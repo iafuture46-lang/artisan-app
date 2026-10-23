@@ -62,19 +62,29 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .page-content{animation:fadeInUp 0.3s ease-out forwards}
 
-/* HERO BANNER (Nouveau) */
+/* HERO BANNER V17 */
 .hero-banner {
-    background-image: linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.1) 100%), url('hero.jpg');
+    background-image: 
+        linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 35%, rgba(255,255,255,0.2) 100%), 
+        url('hero-bg.jpg?v=2');
     background-size: cover;
-    background-position: center;
+    background-position: center 45%; 
+    background-repeat: no-repeat;
     border-radius: var(--radius);
-    padding: 32px;
+    padding: 40px 32px;
     margin-bottom: 24px;
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border);
+    background-color: var(--primary-light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 220px;
+    position: relative;
+    overflow: hidden;
 }
-.hero-banner h2 { font-size: 28px; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 8px; }
-.hero-banner p { font-size: 15px; color: var(--text-muted); font-weight: 500; max-width: 60%; }
+.hero-banner h2 { font-size: 32px; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
+.hero-banner p { font-size: 16px; color: var(--text-muted); font-weight: 600; max-width: 65%; text-shadow: 0 1px 3px rgba(255,255,255,0.9); }
 
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all 0.3s ease}
 .card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg)}
@@ -151,6 +161,11 @@ a{text-decoration:none;cursor:pointer;color:inherit}
   .kpi-grid{grid-template-columns:repeat(3,1fr)}.kpi.full{grid-column:span 1}.row-2{grid-template-columns:1fr 1fr}
   .modal-overlay{align-items:center}.modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
 }
+@media (max-width: 768px) {
+    .hero-banner { background-position: 35% center; padding: 32px 24px; min-height: 200px; }
+    .hero-banner h2 { font-size: 26px; }
+    .hero-banner p { max-width: 90%; font-size: 14px; }
+}
 </style>
 </head>
 <body>
@@ -188,25 +203,97 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <div id="pdf-template"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════
+   MOTEUR V17 — FOUNDATION SOLIDE (Prêt pour Supabase)
+   ═══════════════════════════════════════════════════════════════════ */
+
+// ─── 1. STORAGE LAYER (Sécurisé & Versionné) ───
+const SCHEMA_VERSION = 1;
+const STORAGE_KEYS = { settings: 'app_settings', data: 'app_data', catalogue: 'app_cat', users: 'app_users' };
 const DEFAULT_SETTINGS = {
     nom_entreprise: "", siret: "", adresse: "", cp: "", ville: "",
     tel: "", email: "", iban: "", bic: "", assurance: "",
     marge: 15, aleas: 5, emailjs_service: "", emailjs_template: "", emailjs_public: ""
 };
 
-function getS() { try { return {...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('app_settings') || '{}')}; } catch(e) { return DEFAULT_SETTINGS; } }
-function saveS(s) { localStorage.setItem('app_settings', JSON.stringify(s)); }
+function uuid() {
+  if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+function safeSetItem(key, value) {
+  try { localStorage.setItem(key, value); return true; }
+  catch (e) { console.error('[Storage] write failed:', e); try { toast('⚠️ Sauvegarde impossible (quota atteint ?)'); } catch(_) {} return false; }
+}
+function safeGetItem(key) {
+  try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+
+function getS() {
+  try {
+    const raw = JSON.parse(safeGetItem(STORAGE_KEYS.settings) || '{}');
+    const s = { ...DEFAULT_SETTINGS, ...raw };
+    s.marge = Number.isFinite(+s.marge) ? +s.marge : DEFAULT_SETTINGS.marge;
+    s.aleas = Number.isFinite(+s.aleas) ? +s.aleas : DEFAULT_SETTINGS.aleas;
+    return s;
+  } catch (e) { return { ...DEFAULT_SETTINGS }; }
+}
+function saveS(s) { return safeSetItem(STORAGE_KEYS.settings, JSON.stringify(s)); }
 let SETTINGS = getS();
 
-function getUsers() { try { return JSON.parse(localStorage.getItem('app_users')) || [{id:1, nom:'Patron', role:'admin'}]; } catch(e) { return [{id:1, nom:'Patron', role:'admin'}]; } }
-function saveUsers(u) { localStorage.setItem('app_users', JSON.stringify(u)); }
+function getUsers() { try { return JSON.parse(safeGetItem(STORAGE_KEYS.users)) || [{id:1, nom:'Patron', role:'admin'}]; } catch(e) { return [{id:1, nom:'Patron', role:'admin'}]; } }
+function saveUsers(u) { return safeSetItem(STORAGE_KEYS.users, JSON.stringify(u)); }
 
-function getData() { try { return JSON.parse(localStorage.getItem('app_data')) || { clients: [], devis: [], cpt: { c: 0, d: 0 } }; } catch(e) { return { clients: [], devis: [], cpt: { c: 0, d: 0 } }; } }
-function saveData(d) { localStorage.setItem('app_data', JSON.stringify(d)); }
+const EMPTY_DATA = () => ({ schemaVersion: SCHEMA_VERSION, clients: [], devis: [], cpt: { c: 0, d: 0 } });
 
-function getCatalogue() { try { return JSON.parse(localStorage.getItem('app_cat')) || {}; } catch(e) { return {}; } }
-function saveCatalogue(c) { localStorage.setItem('app_cat', JSON.stringify(c)); }
+function migrateData(data) {
+  if (!data || typeof data !== 'object') return EMPTY_DATA();
+  if (!Array.isArray(data.clients)) data.clients = [];
+  if (!Array.isArray(data.devis)) data.devis = [];
+  if (!data.cpt || typeof data.cpt !== 'object') data.cpt = { c: 0, d: 0 };
+  data.cpt.c = Number.isFinite(+data.cpt.c) ? +data.cpt.c : 0;
+  data.cpt.d = Number.isFinite(+data.cpt.d) ? +data.cpt.d : 0;
 
+  const now = new Date().toISOString();
+  data.clients.forEach(c => {
+    if (!c.uuid) c.uuid = uuid();
+    if (!c.createdAt) c.createdAt = c.date || now;
+    if (!c.updatedAt) c.updatedAt = c.createdAt;
+  });
+  data.devis.forEach(dv => {
+    if (!dv.uuid) dv.uuid = uuid();
+    if (!dv.createdAt) dv.createdAt = dv.date || now;
+    if (!dv.updatedAt) dv.updatedAt = dv.createdAt;
+    if (!dv.clientUuid && dv.clientId) {
+      const c = data.clients.find(x => x.id === dv.clientId);
+      if (c && c.uuid) dv.clientUuid = c.uuid;
+    }
+    if (dv.tauxTVA === undefined) dv.tauxTVA = 10; 
+  });
+
+  if (data.schemaVersion === undefined) data.schemaVersion = SCHEMA_VERSION;
+  return data;
+}
+
+function getData() {
+  try {
+    const raw = safeGetItem(STORAGE_KEYS.data);
+    if (!raw) return EMPTY_DATA();
+    return migrateData(JSON.parse(raw));
+  } catch (e) { return EMPTY_DATA(); }
+}
+function saveData(d) {
+  if (d && typeof d === 'object') d.schemaVersion = SCHEMA_VERSION;
+  return safeSetItem(STORAGE_KEYS.data, JSON.stringify(d));
+}
+
+function getCatalogue() { try { return JSON.parse(safeGetItem(STORAGE_KEYS.catalogue)) || {}; } catch (e) { return {}; } }
+function saveCatalogue(c) { return safeSetItem(STORAGE_KEYS.catalogue, JSON.stringify(c)); }
+
+// ─── 2. MOTEUR DE CALCUL PUR ───
 const TARIFS = {
     'carr.sol.std':{d:'Pose carrelage standard',u:'m2',pu:55,partF:0.35},
     'carr.sol.grand':{d:'Pose carrelage grand format',u:'m2',pu:80,partF:0.45},
@@ -220,6 +307,26 @@ const TARIFS = {
     'mac.mur':{d:'Élévation mur parpaing',u:'m2',pu:75,partF:0.40}
 };
 
+function computeQuote(lignes, aleasPct, tvaPct) {
+    let totalHTBrut = 0;
+    lignes.forEach(l => {
+        const q = Number.isFinite(+l.q) ? +l.q : 0;
+        const pu = Number.isFinite(+l.pu) ? +l.pu : 0;
+        totalHTBrut += q * pu;
+    });
+    
+    // Arrondi au centime
+    totalHTBrut = Math.round(totalHTBrut * 100) / 100;
+    
+    const aleasMontant = Math.round(totalHTBrut * (aleasPct / 100) * 100) / 100;
+    const totalHTNet = Math.round((totalHTBrut + aleasMontant) * 100) / 100;
+    const montantTVA = Math.round(totalHTNet * (tvaPct / 100) * 100) / 100;
+    const totalTTC = Math.round((totalHTNet + montantTVA) * 100) / 100;
+
+    return { totalHTBrut, aleasMontant, totalHTNet, montantTVA, totalTTC };
+}
+
+// ─── 3. HELPERS UI ───
 function esc(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function eur(n) { if (n === null || n === undefined) return '-'; return (parseFloat(n) || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
 function dateFr(iso) { try { return new Date(iso).toLocaleDateString('fr-FR'); } catch(e) { return '-'; } }
@@ -232,6 +339,7 @@ function toast(m) {
     clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+// ─── 4. NAVIGATION ───
 let STACK = []; let CURRENT_ID = null; let CURRENT_MODE = 'new'; let DEV_LIGNES = [];
 
 function go(page, id, mode) {
@@ -281,7 +389,7 @@ function render() {
             case 'nouveau-devis': html = viewFormDevis(); break;
             case 'detail-devis': html = viewDetailDevis(); break;
         }
-    } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${e.message}</p></div>`; }
+    } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${esc(e.message)}</p></div>`; }
     root.innerHTML = `<div class="page-content">${html}</div>`;
     
     if (cur.page === 'nouveau-devis') {
@@ -291,17 +399,15 @@ function render() {
     window.scrollTo(0,0);
 }
 
-// ---------------- VUES ----------------
+// ─── 5. VUES ───
 
 function viewAccueil() {
     const d = getData();
     const nbDevisEnCours = d.devis.filter(x => x.statut === 'brouillon').length;
     let ca = 0; d.devis.forEach(x => { if (x.statut === 'accepte') ca += x.totalTTC; });
 
-    // Déterminer le message d'accueil
     const h = new Date().getHours();
-    let salut = "Bonjour";
-    if (h >= 18) salut = "Bonsoir";
+    let salut = (h >= 18) ? "Bonsoir" : "Bonjour";
     
     return `
         <div class="hero-banner">
@@ -334,8 +440,8 @@ function viewAccueil() {
             <div class="card-head"><div class="card-title">Derniers devis</div><button class="btn btn-sm" onclick="go('devis')">Tout voir</button></div>
             ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${d.devis.slice(-3).reverse().map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${x.id}')">
-                    <div><div class="title">${x.clientNom}</div><div class="sub">${x.id} - ${x.statut.toUpperCase()}</div></div>
+                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
+                    <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)} - ${esc(x.statut).toUpperCase()}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
@@ -370,8 +476,8 @@ function viewParametres() {
         <div class="card">
             <div class="card-head"><div class="card-title">Rentabilité & EmailJS</div></div>
             <div class="row-2">
-                <div class="field"><label>Marge (%)</label><input class="inp" type="number" id="s-marge" value="${s.marge}"></div>
-                <div class="field"><label>Aléas (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
+                <div class="field"><label>Marge cible (%)</label><input class="inp" type="number" id="s-marge" value="${s.marge}"></div>
+                <div class="field"><label>Aléas chantier (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
             </div>
             <div class="field"><label>EmailJS Service ID</label><input class="inp" id="s-ejs-service" value="${esc(s.emailjs_service)}"></div>
             <div class="field"><label>EmailJS Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
@@ -390,13 +496,17 @@ function viewParametres() {
 }
 
 function saveParam() {
+    const margeV = parseFloat(document.getElementById('s-marge').value);
+    const aleasV = parseFloat(document.getElementById('s-aleas').value);
+    
     SETTINGS = {
         nom_entreprise: document.getElementById('s-nom').value, siret: document.getElementById('s-siret').value,
         assurance: document.getElementById('s-assurance').value, adresse: document.getElementById('s-adresse').value,
         cp: document.getElementById('s-cp').value, ville: document.getElementById('s-ville').value,
         email: document.getElementById('s-email').value, tel: document.getElementById('s-tel').value,
         iban: document.getElementById('s-iban').value, bic: document.getElementById('s-bic').value,
-        marge: parseFloat(document.getElementById('s-marge').value) || 15, aleas: parseFloat(document.getElementById('s-aleas').value) || 5,
+        marge: Number.isFinite(margeV) ? margeV : 15,
+        aleas: Number.isFinite(aleasV) ? aleasV : 5,
         emailjs_service: document.getElementById('s-ejs-service').value, emailjs_template: document.getElementById('s-ejs-template').value, emailjs_public: document.getElementById('s-ejs-public').value
     };
     saveS(SETTINGS); toast("Paramètres enregistrés"); home();
@@ -420,7 +530,9 @@ function processImport(event) {
             const backup = JSON.parse(e.target.result);
             if (backup.data && backup.settings) {
                 if(confirm("Cela remplacera vos données actuelles. Continuer ?")) {
-                    saveData(backup.data); saveS(backup.settings); SETTINGS = backup.settings;
+                    saveData(migrateData(backup.data)); 
+                    saveS({...DEFAULT_SETTINGS, ...backup.settings}); 
+                    SETTINGS = getS();
                     toast("Import réussi !"); home();
                 }
             } else { toast("Fichier invalide"); }
@@ -438,7 +550,7 @@ function viewEquipe() {
                 <div class="list-item" style="cursor:default;">
                     <div style="display:flex; align-items:center; gap:16px;">
                         <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(u.nom)}</div>
-                        <div><div class="title">${u.nom}</div><div class="sub">${u.role}</div></div>
+                        <div><div class="title">${esc(u.nom)}</div><div class="sub">${esc(u.role)}</div></div>
                     </div>
                     ${u.role !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="delUser(${u.id})">Suppr</button>` : ''}
                 </div>
@@ -464,10 +576,10 @@ function viewClients() {
             <div class="card-head"><div class="card-title">Mes Clients</div></div>
             ${d.clients.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun client.</p>' : ''}
             ${d.clients.map(c => `
-                <div class="list-item" onclick="go('fiche-client', '${c.id}')">
+                <div class="list-item" onclick="go('fiche-client', '${esc(c.id)}')">
                     <div style="display:flex;align-items:center;gap:16px;">
                         <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(c.nom)}</div>
-                        <div><div class="title">${c.nom}</div><div class="sub">${c.ville}</div></div>
+                        <div><div class="title">${esc(c.nom)}</div><div class="sub">${esc(c.ville)}</div></div>
                     </div>
                 </div>
             `).join('')}
@@ -479,7 +591,7 @@ function viewFormClient() {
     const isEdit = CURRENT_MODE === 'edit';
     let c = { nom: '', ville: '', cp: '', email: '', tel: '' };
     if (isEdit) {
-        const d = getData(); c = d.clients.find(x => x.id === CURRENT_ID);
+        const d = getData(); c = d.clients.find(x => x.id === CURRENT_ID) || c;
     }
     return `
         <div class="card">
@@ -510,37 +622,39 @@ function saveClient() {
 
     if (CURRENT_MODE === 'edit') {
         const idx = d.clients.findIndex(x => x.id === CURRENT_ID);
-        if (idx > -1) d.clients[idx] = { ...d.clients[idx], ...data };
+        if (idx > -1) d.clients[idx] = { ...d.clients[idx], ...data, updatedAt: new Date().toISOString() };
         saveData(d); toast("Client modifié"); go('fiche-client', CURRENT_ID);
     } else {
         d.cpt.c++;
         const id = 'C-' + new Date().getFullYear() + '-' + String(d.cpt.c).padStart(4, '0');
-        d.clients.push({ id, date: new Date().toISOString(), ...data });
+        const now = new Date().toISOString();
+        d.clients.push({ id, uuid: uuid(), date: now, createdAt: now, updatedAt: now, ...data });
         saveData(d); toast("Client créé"); home();
     }
 }
 
 function viewFicheClient() {
     const d = getData(); const c = d.clients.find(x => x.id === CURRENT_ID);
+    if(!c) return '<div class="card">Client introuvable</div>';
     const devis = d.devis.filter(x => x.clientId === CURRENT_ID);
     return `
         <div class="card">
             <div class="card-head">
-                <div class="card-title">${c.nom}</div>
+                <div class="card-title">${esc(c.nom)}</div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn btn-sm btn-ghost" onclick="go('nouveau-client', '${c.id}', 'edit')">Modifier</button>
-                    <button class="btn btn-sm btn-danger" onclick="delClient('${c.id}')">Suppr</button>
+                    <button class="btn btn-sm btn-ghost" onclick="go('nouveau-client', '${esc(c.id)}', 'edit')">Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="delClient('${esc(c.id)}')">Suppr</button>
                 </div>
             </div>
-            <div class="sub" style="margin-bottom:24px;">${c.email || 'Pas d\'email'} - ${c.tel || 'Pas de tél'}</div>
-            <button class="btn" onclick="go('nouveau-devis', '${c.id}')">+ Créer un devis</button>
+            <div class="sub" style="margin-bottom:24px;">${esc(c.email) || 'Pas d\'email'} - ${esc(c.tel) || 'Pas de tél'}</div>
+            <button class="btn" onclick="go('nouveau-devis', '${esc(c.id)}')">+ Créer un devis</button>
         </div>
         <div class="card">
             <div class="card-head"><div class="card-title">Historique</div></div>
             ${devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${devis.map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${x.id}')">
-                    <div><div class="title">${x.id}</div><div class="sub">${dateFr(x.date)}</div></div>
+                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
+                    <div><div class="title">${esc(x.id)}</div><div class="sub">${dateFr(x.date)}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
@@ -563,8 +677,8 @@ function viewDevis() {
             <div class="card-head"><div class="card-title">Mes Devis</div></div>
             ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${d.devis.slice().reverse().map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${x.id}')">
-                    <div><div class="title">${x.clientNom}</div><div class="sub">${x.id} - ${x.statut.toUpperCase()}</div></div>
+                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
+                    <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)} - ${esc(x.statut).toUpperCase()}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
@@ -576,15 +690,20 @@ function viewFormDevis() {
     const isEdit = CURRENT_MODE === 'edit';
     const d = getData();
     let dev = null;
+    let tauxTVA = 10;
     
     if (isEdit) {
         dev = d.devis.find(x => x.id === CURRENT_ID);
+        if(!dev) return '<div class="card">Devis introuvable</div>';
+        tauxTVA = dev.tauxTVA !== undefined ? dev.tauxTVA : 10;
+        
         DEV_LIGNES = dev.lignes.map(l => {
             const base = TARIFS[l.code] || { pu: l.pu };
             return { code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu, puBase: base.pu };
         });
     } else {
         DEV_LIGNES = [];
+        tauxTVA = 10;
     }
 
     return `
@@ -596,7 +715,7 @@ function viewFormDevis() {
                     <option value="">-- Choisir --</option>
                     ${d.clients.map(c => {
                         let sel = (c.id === CURRENT_ID || (isEdit && c.id === dev.clientId)) ? 'selected' : '';
-                        return `<option value="${c.id}" ${sel}>${c.nom}</option>`;
+                        return `<option value="${esc(c.id)}" ${sel}>${esc(c.nom)}</option>`;
                     }).join('')}
                 </select>
             </div>
@@ -606,7 +725,7 @@ function viewFormDevis() {
                 <input class="inp" id="ia-text" placeholder="Ex: pose 20m2 carrelage grand format">
                 <button class="btn btn-ghost" style="margin-top:12px;" onclick="parseIA()">Analyser</button>
             </div>` : ''}
-            <div id="lines-container"></div>
+            <div id="lines-container" data-tva="${tauxTVA}"></div>
         </div>
     `;
 }
@@ -639,35 +758,46 @@ function addLine(code, q) {
 function renderLines() {
     const cont = document.getElementById('lines-container');
     if (!cont) return;
-    let totalHT = 0; let html = '';
+    const parsedTVA = parseFloat(cont.dataset.tva);
+    const tauxTVA = Number.isFinite(parsedTVA) ? parsedTVA : 10;
+    let html = '';
     
     DEV_LIGNES.forEach((l, i) => {
-        totalHT += l.q * l.pu;
         html += `
             <div class="line-item">
-                <div class="line-header"><div class="line-desc">${l.d}</div><div class="line-total">${eur(l.q * l.pu)}</div></div>
+                <div class="line-header"><div class="line-desc">${esc(l.d)}</div><div class="line-total">${eur(l.q * l.pu)}</div></div>
                 <div class="line-inputs">
                     <input class="inp" type="number" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;">
                     <div class="pu-wrapper" style="flex:2;">
                         <input class="inp" type="number" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;">
-                        ${l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})">↺</button>` : ''}
+                        ${l.code !== 'custom' && l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})">↺</button>` : ''}
                     </div>
                 </div>
             </div>
         `;
     });
 
-    const aleas = totalHT * (SETTINGS.aleas / 100);
-    const totalHTFinal = totalHT + aleas;
-    const tva = totalHTFinal * 0.10;
-    const totalTTC = totalHTFinal + tva;
+    // Calculs via la fonction pure
+    const tot = computeQuote(DEV_LIGNES, SETTINGS.aleas, tauxTVA);
 
     html += `
         <div style="background:var(--bg);padding:24px;border-radius:12px;margin-top:24px;border:1px solid var(--border);">
-            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Sous-total HT</span><span>${eur(totalHT)}</span></div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Aléas (${SETTINGS.aleas}%)</span><span>${eur(aleas)}</span></div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (10%)</span><span>${eur(tva)}</span></div>
-            <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(totalTTC)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Sous-total HT</span><span>${eur(tot.totalHTBrut)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Aléas (${SETTINGS.aleas}%)</span><span>${eur(tot.aleasMontant)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Total HT Net</span><span>${eur(tot.totalHTNet)}</span></div>
+            
+            <div style="display:flex;align-items:center;gap:16px;margin:16px 0;padding:16px 0;border-top:1px solid var(--border);">
+                <label style="font-size:13px;font-weight:700;color:var(--text-muted);">Taux de TVA</label>
+                <select class="inp" style="flex:1;padding:12px;" onchange="document.getElementById('lines-container').dataset.tva=this.value; renderLines();">
+                    <option value="20" ${tauxTVA === 20 ? 'selected' : ''}>20 % (Neuf)</option>
+                    <option value="10" ${tauxTVA === 10 ? 'selected' : ''}>10 % (Rénovation)</option>
+                    <option value="5.5" ${tauxTVA === 5.5 ? 'selected' : ''}>5,5 % (Énergie)</option>
+                    <option value="0" ${tauxTVA === 0 ? 'selected' : ''}>0 % (Franchise)</option>
+                </select>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Montant TVA</span><span>${eur(tot.montantTVA)}</span></div>
+            <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(tot.totalTTC)}</span></div>
         </div>
         <button class="btn" style="margin-top:24px;" onclick="saveDevis()">Enregistrer</button>
     `;
@@ -684,6 +814,7 @@ function updateLine(i, f, v) {
 }
 
 function resetLine(i) {
+    if (DEV_LIGNES[i].code === 'custom') return;
     DEV_LIGNES[i].pu = DEV_LIGNES[i].puBase;
     let c = getCatalogue(); delete c[DEV_LIGNES[i].code]; saveCatalogue(c);
     renderLines();
@@ -692,6 +823,9 @@ function resetLine(i) {
 function saveDevis() {
     let cid;
     const d = getData();
+    const cont = document.getElementById('lines-container');
+    const parsedTVA = parseFloat(cont.dataset.tva);
+    const tauxTVA = Number.isFinite(parsedTVA) ? parsedTVA : 10;
     
     if (CURRENT_MODE === 'edit') {
         cid = d.devis.find(x => x.id === CURRENT_ID).clientId;
@@ -700,25 +834,35 @@ function saveDevis() {
     }
     if (!cid) { toast("Sélectionnez un client"); return; }
     
-    let totalHT = 0; DEV_LIGNES.forEach(l => totalHT += l.q * l.pu);
-    const aleas = totalHT * (SETTINGS.aleas / 100); const totalHTF = totalHT + aleas;
-    const tva = totalHTF * 0.10; const ttc = totalHTF + tva;
+    const tot = computeQuote(DEV_LIGNES, SETTINGS.aleas, tauxTVA);
     const c = d.clients.find(x => x.id === cid);
     
     if (CURRENT_MODE === 'edit') {
         const idx = d.devis.findIndex(x => x.id === CURRENT_ID);
         if (idx > -1) {
             d.devis[idx].lignes = DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu }));
-            d.devis[idx].aleas = aleas; d.devis[idx].totalHT = totalHTF; d.devis[idx].tva = tva; d.devis[idx].totalTTC = ttc;
+            d.devis[idx].tauxTVA = tauxTVA;
+            d.devis[idx].aleas = tot.aleasMontant;
+            d.devis[idx].totalHT = tot.totalHTNet;
+            d.devis[idx].tva = tot.montantTVA;
+            d.devis[idx].totalTTC = tot.totalTTC;
+            d.devis[idx].updatedAt = new Date().toISOString();
         }
         saveData(d); toast("Devis mis à jour"); 
         go('detail-devis', CURRENT_ID, 'view');
     } else {
         d.cpt.d++; const id = 'DEV-' + new Date().getFullYear() + '-' + String(d.cpt.d).padStart(4, '0');
+        const now = new Date().toISOString();
         d.devis.push({
-            id, clientId: cid, clientNom: c.nom, date: new Date().toISOString(), statut: 'brouillon',
+            id, uuid: uuid(), clientId: cid, clientUuid: c.uuid, clientNom: c.nom,
+            date: now, createdAt: now, updatedAt: now,
+            statut: 'brouillon',
             lignes: DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu })),
-            aleas, totalHT: totalHTF, tva, totalTTC: ttc
+            tauxTVA: tauxTVA,
+            aleas: tot.aleasMontant,
+            totalHT: tot.totalHTNet,
+            tva: tot.montantTVA,
+            totalTTC: tot.totalTTC
         });
         saveData(d); toast("Devis enregistré"); 
         go('detail-devis', id, 'view');
@@ -727,35 +871,38 @@ function saveDevis() {
 
 function viewDetailDevis() {
     const d = getData(); const dev = d.devis.find(x => x.id === CURRENT_ID);
+    if(!dev) return '<div class="card">Devis introuvable</div>';
+    const tauxTVA = dev.tauxTVA !== undefined ? dev.tauxTVA : 10;
+    
     return `
         <div class="card">
             <div class="card-head">
-                <div class="card-title">${dev.id}</div>
-                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;">${dev.statut.toUpperCase()}</span>
+                <div class="card-title">${esc(dev.id)}</div>
+                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;">${esc(dev.statut).toUpperCase()}</span>
             </div>
-            <div style="color:var(--text-muted);margin-bottom:24px;font-weight:500;">Client : <strong style="color:var(--text-main);">${dev.clientNom}</strong></div>
+            <div style="color:var(--text-muted);margin-bottom:24px;font-weight:500;">Client : <strong style="color:var(--text-main);">${esc(dev.clientNom)}</strong></div>
             
             ${dev.lignes.map(l => `
                 <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
-                    <div><div style="font-weight:800;">${l.d}</div><div style="font-size:13px;color:var(--text-muted);">${l.q} ${l.u} x ${eur(l.pu)}</div></div>
+                    <div><div style="font-weight:800;">${esc(l.d)}</div><div style="font-size:13px;color:var(--text-muted);">${l.q} ${esc(l.u)} x ${eur(l.pu)}</div></div>
                     <div style="font-family:var(--font-mono);font-weight:800;">${eur(l.q * l.pu)}</div>
                 </div>
             `).join('')}
 
             <div style="background:var(--bg);padding:24px;border-radius:12px;margin-top:24px;border:1px solid var(--border);">
                 <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Aléas</span><span>${eur(dev.aleas)}</span></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Total HT</span><span>${eur(dev.totalHT)}</span></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (10%)</span><span>${eur(dev.tva)}</span></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Total HT Net</span><span>${eur(dev.totalHT)}</span></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (${tauxTVA}%)</span><span>${eur(dev.tva)}</span></div>
                 <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(dev.totalTTC)}</span></div>
             </div>
 
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
-                <button class="btn" onclick="genPDF('${dev.id}')">Générer le PDF</button>
-                <button class="btn btn-ghost" onclick="sendMail('${dev.id}')">Envoyer par Email</button>
-                ${dev.statut !== 'accepte' ? `<button class="btn btn-success" onclick="acceptDevis('${dev.id}')">Marquer comme Accepté</button>` : ''}
+                <button class="btn" onclick="genPDF('${esc(dev.id)}')">Générer le PDF</button>
+                <button class="btn btn-ghost" onclick="sendMail('${esc(dev.id)}')">Envoyer par Email</button>
+                ${dev.statut !== 'accepte' ? `<button class="btn btn-success" onclick="acceptDevis('${esc(dev.id)}')">Marquer comme Accepté</button>` : ''}
                 <div class="row-2" style="margin-top:12px;">
-                    <button class="btn btn-ghost" onclick="go('nouveau-devis', '${dev.id}', 'edit')">Modifier</button>
-                    <button class="btn btn-ghost btn-danger" onclick="delDevis('${dev.id}')">Supprimer</button>
+                    <button class="btn btn-ghost" onclick="go('nouveau-devis', '${esc(dev.id)}', 'edit')">Modifier</button>
+                    <button class="btn btn-ghost btn-danger" onclick="delDevis('${esc(dev.id)}')">Supprimer</button>
                 </div>
             </div>
         </div>
@@ -763,7 +910,7 @@ function viewDetailDevis() {
 }
 
 function acceptDevis(id) {
-    let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'accepte'; saveData(d); render(); toast("Devis accepté !");
+    let d = getData(); let dev = d.devis.find(x => x.id === id); if(dev) { dev.statut = 'accepte'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); toast("Devis accepté !"); }
 }
 
 function delDevis(id) {
@@ -773,20 +920,23 @@ function delDevis(id) {
 
 function genPDF(id) {
     const d = getData(); const dev = d.devis.find(x => x.id === id); const s = SETTINGS;
+    if(!dev) return;
+    const tauxTVA = dev.tauxTVA !== undefined ? dev.tauxTVA : 10;
+    
     const html = `
-        <h1>DEVIS N° ${dev.id}</h1>
+        <h1>DEVIS N° ${esc(dev.id)}</h1>
         <div class="header-info">
-            <div class="box"><strong>${s.nom_entreprise}</strong><br>${s.adresse}<br>${s.cp} ${s.ville}<br>Siret: ${s.siret}<br>Décennale: ${s.assurance}</div>
-            <div class="box" style="text-align:right;"><strong>Client :</strong><br>${dev.clientNom}<br>Date: ${dateFr(dev.date)}<br>Validité: 30 jours</div>
+            <div class="box"><strong>${esc(s.nom_entreprise)}</strong><br>${esc(s.adresse)}<br>${esc(s.cp)} ${esc(s.ville)}<br>Siret: ${esc(s.siret)}<br>Décennale: ${esc(s.assurance)}</div>
+            <div class="box" style="text-align:right;"><strong>Client :</strong><br>${esc(dev.clientNom)}<br>Date: ${dateFr(dev.date)}<br>Validité: 30 jours</div>
         </div>
         <table>
             <thead><tr><th>Désignation</th><th>Qté</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
-            <tbody>${dev.lignes.map(l => `<tr><td>${l.d}</td><td>${l.q} ${l.u}</td><td>${eur(l.pu)}</td><td>${eur(l.q * l.pu)}</td></tr>`).join('')}</tbody>
+            <tbody>${dev.lignes.map(l => `<tr><td>${esc(l.d)}</td><td>${l.q} ${esc(l.u)}</td><td>${eur(l.pu)}</td><td>${eur(l.q * l.pu)}</td></tr>`).join('')}</tbody>
         </table>
         <div class="totals">
-            <p>Aléas: ${eur(dev.aleas)}</p><p><strong>Total HT: ${eur(dev.totalHT)}</strong></p><p>TVA: ${eur(dev.tva)}</p><h3>TOTAL TTC: ${eur(dev.totalTTC)}</h3>
+            <p>Aléas: ${eur(dev.aleas)}</p><p><strong>Total HT Net: ${eur(dev.totalHT)}</strong></p><p>TVA (${tauxTVA}%): ${eur(dev.tva)}</p><h3>TOTAL TTC: ${eur(dev.totalTTC)}</h3>
         </div>
-        <div class="legal"><p>Conditions : 30% à la commande, solde à la livraison.</p><p>IBAN: ${s.iban} - BIC: ${s.bic}</p></div>
+        <div class="legal"><p>Conditions : 30% à la commande, solde à la livraison.</p><p>IBAN: ${esc(s.iban)} - BIC: ${esc(s.bic)}</p></div>
     `;
     const el = document.getElementById('pdf-template'); el.innerHTML = html; el.style.display = 'block';
     html2pdf().set({ margin: 0, filename: `Devis_${dev.id}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { el.style.display = 'none'; });
@@ -794,14 +944,15 @@ function genPDF(id) {
 
 function sendMail(id) {
     const d = getData(); const dev = d.devis.find(x => x.id === id); const c = d.clients.find(x => x.id === dev.clientId); const s = SETTINGS;
+    if(!dev || !c) return;
     if (s.emailjs_public && s.emailjs_service) emailjs.init(s.emailjs_public);
     const ov = document.getElementById('modal-overlay');
     ov.innerHTML = `
         <div class="modal">
             <h3>Envoyer par Email</h3>
-            <div class="field"><label>Email du client</label><input class="inp" id="m-to" value="${c.email || ''}"></div>
-            <div class="field"><label>Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${c.nom},\n\nVeuillez trouver ci-joint le devis ${dev.id} d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${s.nom_entreprise}</textarea></div>
-            <button class="btn" onclick="execMail('${id}')">Envoyer</button>
+            <div class="field"><label>Email du client</label><input class="inp" id="m-to" value="${esc(c.email) || ''}"></div>
+            <div class="field"><label>Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${esc(c.nom)},\n\nVeuillez trouver ci-joint le devis ${esc(dev.id)} d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${esc(s.nom_entreprise)}</textarea></div>
+            <button class="btn" onclick="execMail('${esc(id)}')">Envoyer</button>
             <button class="btn btn-ghost" style="margin-top:12px;" onclick="document.getElementById('modal-overlay').classList.remove('show')">Annuler</button>
         </div>
     `;
@@ -816,13 +967,15 @@ function execMail(id) {
         emailjs.send(s.emailjs_service, s.emailjs_template, { to_email: to, message: msg, from_name: s.nom_entreprise })
             .then(() => {
                 toast("Email envoyé !"); document.getElementById('modal-overlay').classList.remove('show');
-                let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d); render();
+                let d = getData(); let dev = d.devis.find(x => x.id === id); 
+                if(dev) { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
             }, (e) => { toast("Erreur : " + e.text); });
     } else {
         const sub = encodeURIComponent(`Devis ${id} - ${s.nom_entreprise}`); const bod = encodeURIComponent(msg);
         window.location.href = `mailto:${to}?subject=${sub}&body=${bod}`;
         document.getElementById('modal-overlay').classList.remove('show');
-        let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d); render();
+        let d = getData(); let dev = d.devis.find(x => x.id === id); 
+        if(dev) { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
     }
 }
 
