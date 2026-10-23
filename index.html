@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f1f5f9">
 <title>ArtisanApp V18</title>
 
@@ -11,13 +11,20 @@
 
 <style>
 :root{
-  --bg: #f1f5f9; --surface: #ffffff; --surface-hover: #f8fafc; --border: #e2e8f0;
-  --text-main: #0f172a; --text-muted: #64748b; --primary: #2563eb; --primary-hover: #1d4ed8;
-  --primary-light: #eff6ff; --danger: #ef4444; --danger-light: #fef2f2;
-  --success: #10b981; --success-light: #ecfdf5; --radius: 16px;
-  --font-main: 'Inter', -apple-system, sans-serif; --font-mono: 'JetBrains Mono', monospace;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05); --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
+    --bg-app:#F8FAFC; --bg-surface:#FFFFFF; --bg-subtle:#F1F5F9;
+    --text-strong:#172033; --text-muted:#64748B; --border:#E7ECF2;
+    --accent:#F97316; --accent-soft:#FFF1E7; --success:#059669; --warning:#D97706; --danger:#DC2626;
+    --shadow-sm:0 1px 2px rgba(15,23,42,.04); --shadow-md:0 4px 12px rgba(15,23,42,.06); --shadow-lg:0 12px 32px rgba(15,23,42,.08);
+    --radius-sm:6px; --radius-md:10px; --radius-lg:14px; --radius-pill:999px;
+    --ease:cubic-bezier(.2,.7,.2,1); --dur-fast:150ms; --dur-base:200ms; --dur-slow:250ms;
+    --focus-ring:2px solid rgba(249,115,22,.65); --focus-offset:2px;
+    --bg:var(--bg-app); --surface:var(--bg-surface); --surface-hover:var(--bg-subtle);
+    --text-main:var(--text-strong); --primary:var(--accent); --primary-hover:#EA580C;
+    --primary-light:var(--accent-soft); --danger-light:#FEF2F2; --success-light:#ECFDF5;
+    --warning-light:#FFFBEB; --radius:var(--radius-lg);
+    --font-main:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font-mono:ui-monospace,SFMono-Regular,Consolas,monospace;
+    --shadow-glow:0 0 0 3px rgba(249,115,22,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);font-size:15px;line-height:1.5;padding-bottom:100px;display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
@@ -35,7 +42,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .bottom-nav a.active{color:var(--primary)}
 .bottom-nav svg{width:24px;height:24px;stroke-width:2.5;transition:transform 0.2s}
 .bottom-nav a.active svg{transform:translateY(-2px)}
-.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(37, 99, 235, 0.4);z-index:99}
+.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(249,115,22, 0.4);z-index:99}
 .fab:hover{transform:scale(1.05) translateY(-2px)}
 .fab:active{transform:scale(.95)}
 
@@ -128,6 +135,116 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .modal{background:var(--surface);border-radius:24px 24px 0 0;padding:32px 24px;width:100%;border-top:4px solid var(--primary);transform:translateY(100%);transition:transform .3s;box-shadow:0 -10px 40px rgba(0,0,0,0.1)}
 .modal-overlay.show .modal{transform:translateY(0)}
 .modal h3{font-size:22px;font-weight:800;margin-bottom:20px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+
+/* Premium interface system */
+body{background:var(--bg-app);color:var(--text-strong);font-family:var(--font-main)}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
+button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.hdr{display:flex;min-height:72px;padding:12px 28px;background:var(--bg-surface);box-shadow:none}
+.hdr-mark{background:var(--accent);border-radius:var(--radius-md)}
+.hdr-text p{color:var(--text-muted)}
+.layout-wrapper{max-width:1600px}
+.sidebar{position:sticky;top:72px;height:calc(100vh - 72px);width:248px;flex:0 0 248px;border-color:var(--border);padding:20px 0}
+.hdr-context{margin-left:auto;color:var(--text-muted);font-size:14px;font-weight:650}
+.sidebar .nav-item{width:calc(100% - 24px);min-height:48px;margin:3px 12px;padding:12px 16px;border:0;border-radius:var(--radius-md);background:transparent;text-align:left;font-size:14px}
+.sidebar .nav-item:hover{background:var(--bg-subtle);color:var(--text-strong)}
+.sidebar .nav-item.active{background:var(--accent-soft);color:#9A3412}
+.wrap{min-width:0;max-width:1220px;padding:32px clamp(18px,3vw,40px) 48px;overflow:visible}
+.card,.kpi{border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);transition:box-shadow var(--dur-base) var(--ease),border-color var(--dur-base) var(--ease)}
+.card{padding:24px;margin-bottom:18px}
+.card:hover{transform:none;box-shadow:var(--shadow-sm)}
+.card-title{font-size:18px;color:var(--text-strong)}
+.kpi{padding:20px;cursor:default}
+button.kpi{width:100%;text-align:left;color:inherit;background:var(--bg-surface)}
+.kpi[role="button"]{cursor:pointer}
+.kpi:hover{transform:none;box-shadow:var(--shadow-md);border-color:#FDBA74}
+.kpi .val{font-size:28px;color:var(--text-strong)}
+.kpi.full{background:var(--bg-surface);border-left:1px solid var(--border)}
+.kpi.full .val{color:var(--text-strong)}
+.kpi-icon{color:var(--accent)}
+.btn{min-height:44px;padding:12px 18px;border-radius:var(--radius-md);background:var(--accent);box-shadow:none;text-transform:none;transition:background var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.btn:hover{background:var(--primary-hover);transform:none}
+.btn:active{transform:none}
+.btn-ghost{background:var(--bg-surface);color:var(--text-strong);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg-subtle);border-color:#CBD5E1;color:var(--text-strong)}
+.btn-danger{background:#FEF2F2;color:#B91C1C;border-color:#FECACA}
+.btn-danger:hover{background:#DC2626;color:#fff}
+.btn-success{background:#ECFDF5;color:#047857;border-color:#A7F3D0}
+.btn-success:hover{background:#059669;color:#fff}
+.inp{min-height:44px;padding:11px 13px;border:1px solid #CBD5E1;border-radius:var(--radius-sm);background:var(--bg-surface);font-weight:500}
+.inp:focus{border-color:var(--accent);box-shadow:var(--shadow-glow);outline:none}
+.field label{color:#475569;text-transform:none;font-size:13px}
+.list-item{min-height:64px;border-radius:var(--radius-sm);margin-bottom:4px}
+.list-item[role="button"]:hover{background:var(--bg-subtle);border-color:var(--border);transform:none}
+.list-item .amount,.line-total{color:#C2410C}
+.bottom-nav{padding:6px 0 max(8px,env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(15,23,42,.06)}
+.bottom-nav a{min-width:64px;min-height:56px;justify-content:center;padding:6px 10px;color:#475569}
+.bottom-nav a.active{color:#C2410C}
+.fab{width:56px;height:56px;bottom:84px;right:18px;border-radius:var(--radius-md);background:var(--accent);box-shadow:var(--shadow-md)}
+.modal-overlay{padding:16px}
+.modal{max-height:min(90vh,760px);overflow:auto;border-radius:var(--radius-lg);border:1px solid var(--border);border-top:3px solid var(--accent);box-shadow:var(--shadow-lg)}
+#toast{max-width:min(92vw,480px);border-radius:var(--radius-md);background:#172033;box-shadow:var(--shadow-md)}
+.hero-banner{background:var(--bg-surface);min-height:0;padding:28px;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)}
+.hero-banner h2,.hero-banner p{color:var(--text-strong);text-shadow:none;max-width:none}
+.hero-banner h2{font-size:28px}
+.hero-banner p{color:var(--text-muted)}
+.line-item{border-radius:var(--radius-md);background:var(--bg-subtle)}
+.line-header{align-items:flex-start}
+.line-desc{flex:1;min-width:0}
+.line-desc .inp{font-weight:650}
+.line-unit{flex:none;width:112px}
+.line-note{margin-top:8px;color:var(--text-muted);font-size:11px}
+.add-line-button{width:auto;margin:4px 0 18px}
+.btn-reset{min-width:44px;min-height:44px;border-radius:var(--radius-sm)}
+#pdf-template{font-family:Arial,sans-serif}
+.dashboard-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px}
+.dashboard-top h2{font-size:28px;line-height:1.2;font-weight:750}
+.dashboard-top p{margin-top:6px;color:var(--text-muted)}
+.dashboard-top .btn{width:auto;white-space:nowrap}
+.dashboard-kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.dashboard-kpis .kpi{min-height:116px;justify-content:center;gap:8px}
+.dashboard-kpis .lbl{font-size:12px;line-height:1.4}
+.dashboard-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.dashboard-actions .btn{width:auto}
+.dashboard-main-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:18px;align-items:start}
+.dashboard-main-grid .card{height:100%;margin-bottom:0}
+.document-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.document-row:last-child{border-bottom:0}
+.document-row:hover .document-title{color:#C2410C}
+.document-title{font-size:14px;font-weight:700;color:var(--text-strong)}
+.document-meta{font-size:12px;color:var(--text-muted);margin-top:3px}
+.document-amount{flex:none;font-family:var(--font-mono);font-weight:700;color:#C2410C}
+.status-note{padding:12px 14px;border:1px solid #FED7AA;border-radius:var(--radius-sm);background:#FFF7ED;color:#9A3412;font-size:12px;line-height:1.5}
+.assistant-panel{display:flex;flex-direction:column;gap:14px}
+.assistant-label{display:inline-flex;align-self:flex-start;padding:4px 9px;border-radius:var(--radius-pill);background:var(--accent-soft);color:#9A3412;font-size:11px;font-weight:700;text-transform:uppercase}
+.empty-state{padding:28px 12px;text-align:center;color:var(--text-muted)}
+.page-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.page-heading h2{font-size:24px;line-height:1.25}
+.page-heading p{margin-top:4px;color:var(--text-muted);font-size:13px}
+
+@media (min-width:768px){
+    body{padding-bottom:0}.hdr{display:flex}.sidebar{display:flex}.bottom-nav,.fab{display:none}
+    .wrap{padding-top:28px}.row-2{grid-template-columns:1fr 1fr}
+    .modal{border:1px solid var(--border);border-top:3px solid var(--accent);transform:translateY(8px)}
+    .modal-overlay.show .modal{transform:translateY(0)}
+}
+@media (max-width:767px){
+    body{padding-bottom:84px}.hdr{padding:10px 16px;min-height:64px}.wrap{padding:20px 14px 32px}
+    .card{padding:18px;margin-bottom:14px}.kpi-grid{gap:10px}.kpi{padding:16px}.kpi .val{font-size:23px}
+    .row-2{grid-template-columns:1fr}.modal-overlay{align-items:flex-end;padding:0}.modal{width:100%;border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:24px 18px max(24px,env(safe-area-inset-bottom))}
+    .line-inputs{flex-wrap:wrap}.pu-wrapper{min-width:100%}
+    .dashboard-top{align-items:stretch;flex-direction:column;gap:14px}.dashboard-top .btn{width:100%}
+    .dashboard-top h2{font-size:24px}.dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .dashboard-kpis .kpi:last-child{grid-column:1 / -1}.dashboard-actions{display:grid;grid-template-columns:1fr 1fr}
+    .dashboard-actions .btn{width:100%;padding:11px 10px}.dashboard-main-grid{grid-template-columns:1fr;gap:14px}
+    .page-heading{align-items:flex-start;flex-direction:column}.document-row{gap:10px}
+    .hdr-context{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 
 /* PDF */
 #pdf-template{display:none;width:210mm;padding:20mm;background:#fff;color:#000;font-family:Arial,sans-serif}
@@ -139,45 +256,40 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 #pdf-template td{padding:12px;border-bottom:1px solid #ccc;font-size:14px}
 #pdf-template .totals{text-align:right;font-size:16px;line-height:1.8}
 #pdf-template .legal{margin-top:60px;font-size:11px;color:#555;line-height:1.5}
-
-@media (min-width:768px){
-  body{padding-bottom:0}.bottom-nav,.fab{display:none}.hdr{display:none}.sidebar{display:flex}.wrap{padding:40px}
-  .kpi-grid{grid-template-columns:repeat(3,1fr)}.kpi.full{grid-column:span 1}.row-2{grid-template-columns:1fr 1fr}
-  .modal-overlay{align-items:center}.modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
-}
 </style>
 </head>
 <body>
 
 <header class="hdr">
-  <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
+    <div style="display:flex;align-items:center;cursor:pointer" role="button" tabindex="0" onclick="go('accueil')" aria-label="Retour au tableau de bord">
     <div class="hdr-mark">A</div>
     <div><h1>ArtisanApp</h1><p>Copilote V18</p></div>
   </div>
+    <div class="hdr-context" id="header-page-title">Tableau de bord</div>
 </header>
 
 <div class="layout-wrapper">
   <aside class="sidebar" id="desktop-sidebar">
     <div style="padding:0 24px 24px 24px; font-weight:900; font-size:22px; border-bottom:1px solid var(--border); margin-bottom:16px;">ArtisanApp</div>
-    <div class="nav-item" onclick="go('accueil')" id="side-accueil">Tableau de bord</div>
-    <div class="nav-item" onclick="go('devis')" id="side-devis">Mes Devis</div>
-    <div class="nav-item" onclick="go('clients')" id="side-clients">Mes Clients</div>
-    <div class="nav-item" onclick="go('equipe')" id="side-equipe">Mon Équipe</div>
-    <div class="nav-item" onclick="go('parametres')" id="side-param">Paramètres</div>
+    <button type="button" class="nav-item" onclick="go('accueil')" id="side-accueil">Tableau de bord</button>
+    <button type="button" class="nav-item" onclick="go('devis')" id="side-devis">Mes Devis</button>
+    <button type="button" class="nav-item" onclick="go('clients')" id="side-clients">Mes Clients</button>
+    <button type="button" class="nav-item" onclick="go('equipe')" id="side-equipe">Mon Équipe</button>
+    <button type="button" class="nav-item" onclick="go('parametres')" id="side-param">Paramètres</button>
   </aside>
   <main class="wrap" id="root"></main>
 </div>
 
-<a class="fab" id="fab-main" onclick="go('nouveau-devis')">+</a>
+<button type="button" class="fab" id="fab-main" onclick="go('nouveau-devis')" aria-label="Créer un devis">+</button>
 
 <nav class="bottom-nav">
-  <a onclick="go('accueil')" id="nav-accueil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Accueil</a>
-  <a onclick="go('clients')" id="nav-clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Clients</a>
-  <a onclick="go('devis')" id="nav-devis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Devis</a>
-  <a onclick="go('parametres')" id="nav-param"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Paramètres</a>
+    <a role="button" tabindex="0" onclick="go('accueil')" id="nav-accueil"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Accueil</a>
+    <a role="button" tabindex="0" onclick="go('clients')" id="nav-clients"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Clients</a>
+    <a role="button" tabindex="0" onclick="go('devis')" id="nav-devis"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Devis</a>
+    <a role="button" tabindex="0" onclick="go('parametres')" id="nav-param"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 1 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Paramètres</a>
 </nav>
 
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <div class="modal-overlay" id="modal-overlay"></div>
 <div id="pdf-template"></div>
 
@@ -187,13 +299,13 @@ a{text-decoration:none;cursor:pointer;color:inherit}
    ═══════════════════════════════════════════════════════════════════ */
 
 // ─── 1. STORAGE LAYER ───
-const SCHEMA_VERSION = 2; // Version bump pour intégrer les nouvelles données
+const SCHEMA_VERSION = 2;
 const STORAGE_KEYS = { settings: 'app_settings', data: 'app_data', catalogue: 'app_cat', users: 'app_users' };
 const DEFAULT_SETTINGS = {
     nom_entreprise: "", siret: "", adresse: "", cp: "", ville: "",
     tel: "", email: "", iban: "", bic: "", assurance: "",
     marge: 15, aleas: 5, emailjs_service: "", emailjs_template: "", emailjs_public: "",
-    openai_key: "" // Nouvelle clé pour l'IA
+    openai_key: "" 
 };
 
 function uuid() {
@@ -233,7 +345,7 @@ function migrateData(data) {
   if (!data.cpt || typeof data.cpt !== 'object') data.cpt = { c: 0, d: 0, f: 0 };
   data.cpt.c = Number.isFinite(+data.cpt.c) ? +data.cpt.c : 0;
   data.cpt.d = Number.isFinite(+data.cpt.d) ? +data.cpt.d : 0;
-  data.cpt.f = Number.isFinite(+data.cpt.f) ? +data.cpt.f : 0; // Compteur factures
+  data.cpt.f = Number.isFinite(+data.cpt.f) ? +data.cpt.f : 0;
 
   const now = new Date().toISOString();
   data.clients.forEach(c => {
@@ -245,7 +357,7 @@ function migrateData(data) {
     if (!dv.uuid) dv.uuid = uuid();
     if (!dv.createdAt) dv.createdAt = dv.date || now;
     if (!dv.updatedAt) dv.updatedAt = dv.createdAt;
-    if (!dv.type) dv.type = 'devis'; // 'devis' ou 'facture'
+    if (!dv.type) dv.type = 'devis';
     if (dv.coutMateriaux === undefined) dv.coutMateriaux = 0;
     if (dv.tauxTVA === undefined) dv.tauxTVA = 10; 
   });
@@ -307,10 +419,55 @@ function dateFr(iso) { try { return new Date(iso).toLocaleDateString('fr-FR'); }
 function init(nom) { if (!nom) return '?'; let p = nom.split(/\s+/); if (p.length === 1) return p[0].substring(0,2).toUpperCase(); return (p[0][0] + p[1][0]).toUpperCase(); }
 
 let toastTimer;
+let pendingDialogResolve = null;
+let dialogReturnFocus = null;
 function toast(m) {
     const t = document.getElementById('toast');
     t.textContent = m; t.classList.add('show');
     clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function finishDialog(value) {
+    if (!pendingDialogResolve) return;
+    const resolve = pendingDialogResolve;
+    pendingDialogResolve = null;
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('show');
+    overlay.innerHTML = '';
+    resolve(value);
+    if (dialogReturnFocus?.isConnected) dialogReturnFocus.focus();
+}
+
+function closeActiveModal() {
+    if (pendingDialogResolve) { finishDialog(null); return; }
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('show');
+    overlay.innerHTML = '';
+    if (dialogReturnFocus?.isConnected) dialogReturnFocus.focus();
+}
+
+function confirmDialog(message, confirmLabel = 'Confirmer') {
+    const overlay = document.getElementById('modal-overlay');
+    dialogReturnFocus = document.activeElement;
+    overlay.innerHTML = `<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <h3 id="confirm-title">Confirmation</h3><p id="confirm-message">${esc(message)}</p>
+        <div class="dialog-actions"><button type="button" class="btn btn-ghost" onclick="finishDialog(false)">Annuler</button><button type="button" class="btn btn-danger" onclick="finishDialog(true)">${esc(confirmLabel)}</button></div>
+    </div>`;
+    overlay.classList.add('show');
+    overlay.querySelector('.btn-danger').focus();
+    return new Promise(resolve => { pendingDialogResolve = resolve; });
+}
+
+function promptDialog(message) {
+    const overlay = document.getElementById('modal-overlay');
+    dialogReturnFocus = document.activeElement;
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="prompt-title">
+        <h3 id="prompt-title">${esc(message)}</h3><div class="field"><label for="app-prompt-input">Nom</label><input class="inp" id="app-prompt-input" autocomplete="name"></div>
+        <div class="dialog-actions"><button type="button" class="btn btn-ghost" onclick="finishDialog(null)">Annuler</button><button type="button" class="btn" onclick="finishDialog(document.getElementById('app-prompt-input').value.trim())">Continuer</button></div>
+    </div>`;
+    overlay.classList.add('show');
+    overlay.querySelector('#app-prompt-input').focus();
+    return new Promise(resolve => { pendingDialogResolve = resolve; });
 }
 
 // ─── 4. NAVIGATION ───
@@ -331,6 +488,8 @@ function render() {
     
     const root = document.getElementById('root');
     let html = '';
+    const pageTitles = { accueil: 'Tableau de bord', parametres: 'Paramètres', equipe: 'Mon Équipe', clients: 'Mes Clients', 'nouveau-client': 'Nouveau client', 'fiche-client': 'Fiche client', devis: 'Mes Documents', 'nouveau-devis': 'Nouveau devis', 'detail-devis': 'Détail du document' };
+    document.getElementById('header-page-title').textContent = pageTitles[cur.page] || 'ArtisanApp';
 
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
     document.querySelectorAll('.sidebar .nav-item').forEach(a => a.classList.remove('active'));
@@ -344,6 +503,9 @@ function render() {
 
     const mNav = document.getElementById('nav-' + activeNav); if(mNav) mNav.classList.add('active');
     const dNav = document.getElementById('side-' + activeNav); if(dNav) dNav.classList.add('active');
+    document.querySelectorAll('.bottom-nav a, .sidebar .nav-item').forEach(a => a.removeAttribute('aria-current'));
+    if (mNav) mNav.setAttribute('aria-current', 'page');
+    if (dNav) dNav.setAttribute('aria-current', 'page');
 
     const fab = document.getElementById('fab-main');
     if (cur.page === 'accueil') { fab.style.display = 'flex'; fab.setAttribute('onclick', "go('nouveau-devis')"); }
@@ -365,6 +527,7 @@ function render() {
         }
     } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${esc(e.message)}</p></div>`; }
     root.innerHTML = `<div class="page-content">${html}</div>`;
+    associateFieldLabels(root);
     
     if (cur.page === 'nouveau-devis') {
         setTimeout(() => { if(document.getElementById('lines-container')) renderLines(); }, 10);
@@ -373,67 +536,85 @@ function render() {
     window.scrollTo(0,0);
 }
 
+function associateFieldLabels(container) {
+    container.querySelectorAll('.field label').forEach(label => {
+        const control = Array.from(label.parentElement.children).find(el => /^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName));
+        if (control && control.id && !label.htmlFor) label.htmlFor = control.id;
+    });
+}
+
 // ─── 5. VUES ───
 
 function viewAccueil() {
     const d = getData();
     const nbDevisEnCours = d.devis.filter(x => x.statut === 'brouillon' && x.type === 'devis').length;
     let ca = 0; d.devis.forEach(x => { if (x.statut === 'accepte' && x.type === 'devis') ca += x.totalTTC; });
-
-    const h = new Date().getHours();
-    let salut = (h >= 18) ? "Bonsoir" : "Bonjour";
+    const recent = d.devis.slice(-3).reverse();
     
     return `
-        <div class="hero-banner">
-            <h2>${salut}, Chef !</h2>
-            <p>Prêt à chiffrer vos chantiers aujourd'hui ?</p>
+        <div class="dashboard-top">
+            <div><h2>Tableau de bord</h2><p>Vos clients et documents, au même endroit.</p></div>
+            <button class="btn" onclick="go('nouveau-devis')">Nouveau devis</button>
         </div>
 
-        <div class="kpi-grid">
-            <div class="kpi full" onclick="go('devis')">
-                <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <div class="lbl">Chiffre d'Affaires Validé</div>
-                <div class="val">${eur(ca)}</div>
-            </div>
-            <div class="kpi" onclick="go('devis')">
-                <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                <div class="lbl">Devis en cours</div>
-                <div class="val">${nbDevisEnCours}</div>
-            </div>
-            <div class="kpi" onclick="go('clients')">
-                <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <div class="lbl">Clients</div>
-                <div class="val">${d.clients.length}</div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-head"><div class="card-title">Actions rapides</div></div>
-            <div class="row-2">
-                <button class="btn btn-ghost" onclick="go('nouveau-devis')" style="background:var(--surface); border:2px dashed var(--border); color:var(--text-muted);">
-                    <span style="font-size:20px; color:var(--primary);">+</span> Nouveau Devis
-                </button>
-                <button class="btn btn-ghost" onclick="go('nouveau-client')" style="background:var(--surface); border:2px dashed var(--border); color:var(--text-muted);">
-                    <span style="font-size:20px; color:var(--primary);">+</span> Nouveau Client
-                </button>
-            </div>
+        <div class="kpi-grid dashboard-kpis">
+            <button type="button" class="kpi" onclick="go('devis')" aria-label="Consulter les devis acceptés, total TTC ${eur(ca)}">
+                <div class="lbl">Total TTC des devis acceptés</div><div class="val">${eur(ca)}</div>
+            </button>
+            <button type="button" class="kpi" onclick="go('devis')" aria-label="Consulter les devis brouillons, ${nbDevisEnCours}">
+                <div class="lbl">Devis brouillons</div><div class="val">${nbDevisEnCours}</div>
+            </button>
+            <button type="button" class="kpi" onclick="go('clients')" aria-label="Consulter les clients, ${d.clients.length}">
+                <div class="lbl">Clients</div><div class="val">${d.clients.length}</div>
+            </button>
         </div>
 
-        <div class="card">
-            <div class="card-head">
-                <div class="card-title">Derniers documents</div>
-                <button class="btn btn-sm btn-ghost" onclick="go('devis')">Tout voir</button>
-            </div>
-            ${d.devis.length === 0 ? '<div style="text-align:center; padding:32px; color:var(--text-muted);"><p style="font-size:32px; margin-bottom:12px;">📂</p><p>Aucun document.</p></div>' : ''}
-            ${d.devis.slice(-3).reverse().map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
-                    <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)} - ${esc(x.type).toUpperCase()} - ${esc(x.statut).toUpperCase()}</div></div>
-                    <div class="amount">${eur(x.totalTTC)}</div>
-                </div>
-            `).join('')}
+        <div class="dashboard-actions" aria-label="Accès rapides">
+            <button class="btn btn-ghost" onclick="go('nouveau-client')">Nouveau client</button>
+            <button class="btn btn-ghost" onclick="go('clients')">Voir les clients</button>
+            <button class="btn btn-ghost" onclick="go('devis')">Voir les documents</button>
+        </div>
+
+        <div class="dashboard-main-grid">
+            <section class="card" aria-labelledby="recent-documents-title">
+                <div class="card-head"><div class="card-title" id="recent-documents-title">Documents récents</div><button class="btn btn-sm btn-ghost" onclick="go('devis')">Tout voir</button></div>
+                ${recent.length === 0 ? '<div class="empty-state">Aucun document pour le moment.</div>' : recent.map(x => `
+                    <div class="document-row" role="button" tabindex="0" onclick="go('detail-devis', '${esc(x.id)}')" aria-label="Ouvrir ${esc(x.type)} ${esc(x.id)} pour ${esc(x.clientNom)}">
+                        <div><div class="document-title">${esc(x.clientNom)}</div><div class="document-meta">${esc(x.id)} · ${esc(x.type).toUpperCase()} · ${esc(x.statut).toUpperCase()}</div></div>
+                        <div class="document-amount">${eur(x.totalTTC)}</div>
+                    </div>
+                `).join('')}
+            </section>
+            <section class="card assistant-panel" aria-labelledby="assistant-title">
+                <span class="assistant-label">Assistant devis · bêta</span>
+                <div><div class="card-title" id="assistant-title">Préparer un devis</div><p class="card-sub">Ouvrir le formulaire de devis et son assistant existant.</p></div>
+                <button class="btn btn-ghost" onclick="go('nouveau-devis')">Ouvrir le formulaire</button>
+                <div class="status-note">L’IA appelle actuellement OpenAI depuis le navigateur. La clé API enregistrée dans le navigateur n’est pas protégée; cette intégration n’est pas sécurisée pour la production.</div>
+            </section>
         </div>
     `;
 }
+
+document.addEventListener('keydown', event => {
+    const overlay = document.getElementById('modal-overlay');
+    const modalOpen = overlay.classList.contains('show');
+    if (modalOpen && event.key === 'Escape') { event.preventDefault(); closeActiveModal(); return; }
+    if (pendingDialogResolve && event.key === 'Enter' && event.target.id === 'app-prompt-input') {
+        event.preventDefault(); finishDialog(event.target.value.trim()); return;
+    }
+    if (modalOpen && event.key === 'Tab') {
+        const focusable = Array.from(document.querySelectorAll('#modal-overlay button, #modal-overlay input, #modal-overlay textarea, #modal-overlay select')).filter(el => !el.disabled);
+        const first = focusable[0]; const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+        return;
+    }
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const target = event.target;
+    if (!target.matches('[role="button"][onclick]')) return;
+    event.preventDefault();
+    target.click();
+});
 
 function viewParametres() {
     const s = SETTINGS;
@@ -460,11 +641,15 @@ function viewParametres() {
             </div>
         </div>
         <div class="card">
-            <div class="card-head"><div class="card-title">Moteur IA & Rentabilité</div></div>
-            <div class="field"><label>Clé API OpenAI (GPT-4o)</label><input class="inp" type="password" id="s-openai" value="${esc(s.openai_key)}" placeholder="sk-..."></div>
+            <div class="card-head"><div><div class="card-title">Assistant de devis · bêta</div><div class="card-sub">L’appel OpenAI est effectué depuis le navigateur; cette intégration n’est pas sécurisée pour la production.</div></div></div>
+            <div class="status-note" style="margin-bottom:16px;">La clé API enregistrée dans ce navigateur peut être consultée par son utilisateur. Ne saisissez pas de nouvelle clé pour un usage en production.</div>
+            <div class="field"><label for="s-openai">Clé OpenAI locale (configuration existante)</label><input class="inp" type="password" id="s-openai" value="${esc(s.openai_key)}" autocomplete="off" placeholder="Configuration locale existante"></div>
+        </div>
+        <div class="card">
+            <div class="card-head"><div class="card-title">Rentabilité</div></div>
             <div class="row-2">
-                <div class="field"><label>Marge cible (%)</label><input class="inp" type="number" id="s-marge" value="${s.marge}"></div>
-                <div class="field"><label>Aléas chantier (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
+                <div class="field"><label for="s-marge">Marge cible (%)</label><input class="inp" type="number" id="s-marge" value="${s.marge}"></div>
+                <div class="field"><label for="s-aleas">Aléas chantier (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
             </div>
         </div>
         <div class="card">
@@ -476,8 +661,8 @@ function viewParametres() {
         <div class="card">
             <div class="card-head"><div class="card-title">Sauvegarde des Données</div></div>
             <div class="row-2">
-                <button class="btn btn-ghost" onclick="exportData()">⬇️ Exporter (JSON)</button>
-                <button class="btn btn-ghost" onclick="importData()">⬆️ Importer</button>
+                <button class="btn btn-ghost" onclick="exportData()">Exporter (JSON)</button>
+                <button class="btn btn-ghost" onclick="importData()">Importer</button>
             </div>
             <input type="file" id="file-import" style="display:none" accept=".json" onchange="processImport(event)">
         </div>
@@ -500,7 +685,8 @@ function saveParam() {
         openai_key: document.getElementById('s-openai').value.trim(),
         emailjs_service: document.getElementById('s-ejs-service').value, emailjs_template: document.getElementById('s-ejs-template').value, emailjs_public: document.getElementById('s-ejs-public').value
     };
-    saveS(SETTINGS); toast("Paramètres enregistrés"); home();
+    if (!saveS(SETTINGS)) { toast("Paramètres non enregistrés. Vérifiez l'espace disponible."); return; }
+    toast("Paramètres enregistrés"); home();
 }
 
 function exportData() {
@@ -516,13 +702,25 @@ function importData() { document.getElementById('file-import').click(); }
 function processImport(event) {
     const file = event.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = async function(e) {
         try {
             const backup = JSON.parse(e.target.result);
             if (backup.data && backup.settings) {
-                if(confirm("Cela remplacera vos données actuelles. Continuer ?")) {
-                    saveData(migrateData(backup.data)); 
-                    saveS({...DEFAULT_SETTINGS, ...backup.settings}); 
+                if (await confirmDialog("Cela remplacera vos données actuelles. Continuer ?", "Remplacer les données")) {
+                    const previousData = safeGetItem(STORAGE_KEYS.data);
+                    const previousSettings = safeGetItem(STORAGE_KEYS.settings);
+                    const dataSaved = saveData(migrateData(backup.data));
+                    const settingsSaved = dataSaved && saveS({...DEFAULT_SETTINGS, ...backup.settings});
+                    if (!dataSaved || !settingsSaved) {
+                        try {
+                            if (previousData === null) localStorage.removeItem(STORAGE_KEYS.data);
+                            else localStorage.setItem(STORAGE_KEYS.data, previousData);
+                            if (previousSettings === null) localStorage.removeItem(STORAGE_KEYS.settings);
+                            else localStorage.setItem(STORAGE_KEYS.settings, previousSettings);
+                        } catch (rollbackError) { console.error('[Import] rollback failed:', rollbackError); }
+                        toast("Import échoué; les données précédentes ont été restaurées si le stockage l'a permis.");
+                        return;
+                    }
                     SETTINGS = getS();
                     toast("Import réussi !"); home();
                 }
@@ -536,28 +734,32 @@ function viewEquipe() {
     const users = getUsers();
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">Mon Équipe</div></div>
+            <div class="card-head"><div><div class="card-title">Profils locaux</div><div class="card-sub">Ces profils sont enregistrés dans ce navigateur. Ils ne constituent ni des comptes authentifiés ni des contrôles d’accès.</div></div></div>
             ${users.map(u => `
                 <div class="list-item" style="cursor:default;">
                     <div style="display:flex; align-items:center; gap:16px;">
-                        <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(u.nom)}</div>
+                        <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${esc(init(u.nom))}</div>
                         <div><div class="title">${esc(u.nom)}</div><div class="sub">${esc(u.role)}</div></div>
                     </div>
                     ${u.role !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="delUser(${u.id})">Suppr</button>` : ''}
                 </div>
             `).join('')}
-            <button class="btn btn-ghost" style="margin-top:24px;" onclick="addUser()">+ Ajouter un profil</button>
+            <button class="btn btn-ghost" style="margin-top:24px;" onclick="addUser()">Ajouter un profil local</button>
         </div>
     `;
 }
 
-function addUser() {
-    const nom = prompt("Nom du collaborateur ?"); if (!nom) return;
-    let u = getUsers(); u.push({id: Date.now(), nom: nom, role: 'ouvrier'}); saveUsers(u); render();
+async function addUser() {
+    const nom = await promptDialog("Ajouter un profil d’équipe"); if (!nom) return;
+    let u = getUsers(); u.push({id: Date.now(), nom: nom, role: 'ouvrier'});
+    if (!saveUsers(u)) { toast("Profil non enregistré. Vérifiez l'espace disponible."); return; }
+    render();
 }
-function delUser(id) {
-    if (!confirm("Supprimer ce profil ?")) return;
-    let u = getUsers(); u = u.filter(x => x.id !== id); saveUsers(u); render();
+async function delUser(id) {
+    if (!await confirmDialog("Supprimer ce profil ?", "Supprimer le profil")) return;
+    let u = getUsers(); u = u.filter(x => x.id !== id);
+    if (!saveUsers(u)) { toast("Suppression non enregistrée. Vérifiez l'espace disponible."); return; }
+    render();
 }
 
 function viewClients() {
@@ -567,7 +769,7 @@ function viewClients() {
             <div class="card-head"><div class="card-title">Mes Clients</div></div>
             ${d.clients.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun client.</p>' : ''}
             ${d.clients.map(c => `
-                <div class="list-item" onclick="go('fiche-client', '${esc(c.id)}')">
+                <div class="list-item" role="button" tabindex="0" onclick="go('fiche-client', '${esc(c.id)}')">
                     <div style="display:flex;align-items:center;gap:16px;">
                         <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(c.nom)}</div>
                         <div><div class="title">${esc(c.nom)}</div><div class="sub">${esc(c.ville)}</div></div>
@@ -614,13 +816,15 @@ function saveClient() {
     if (CURRENT_MODE === 'edit') {
         const idx = d.clients.findIndex(x => x.id === CURRENT_ID);
         if (idx > -1) d.clients[idx] = { ...d.clients[idx], ...data, updatedAt: new Date().toISOString() };
-        saveData(d); toast("Client modifié"); go('fiche-client', CURRENT_ID);
+        if (!saveData(d)) { toast("Client non enregistré. Vérifiez l'espace disponible."); return; }
+        toast("Client modifié"); go('fiche-client', CURRENT_ID);
     } else {
         d.cpt.c++;
         const id = 'C-' + new Date().getFullYear() + '-' + String(d.cpt.c).padStart(4, '0');
         const now = new Date().toISOString();
         d.clients.push({ id, uuid: uuid(), date: now, createdAt: now, updatedAt: now, ...data });
-        saveData(d); toast("Client créé"); home();
+        if (!saveData(d)) { toast("Client non enregistré. Vérifiez l'espace disponible."); return; }
+        toast("Client créé"); home();
     }
 }
 
@@ -644,7 +848,7 @@ function viewFicheClient() {
             <div class="card-head"><div class="card-title">Historique</div></div>
             ${devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${devis.map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
+                <div class="list-item" role="button" tabindex="0" onclick="go('detail-devis', '${esc(x.id)}')">
                     <div><div class="title">${esc(x.id)}</div><div class="sub">${dateFr(x.date)}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
@@ -653,12 +857,13 @@ function viewFicheClient() {
     `;
 }
 
-function delClient(id) {
-    if (!confirm("Supprimer ce client ET tous ses devis ? Irréversible.")) return;
+async function delClient(id) {
+    if (!await confirmDialog("Supprimer ce client et tous ses devis ? Cette action est irréversible.", "Supprimer")) return;
     let d = getData();
     d.clients = d.clients.filter(x => x.id !== id);
     d.devis = d.devis.filter(x => x.clientId !== id);
-    saveData(d); toast("Client supprimé"); home();
+    if (!saveData(d)) { toast("Suppression non enregistrée. Vérifiez l'espace disponible."); return; }
+    toast("Client supprimé"); home();
 }
 
 function viewDevis() {
@@ -668,7 +873,7 @@ function viewDevis() {
             <div class="card-head"><div class="card-title">Mes Documents</div></div>
             ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun document.</p>' : ''}
             ${d.devis.slice().reverse().map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
+                <div class="list-item" role="button" tabindex="0" onclick="go('detail-devis', '${esc(x.id)}')">
                     <div>
                         <div class="title">${esc(x.clientNom)}</div>
                         <div class="sub">${esc(x.id)} - <span style="color:${x.type==='facture'?'var(--success)':'var(--primary)'};font-weight:700;">${esc(x.type).toUpperCase()}</span> - ${esc(x.statut).toUpperCase()}</div>
@@ -719,7 +924,7 @@ function viewFormDevis() {
             <div class="field">
                 <label>Génération de devis par l'IA (GPT-4o)</label>
                 <textarea class="inp" id="ia-text" rows="3" placeholder="Ex: Rénovation complète d'une salle de bain de 6m2, dépose carrelage, pose faïence et sol, remplacement WC"></textarea>
-                <button class="btn btn-ghost" style="margin-top:12px;" id="btn-ia" onclick="parseIA()">✨ Générer avec l'IA</button>
+                <button class="btn btn-ghost" style="margin-top:12px;" id="btn-ia" onclick="parseIA()">Générer avec l’assistant bêta</button>
             </div>` : ''}
             
             <div class="field" style="margin-top:24px; background:var(--surface-hover); padding:16px; border-radius:12px; border:1px solid var(--border);">
@@ -738,7 +943,7 @@ async function parseIA() {
     const text = document.getElementById('ia-text').value.trim();
     if (!text) return;
 
-    btn.innerHTML = "⏳ Analyse en cours...";
+    btn.textContent = "Analyse en cours…";
     btn.disabled = true;
 
     try {
@@ -748,9 +953,9 @@ async function parseIA() {
         toast("Lignes générées par l'IA !");
     } catch (e) {
         toast("Erreur IA : " + e.message);
-        console.error(e);
+        if (!e.message.startsWith('Assistant indisponible :')) console.error(e);
     } finally {
-        btn.innerHTML = "✨ Générer avec l'IA";
+        btn.textContent = "Générer avec l’assistant bêta";
         btn.disabled = false;
     }
 }
@@ -758,22 +963,10 @@ async function parseIA() {
 async function generateQuoteWithAI(texte) {
     const apiKey = SETTINGS.openai_key;
     
-    // Fallback local si pas de clé API configurée (pour tester sans payer)
     if (!apiKey) {
-        console.warn("Pas de clé API OpenAI. Utilisation du mock local.");
-        await new Promise(r => setTimeout(r, 1000)); // Simule un délai réseau
-        if (texte.toLowerCase().includes('salle de bain')) {
-            return [
-                { code: 'custom', d: 'Dépose carrelage et faïence existants', q: 1, u: 'forfait', pu: 450, puBase: 0 },
-                { code: 'custom', d: 'Pose faïence murale', q: 12, u: 'm2', pu: 65, puBase: 0 },
-                { code: 'custom', d: 'Pose carrelage sol', q: 6, u: 'm2', pu: 75, puBase: 0 },
-                { code: 'plomb.wc', d: TARIFS['plomb.wc'].d, q: 1, u: 'u', pu: 650, puBase: 650 }
-            ];
-        }
-        return [{ code: 'custom', d: texte, q: 1, u: 'forfait', pu: 0, puBase: 0 }];
+        throw new Error("Assistant indisponible : aucune configuration locale n'est enregistrée.");
     }
 
-    // Appel réel à l'API OpenAI
     const prompt = `Tu es un expert en bâtiment. Transforme cette description en lignes de devis.
     Description: "${texte}"
     Renvoie UNIQUEMENT un tableau JSON valide (aucun texte autour) avec les clés exactes suivantes : 
@@ -797,43 +990,35 @@ async function generateQuoteWithAI(texte) {
     
     const data = await response.json();
     const content = data.choices[0].message.content;
-    
-    // Nettoyage des backticks Markdown si l'IA en ajoute
     const jsonStr = content.replace(/```json/g, '').replace(/```/g, '').trim();
     const parsed = JSON.parse(jsonStr);
 
-    // Mapping vers notre structure
     return parsed.map(item => ({
         code: 'custom',
         d: item.designation,
         q: item.quantite,
         u: item.unite,
-        pu: 0, // L'IA ne devine pas les prix, on les met à 0
+        pu: 0,
         puBase: 0
     }));
 }
 
-async function searchPriceForItem(index) {
-    const line = DEV_LIGNES[index];
-    toast("Recherche du prix sur le web...");
-    
-    // Simulation d'un appel API (ex: SerpApi)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Génération d'un prix cohérent (si base à 0, on génère entre 20 et 100€)
-    let basePrice = line.puBase > 0 ? line.puBase : (Math.random() * 80 + 20);
-    let variation = basePrice * (Math.random() * 0.2 - 0.1); // +/- 10%
-    let newPrice = Math.round((basePrice + variation) * 100) / 100;
-    
-    DEV_LIGNES[index].pu = newPrice;
-    renderLines();
-    toast(`Prix mis à jour via le web : ${eur(newPrice)}`);
-}
-
 function addLine(code, q) {
-    const base = TARIFS[code]; const cat = getCatalogue();
+    if (code === 'custom') {
+        DEV_LIGNES.push({ code: 'custom', d: 'Nouvelle prestation', q: Number.isFinite(+q) ? +q : 1, u: 'forfait', pu: 0, puBase: 0 });
+        renderLines();
+        return;
+    }
+    const base = TARIFS[code];
+    if (!base) return;
+    const cat = getCatalogue();
     const pu = cat[code] !== undefined ? cat[code] : base.pu;
     DEV_LIGNES.push({ code, d: base.d, q, u: base.u, pu, puBase: base.pu });
+    renderLines();
+}
+
+function removeLine(index) {
+    DEV_LIGNES.splice(index, 1);
     renderLines();
 }
 
@@ -843,22 +1028,29 @@ function renderLines() {
     const parsedTVA = parseFloat(cont.dataset.tva);
     const tauxTVA = Number.isFinite(parsedTVA) ? parsedTVA : 10;
     let html = '';
+    if (!DEV_LIGNES.length) html += '<div class="empty-state">Aucune ligne pour le moment. Ajoutez une prestation pour commencer.</div>';
     
     DEV_LIGNES.forEach((l, i) => {
         html += `
             <div class="line-item">
-                <div class="line-header"><div class="line-desc">${esc(l.d)}</div><div class="line-total">${eur(l.q * l.pu)}</div></div>
+                <div class="line-header"><div class="line-desc"><input class="inp" type="text" value="${esc(l.d)}" onchange="updateLine(${i}, 'd', this.value)" aria-label="Désignation de la ligne ${i + 1}"></div><div class="line-total">${eur(l.q * l.pu)}</div></div>
                 <div class="line-inputs">
-                    <input class="inp" type="number" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;" placeholder="Qté">
+                    <input class="inp" type="number" step="0.01" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;" placeholder="Qté" aria-label="Quantité de la ligne ${i + 1}">
                     <div class="pu-wrapper">
-                        <input class="inp" type="number" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;" placeholder="PU HT">
-                        <button class="btn-reset" onclick="searchPriceForItem(${i})" title="Chercher le prix sur le web">🔍</button>
-                        ${l.code !== 'custom' && l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})" title="Réinitialiser">↺</button>` : ''}
+                        <select class="inp line-unit" onchange="updateLine(${i}, 'u', this.value)" aria-label="Unité de la ligne ${i + 1}">
+                            <option value="m2" ${l.u === 'm2' ? 'selected' : ''}>m²</option><option value="ml" ${l.u === 'ml' ? 'selected' : ''}>ml</option><option value="u" ${l.u === 'u' ? 'selected' : ''}>unité</option><option value="forfait" ${l.u === 'forfait' ? 'selected' : ''}>forfait</option>
+                        </select>
+                        <input class="inp" type="number" min="0" step="0.01" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;" placeholder="PU HT" aria-label="Prix unitaire HT de la ligne ${i + 1}">
+                        ${l.code !== 'custom' && l.pu !== l.puBase ? `<button type="button" class="btn-reset" onclick="resetLine(${i})" title="Réinitialiser le prix">Réinit.</button>` : ''}
+                        <button type="button" class="btn-reset btn-danger" onclick="removeLine(${i})" aria-label="Supprimer la ligne ${i + 1}">Supprimer</button>
                     </div>
                 </div>
+                <div class="line-note">Recherche tarifaire en ligne indisponible; aucun prix automatique n'est appliqué.</div>
             </div>
         `;
     });
+
+    html += '<button type="button" class="btn btn-ghost add-line-button" onclick="addLine(\'custom\', 1)">Ajouter une ligne</button>';
 
     const tot = computeQuote(DEV_LIGNES, SETTINGS.aleas, tauxTVA);
     const coutMat = parseFloat(document.getElementById('d-cout-materiaux')?.value) || 0;
@@ -894,6 +1086,8 @@ function renderLines() {
 
 function updateLine(i, f, v) {
     if (f === 'q') DEV_LIGNES[i].q = parseFloat(v) || 0;
+    if (f === 'd') DEV_LIGNES[i].d = v.trim() || 'Nouvelle prestation';
+    if (f === 'u') DEV_LIGNES[i].u = v;
     if (f === 'pu') {
         DEV_LIGNES[i].pu = parseFloat(v) || 0;
         if (DEV_LIGNES[i].code !== 'custom') { let c = getCatalogue(); c[DEV_LIGNES[i].code] = DEV_LIGNES[i].pu; saveCatalogue(c); }
@@ -938,7 +1132,8 @@ function saveDevis() {
             d.devis[idx].totalTTC = tot.totalTTC;
             d.devis[idx].updatedAt = new Date().toISOString();
         }
-        saveData(d); toast("Devis mis à jour"); 
+        if (!saveData(d)) { toast("Devis non enregistré. Vérifiez l'espace disponible."); return; }
+        toast("Devis mis à jour"); 
         go('detail-devis', CURRENT_ID, 'view');
     } else {
         d.cpt.d++; const id = 'DEV-' + new Date().getFullYear() + '-' + String(d.cpt.d).padStart(4, '0');
@@ -955,7 +1150,8 @@ function saveDevis() {
             tva: tot.montantTVA,
             totalTTC: tot.totalTTC
         });
-        saveData(d); toast("Devis enregistré"); 
+        if (!saveData(d)) { toast("Devis non enregistré. Vérifiez l'espace disponible."); return; }
+        toast("Devis enregistré"); 
         go('detail-devis', id, 'view');
     }
 }
@@ -1011,7 +1207,7 @@ function viewDetailDevis() {
 
 function acceptDevis(id) {
     let d = getData(); let dev = d.devis.find(x => x.id === id); 
-    if(dev) { dev.statut = 'accepte'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); toast("Devis accepté !"); }
+    if(dev) { dev.statut = 'accepte'; dev.updatedAt = new Date().toISOString(); if (!saveData(d)) { toast("Statut non enregistré. Vérifiez l'espace disponible."); return; } render(); toast("Devis accepté !"); }
 }
 
 function exportToFacture(id) {
@@ -1024,26 +1220,28 @@ function exportToFacture(id) {
     const now = new Date().toISOString();
 
     const facture = {
-        ...dev, // Copie tout (lignes, totaux, matériaux, TVA)
+        ...dev,
         id: facId,
         uuid: uuid(),
         type: 'facture',
-        statut: 'emise', // Une facture est émise
+        statut: 'emise',
         date: now,
         createdAt: now,
         updatedAt: now,
-        linkedDevisId: dev.id // Traçabilité
+        linkedDevisId: dev.id 
     };
 
     d.devis.push(facture);
-    saveData(d);
+    if (!saveData(d)) { toast("Facture non enregistrée. Vérifiez l'espace disponible."); return; }
     toast("Facture générée avec succès !");
     go('detail-devis', facId, 'view');
 }
 
-function delDevis(id) {
-    if (!confirm("Supprimer ce document ?")) return;
-    let d = getData(); d.devis = d.devis.filter(x => x.id !== id); saveData(d); home();
+async function delDevis(id) {
+    if (!await confirmDialog("Supprimer ce document ? Cette action est irréversible.", "Supprimer")) return;
+    let d = getData(); d.devis = d.devis.filter(x => x.id !== id);
+    if (!saveData(d)) { toast("Suppression non enregistrée. Vérifiez l'espace disponible."); return; }
+    home();
 }
 
 function genPDF(id) {
@@ -1075,39 +1273,48 @@ function genPDF(id) {
 }
 
 function sendMail(id) {
-    const d = getData(); const dev = d.devis.find(x => x.id === id); const c = d.clients.find(x => x.id === dev.clientId); const s = SETTINGS;
-    if(!dev || !c) return;
-    if (s.emailjs_public && s.emailjs_service) emailjs.init(s.emailjs_public);
+    const d = getData(); const dev = d.devis.find(x => x.id === id); const s = SETTINGS;
+    if (!dev) return;
+    const c = d.clients.find(x => x.id === dev.clientId);
+    if (!c) return;
+    if (s.emailjs_public && s.emailjs_service && window.emailjs) emailjs.init(s.emailjs_public);
     const ov = document.getElementById('modal-overlay');
+    dialogReturnFocus = document.activeElement;
     ov.innerHTML = `
-        <div class="modal">
-            <h3>Envoyer par Email</h3>
-            <div class="field"><label>Email du client</label><input class="inp" id="m-to" value="${esc(c.email) || ''}"></div>
-            <div class="field"><label>Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${esc(c.nom)},\n\nVeuillez trouver ci-joint votre ${dev.type} ${esc(dev.id)} d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${esc(s.nom_entreprise)}</textarea></div>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mail-modal-title">
+            <h3 id="mail-modal-title">Envoyer par email</h3>
+            <div class="field"><label for="m-to">Email du client</label><input class="inp" id="m-to" type="email" value="${esc(c.email) || ''}"></div>
+            <div class="field"><label for="m-msg">Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${esc(c.nom)},\n\nJe vous transmets les informations relatives à votre ${dev.type} ${esc(dev.id)}, d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${esc(s.nom_entreprise)}</textarea></div>
             <button class="btn" onclick="execMail('${esc(id)}')">Envoyer</button>
-            <button class="btn btn-ghost" style="margin-top:12px;" onclick="document.getElementById('modal-overlay').classList.remove('show')">Annuler</button>
+            <button class="btn btn-ghost" style="margin-top:12px;" onclick="closeActiveModal()">Annuler</button>
         </div>
     `;
     ov.classList.add('show');
+    document.getElementById('m-to').focus();
 }
 
 function execMail(id) {
     const to = document.getElementById('m-to').value; const msg = document.getElementById('m-msg').value; const s = SETTINGS;
     if (!to) { toast("Email obligatoire"); return; }
-    if (s.emailjs_service && s.emailjs_template && s.emailjs_public) {
+    if (s.emailjs_service && s.emailjs_template && s.emailjs_public && window.emailjs) {
         toast("Envoi...");
         emailjs.send(s.emailjs_service, s.emailjs_template, { to_email: to, message: msg, from_name: s.nom_entreprise })
             .then(() => {
-                toast("Email envoyé !"); document.getElementById('modal-overlay').classList.remove('show');
-                let d = getData(); let dev = d.devis.find(x => x.id === id); 
-                if(dev && dev.type === 'devis') { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
-            }, (e) => { toast("Erreur : " + e.text); });
+                let message = "Email envoyé !";
+                let d = getData(); let dev = d.devis.find(x => x.id === id);
+                if(dev && dev.type === 'devis') {
+                    dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString();
+                    if (!saveData(d)) message = "Email envoyé, mais statut non enregistré. Vérifiez l'espace disponible.";
+                    else render();
+                }
+                closeActiveModal();
+                toast(message);
+            }, (e) => { toast("Erreur d'envoi : " + (e?.text || "service indisponible")); });
     } else {
         const sub = encodeURIComponent(`${id} - ${s.nom_entreprise}`); const bod = encodeURIComponent(msg);
         window.location.href = `mailto:${to}?subject=${sub}&body=${bod}`;
-        document.getElementById('modal-overlay').classList.remove('show');
-        let d = getData(); let dev = d.devis.find(x => x.id === id); 
-        if(dev && dev.type === 'devis') { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
+        closeActiveModal();
+        toast("Application email ouverte. Envoi non confirmé; statut inchangé.");
     }
 }
 
