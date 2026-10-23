@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#f1f5f9">
 <title>ArtisanApp</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -11,108 +11,136 @@
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════
-   ARTISANAPP V10 : CARBONE (Desktop + Mobile + Team)
+   ARTISANAPP V11 : CLEAN PREMIUM (Clair, Bleu, Animations)
    ═══════════════════════════════════════════════════════════════════ */
 :root{
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --surface-hover: #1f1f1f;
-  --border: #2a2a2a;
-  --text: #f5f5f5;
-  --muted: #888888;
-  --primary: #eab308;
-  --primary-hover: #ca8a04;
-  --primary-bg: rgba(234, 179, 8, 0.1);
-  --green: #10b981;
-  --red: #ef4444;
+  --bg: #f1f5f9;          /* Gris très clair */
+  --surface: #ffffff;     /* Blanc pur */
+  --surface-hover: #f8fafc;
+  --border: #e2e8f0;
+  --text-main: #0f172a;   /* Bleu nuit presque noir */
+  --text-muted: #64748b;
+  
+  --primary: #2563eb;     /* Bleu Royal */
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  
+  --success: #10b981;
+  --danger: #ef4444;
+  
   --radius: 16px;
   --font-main: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Ombres douces */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+  --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
 }
+
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--font-main);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;padding-bottom:100px;display:flex;flex-direction:column;min-height:100vh}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);font-size:15px;line-height:1.5;padding-bottom:100px;display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
-button{cursor:pointer;border:none;background:none}
+button{cursor:pointer;border:none;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
 a{text-decoration:none;cursor:pointer;color:inherit}
 
 /* HEADER MOBILE */
-.hdr{background:var(--bg);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border)}
-.hdr-mark{width:40px;height:40px;background:var(--primary);color:#000;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
-.hdr-text h1{font-size:20px;font-weight:900;letter-spacing:-.5px;margin-left:12px}
+.hdr{background:var(--surface);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.hdr-mark{width:40px;height:40px;background:var(--primary);color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;box-shadow:var(--shadow-sm)}
+.hdr-text h1{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-left:12px;color:var(--text-main)}
 .hdr-text p{font-size:12px;color:var(--primary);font-weight:700;margin-left:12px;text-transform:uppercase;letter-spacing:1px}
 
 /* BOTTOM NAV (MOBILE) */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 24px 0;z-index:100}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;font-weight:800;color:var(--muted);padding:8px 16px;text-transform:uppercase;letter-spacing:.5px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 24px 0;z-index:100;box-shadow:0 -4px 10px rgba(0,0,0,0.02)}
+.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--text-muted);padding:8px 16px;text-transform:uppercase;letter-spacing:.5px}
 .bottom-nav a.active{color:var(--primary)}
-.bottom-nav svg{width:24px;height:24px;stroke-width:2.5}
+.bottom-nav svg{width:24px;height:24px;stroke-width:2.5;transition:transform 0.2s}
+.bottom-nav a.active svg{transform:translateY(-2px)}
 
 /* FAB */
-.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#000;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:400;box-shadow:0 8px 32px rgba(234, 179, 8, 0.3);z-index:99;transition:transform .2s}
-.fab:active{transform:scale(.9)}
+.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:300;box-shadow:0 8px 24px rgba(37, 99, 235, 0.4);z-index:99}
+.fab:hover{transform:scale(1.05) translateY(-2px);box-shadow:0 12px 28px rgba(37, 99, 235, 0.5)}
+.fab:active{transform:scale(.95)}
 
 /* LAYOUT DESKTOP */
 .layout-wrapper{display:flex;flex:1;max-width:1400px;margin:0 auto;width:100%;}
-.sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column;}
-.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:16px 24px;color:var(--muted);font-weight:600;cursor:pointer;transition:all .2s}
-.sidebar .nav-item:hover, .sidebar .nav-item.active{background:var(--surface-hover);color:var(--primary);border-right:4px solid var(--primary)}
-.wrap{flex:1;padding:24px 20px 40px;overflow-y:auto}
+.sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column;box-shadow:var(--shadow-sm);z-index:10}
+.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:14px 24px;margin:4px 16px;border-radius:12px;color:var(--text-muted);font-weight:600;cursor:pointer;transition:all 0.2s}
+.sidebar .nav-item:hover{background:var(--surface-hover);color:var(--primary)}
+.sidebar .nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:800}
+.wrap{flex:1;padding:32px 24px 40px;overflow-y:auto}
 
-/* CARDS & UI */
-.card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:20px;border:1px solid var(--border)}
+/* ANIMATION D'APPARITION DES PAGES */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.page-content { animation: fadeInUp 0.3s ease-out forwards; }
+
+/* CARDS */
+.card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all 0.3s ease}
+/* EFFET LOUPE SUR LES CARTES */
+.card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg);border-color:#cbd5e1}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
-.card-title{font-size:18px;font-weight:900;letter-spacing:-.5px}
-.card-sub{font-size:13px;color:var(--muted);font-weight:500;margin-top:4px}
+.card-title{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--text-main)}
+.card-sub{font-size:13px;color:var(--text-muted);font-weight:500;margin-top:4px}
 
 /* DASHBOARD KPI */
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative}
-.kpi.full{grid-column:span 2;border-left:4px solid var(--primary);background:linear-gradient(90deg, var(--surface) 0%, rgba(234, 179, 8, 0.05) 100%)}
-.kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:8px;letter-spacing:1px}
-.kpi .val{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--primary)}
-.kpi .sub{font-size:12px;color:var(--muted);margin-top:4px;font-weight:500}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;box-shadow:var(--shadow-sm);transition:all 0.3s ease}
+.kpi:hover{transform:scale(1.02) translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary-light)}
+.kpi.full{grid-column:span 2;background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);border-left:4px solid var(--primary)}
+.kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;letter-spacing:1px}
+.kpi .val{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--primary);letter-spacing:-1px}
+.kpi .sub{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:500}
 
 /* BOUTONS */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:800;background:var(--primary);color:#000;transition:all .2s;width:100%;text-transform:uppercase;letter-spacing:1px}
-.btn:active{transform:scale(.98)}
-.btn-ghost{background:var(--surface-hover);color:var(--text);border:1px solid var(--border)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:700;background:var(--primary);color:#fff;width:100%;text-transform:uppercase;letter-spacing:1px;box-shadow:var(--shadow-md)}
+.btn:hover{background:var(--primary-hover);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.btn:active{transform:scale(0.97)}
+.btn-ghost{background:var(--surface);color:var(--text-main);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
 .btn-sm{padding:10px 16px;font-size:12px;width:auto;border-radius:8px}
-.btn-danger{background:var(--red);color:#fff}
+.btn-danger{background:#fef2f2;color:var(--danger);border:1px solid #fca5a5}
+.btn-danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
 
 /* FORMULAIRES */
 .field{margin-bottom:20px}
-.field label{display:block;font-size:12px;font-weight:800;margin-bottom:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.inp{width:100%;padding:16px;font-size:16px;background:var(--bg);border:1px solid var(--border);border-radius:12px;transition:all .2s;outline:none;font-weight:600;color:var(--text)}
-.inp:focus{border-color:var(--primary)}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;padding:16px;font-size:16px;background:var(--bg);border:2px solid transparent;border-radius:12px;outline:none;font-weight:600;color:var(--text-main);transition:all 0.2s}
+.inp:hover{background:#e2e8f0}
+.inp:focus{background:var(--surface);border-color:var(--primary);box-shadow:var(--shadow-glow)}
 .row-2{display:grid;grid-template-columns:1fr;gap:16px}
 
-/* LISTES */
-.list-item{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
-.list-item:hover{background:var(--surface-hover)}
-.list-item:last-child{border-bottom:none}
-.list-item .title{font-weight:800;font-size:16px}
-.list-item .sub{font-size:12px;color:var(--muted);margin-top:2px}
-.list-item .amount{font-family:var(--font-mono);font-weight:700;color:var(--primary)}
+/* LISTES CLIENTS & DEVIS */
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:16px;margin-bottom:8px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:all 0.2s}
+.list-item:hover{background:var(--surface-hover);border-color:var(--border);transform:translateX(4px)}
+.list-item .title{font-weight:800;font-size:16px;color:var(--text-main)}
+.list-item .sub{font-size:12px;color:var(--text-muted);margin-top:2px;font-weight:500}
+.list-item .amount{font-family:var(--font-mono);font-weight:800;color:var(--primary);font-size:16px}
 
-/* DEVIS LIGNES */
-.line-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+/* LIGNES DEVIS */
+.line-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:all 0.2s}
+.line-item:hover{border-color:#cbd5e1;box-shadow:var(--shadow-sm)}
 .line-header{display:flex;justify-content:space-between;margin-bottom:12px}
 .line-desc{font-weight:800;font-size:14px}
-.line-total{font-family:var(--font-mono);color:var(--primary);font-weight:700}
+.line-total{font-family:var(--font-mono);color:var(--primary);font-weight:800}
 .line-inputs{display:flex;gap:12px}
 .pu-wrapper{display:flex;gap:8px;align-items:center}
-.btn-reset{background:var(--surface-hover);color:var(--muted);padding:8px;border-radius:8px;font-size:14px}
+.btn-reset{background:var(--surface);color:var(--text-muted);padding:8px 12px;border-radius:8px;font-size:14px;border:1px solid var(--border)}
+.btn-reset:hover{background:var(--border);color:var(--text-main)}
 
 /* MODALES & TOASTS */
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:1000;background:var(--primary);color:#000;padding:14px 24px;border-radius:30px;font-size:14px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;pointer-events:none}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:1000;background:var(--text-main);color:#fff;padding:14px 24px;border-radius:30px;font-size:14px;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:transform .3s;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(5px);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(15, 23, 42, 0.4);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
 .modal-overlay.show{opacity:1;pointer-events:auto}
-.modal{background:var(--surface);border-radius:24px 24px 0 0;padding:24px;width:100%;border-top:4px solid var(--primary);transform:translateY(100%);transition:transform .3s}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;padding:32px 24px;width:100%;border-top:4px solid var(--primary);transform:translateY(100%);transition:transform .3s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 -10px 40px rgba(0,0,0,0.1)}
 .modal-overlay.show .modal{transform:translateY(0)}
-.modal h3{font-size:20px;font-weight:900;margin-bottom:16px}
+.modal h3{font-size:22px;font-weight:800;margin-bottom:20px;color:var(--text-main)}
 
-/* PDF TEMPLATE */
+/* PDF TEMPLATE (inchangé, pour l'impression) */
 #pdf-template{display:none;width:210mm;padding:20mm;background:#fff;color:#000;font-family:Arial,sans-serif}
 #pdf-template h1{font-size:28px;margin-bottom:24px;border-bottom:2px solid #000;padding-bottom:12px}
 #pdf-template .header-info{display:flex;justify-content:space-between;margin-bottom:40px}
@@ -134,27 +162,26 @@ a{text-decoration:none;cursor:pointer;color:inherit}
   .kpi.full{grid-column:span 1}
   .row-2{grid-template-columns:1fr 1fr}
   .modal-overlay{align-items:center}
-  .modal{border-radius:16px;max-width:500px;transform:translateY(20px);border-top:none;border-left:4px solid var(--primary)}
+  .modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
+  .modal-overlay.show .modal{transform:translateY(0) scale(1)}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER MOBILE -->
 <header class="hdr">
   <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
     <div class="hdr-mark">A</div>
     <div>
       <h1>ArtisanApp</h1>
-      <p>Carbone</p>
+      <p>Copilote</p>
     </div>
   </div>
 </header>
 
 <div class="layout-wrapper">
-  <!-- SIDEBAR DESKTOP -->
   <aside class="sidebar" id="desktop-sidebar">
-    <div style="padding:0 24px 24px 24px; font-weight:900; font-size:20px; color:var(--text); border-bottom:1px solid var(--border); margin-bottom:16px;">ArtisanApp</div>
+    <div style="padding:0 24px 24px 24px; font-weight:900; font-size:22px; color:var(--text-main); border-bottom:1px solid var(--border); margin-bottom:16px;">ArtisanApp</div>
     <div class="nav-item" onclick="go('accueil')" id="side-accueil">Tableau de bord</div>
     <div class="nav-item" onclick="go('devis')" id="side-devis">Mes Devis</div>
     <div class="nav-item" onclick="go('clients')" id="side-clients">Mes Clients</div>
@@ -162,7 +189,6 @@ a{text-decoration:none;cursor:pointer;color:inherit}
     <div class="nav-item" onclick="go('parametres')" id="side-param">Paramètres</div>
   </aside>
 
-  <!-- CONTENU PRINCIPAL -->
   <main class="wrap" id="root"></main>
 </div>
 
@@ -193,7 +219,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   MOTEUR V10 (Desktop & Team)
+   MOTEUR V11 (Clean Premium)
    ═══════════════════════════════════════════════════════════════════ */
 
 const DEFAULT_SETTINGS = {
@@ -206,7 +232,6 @@ function getS() { try { return {...DEFAULT_SETTINGS, ...JSON.parse(localStorage.
 function saveS(s) { localStorage.setItem('app_settings', JSON.stringify(s)); }
 let SETTINGS = getS();
 
-// Multi-utilisateurs (simulation locale)
 function getUsers() { try { return JSON.parse(localStorage.getItem('app_users')) || [{id:1, nom:'Patron', role:'admin'}]; } catch(e) { return [{id:1, nom:'Patron', role:'admin'}]; } }
 function saveUsers(u) { localStorage.setItem('app_users', JSON.stringify(u)); }
 
@@ -260,7 +285,6 @@ function render() {
     const root = document.getElementById('root');
     let html = '';
 
-    // Nav active
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
     document.querySelectorAll('.sidebar .nav-item').forEach(a => a.classList.remove('active'));
     
@@ -276,7 +300,6 @@ function render() {
     const dNav = document.getElementById('side-' + activeNav);
     if(dNav) dNav.classList.add('active');
 
-    // FAB
     const fab = document.getElementById('fab-main');
     if (cur.page === 'accueil') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-devis'); }
     else if (cur.page === 'clients') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-client'); }
@@ -296,7 +319,9 @@ function render() {
             case 'detail-devis': html = viewDetailDevis(); break;
         }
     } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${e.message}</p></div>`; }
-    root.innerHTML = html;
+    
+    // On enveloppe le HTML dans une div avec l'animation d'entrée
+    root.innerHTML = `<div class="page-content">${html}</div>`;
     window.scrollTo(0,0);
 }
 
@@ -334,7 +359,7 @@ function viewAccueil() {
 
         <div class="card">
             <div class="card-head"><div class="card-title">Derniers devis</div><button class="btn btn-sm" onclick="go('devis')">Tout voir</button></div>
-            ${d.devis.length === 0 ? '<p style="color:var(--muted)">Aucun devis.</p>' : ''}
+            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis. Prêt à chiffrer votre premier chantier ?</p>' : ''}
             ${d.devis.slice(-3).reverse().map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${x.id}')">
                     <div>
@@ -356,8 +381,8 @@ function viewEquipe() {
             <div class="card-head"><div class="card-title">Mon Équipe</div></div>
             ${users.map(u => `
                 <div class="list-item" style="cursor:default;">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="width:40px;height:40px;background:var(--surface-hover);color:var(--text);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;">${init(u.nom)}</div>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(u.nom)}</div>
                         <div>
                             <div class="title">${u.nom}</div>
                             <div class="sub">${u.role}</div>
@@ -365,7 +390,7 @@ function viewEquipe() {
                     </div>
                 </div>
             `).join('')}
-            <button class="btn btn-ghost" style="margin-top:20px;" onclick="addUser()">+ Ajouter un profil</button>
+            <button class="btn btn-ghost" style="margin-top:24px;" onclick="addUser()">+ Ajouter un profil</button>
         </div>
     `;
 }
@@ -445,11 +470,11 @@ function viewClients() {
     return `
         <div class="card">
             <div class="card-head"><div class="card-title">Mes Clients</div></div>
-            ${d.clients.length === 0 ? '<p style="color:var(--muted)">Aucun client.</p>' : ''}
+            ${d.clients.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun client.</p>' : ''}
             ${d.clients.map(c => `
                 <div class="list-item" onclick="go('fiche-client', '${c.id}')">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <div style="width:40px;height:40px;background:var(--primary);color:#000;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;">${init(c.nom)}</div>
+                    <div style="display:flex;align-items:center;gap:16px;">
+                        <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(c.nom)}</div>
                         <div>
                             <div class="title">${c.nom}</div>
                             <div class="sub">${c.ville}</div>
@@ -473,7 +498,7 @@ function viewNouveauClient() {
             <div class="field"><label>Email</label><input class="inp" id="c-email" type="email"></div>
             <div class="field"><label>Téléphone</label><input class="inp" id="c-tel" type="tel"></div>
             <button class="btn" onclick="saveClient()">Créer le client</button>
-            <button class="btn btn-ghost" onclick="back()">Annuler</button>
+            <button class="btn btn-ghost" style="margin-top:12px;" onclick="back()">Annuler</button>
         </div>
     `;
 }
@@ -498,12 +523,12 @@ function viewFicheClient() {
     return `
         <div class="card">
             <div class="card-head"><div class="card-title">${c.nom}</div></div>
-            <div class="sub" style="margin-bottom:20px;">${c.email || 'Pas d\'email'} - ${c.tel || 'Pas de tél'}</div>
+            <div class="sub" style="margin-bottom:24px;">${c.email || 'Pas d\'email'} - ${c.tel || 'Pas de tél'}</div>
             <button class="btn" onclick="go('nouveau-devis', '${c.id}')">+ Créer un devis</button>
         </div>
         <div class="card">
             <div class="card-head"><div class="card-title">Historique</div></div>
-            ${devis.length === 0 ? '<p style="color:var(--muted)">Aucun devis.</p>' : ''}
+            ${devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${devis.map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${x.id}')">
                     <div>
@@ -522,7 +547,7 @@ function viewDevis() {
     return `
         <div class="card">
             <div class="card-head"><div class="card-title">Mes Devis</div></div>
-            ${d.devis.length === 0 ? '<p style="color:var(--muted)">Aucun devis.</p>' : ''}
+            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${d.devis.slice().reverse().map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${x.id}')">
                     <div>
@@ -551,7 +576,7 @@ function viewNouveauDevis() {
             <div class="field">
                 <label>Description des travaux (IA)</label>
                 <input class="inp" id="ia-text" placeholder="Ex: pose 20m2 carrelage grand format">
-                <button class="btn btn-ghost" style="margin-top:8px;" onclick="parseIA()">Analyser</button>
+                <button class="btn btn-ghost" style="margin-top:12px;" onclick="parseIA()">Analyser</button>
             </div>
             <div id="lines-container"></div>
         </div>
@@ -606,7 +631,7 @@ function renderLines() {
                     <input class="inp" type="number" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;">
                     <div class="pu-wrapper" style="flex:2;">
                         <input class="inp" type="number" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;">
-                        ${l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})">🔄</button>` : ''}
+                        ${l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})">↺</button>` : ''}
                     </div>
                 </div>
             </div>
@@ -619,13 +644,13 @@ function renderLines() {
     const totalTTC = totalHTFinal + tva;
 
     html += `
-        <div style="background:var(--bg);padding:20px;border-radius:12px;margin-top:20px;border:1px solid var(--border);">
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);"><span>Sous-total HT</span><span>${eur(totalHT)}</span></div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);"><span>Aléas (${SETTINGS.aleas}%)</span><span>${eur(aleas)}</span></div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);"><span>TVA (10%)</span><span>${eur(tva)}</span></div>
-            <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px;margin-top:8px;font-weight:900;font-size:20px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(totalTTC)}</span></div>
+        <div style="background:var(--bg);padding:24px;border-radius:12px;margin-top:24px;border:1px solid var(--border);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Sous-total HT</span><span>${eur(totalHT)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Aléas (${SETTINGS.aleas}%)</span><span>${eur(aleas)}</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (10%)</span><span>${eur(tva)}</span></div>
+            <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(totalTTC)}</span></div>
         </div>
-        <button class="btn" style="margin-top:20px;" onclick="saveDevis()">Enregistrer le devis</button>
+        <button class="btn" style="margin-top:24px;" onclick="saveDevis()">Enregistrer le devis</button>
     `;
     cont.innerHTML = html;
 }
@@ -680,31 +705,31 @@ function viewDetailDevis() {
         <div class="card">
             <div class="card-head">
                 <div class="card-title">${dev.id}</div>
-                <span style="background:var(--primary-bg);color:var(--primary);padding:4px 8px;border-radius:4px;font-size:12px;font-weight:800;">${dev.statut.toUpperCase()}</span>
+                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;letter-spacing:.5px;">${dev.statut.toUpperCase()}</span>
             </div>
-            <div style="color:var(--muted);margin-bottom:20px;">Client : <strong>${dev.clientNom}</strong></div>
+            <div style="color:var(--text-muted);margin-bottom:24px;font-weight:500;">Client : <strong style="color:var(--text-main);">${dev.clientNom}</strong></div>
             
             ${dev.lignes.map(l => `
-                <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
                     <div>
                         <div style="font-weight:800;">${l.d}</div>
-                        <div style="font-size:12px;color:var(--muted);">${l.q} ${l.u} x ${eur(l.pu)}</div>
+                        <div style="font-size:13px;color:var(--text-muted);">${l.q} ${l.u} x ${eur(l.pu)}</div>
                     </div>
-                    <div style="font-family:var(--font-mono);font-weight:700;">${eur(l.q * l.pu)}</div>
+                    <div style="font-family:var(--font-mono);font-weight:800;">${eur(l.q * l.pu)}</div>
                 </div>
             `).join('')}
 
-            <div style="background:var(--bg);padding:20px;border-radius:12px;margin-top:20px;border:1px solid var(--border);">
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);"><span>Aléas</span><span>${eur(dev.aleas)}</span></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);"><span>Total HT</span><span>${eur(dev.totalHT)}</span></div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--muted);"><span>TVA (10%)</span><span>${eur(dev.tva)}</span></div>
-                <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px;margin-top:8px;font-weight:900;font-size:20px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(dev.totalTTC)}</span></div>
+            <div style="background:var(--bg);padding:24px;border-radius:12px;margin-top:24px;border:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Aléas</span><span>${eur(dev.aleas)}</span></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Total HT</span><span>${eur(dev.totalHT)}</span></div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (10%)</span><span>${eur(dev.tva)}</span></div>
+                <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(dev.totalTTC)}</span></div>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;">
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
                 <button class="btn" onclick="genPDF('${dev.id}')">Générer le PDF</button>
                 <button class="btn btn-ghost" onclick="sendMail('${dev.id}')">Envoyer par Email</button>
-                <button class="btn btn-ghost" style="color:var(--red);border-color:var(--red);" onclick="delDevis('${dev.id}')">Supprimer</button>
+                <button class="btn btn-ghost btn-danger" onclick="delDevis('${dev.id}')">Supprimer</button>
             </div>
         </div>
     `;
@@ -785,7 +810,7 @@ function sendMail(id) {
             <div class="field"><label>Email du client</label><input class="inp" id="m-to" value="${c.email || ''}"></div>
             <div class="field"><label>Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${c.nom},\n\nVeuillez trouver ci-joint le devis ${dev.id} d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${s.nom_entreprise}</textarea></div>
             <button class="btn" onclick="execMail('${id}')">Envoyer</button>
-            <button class="btn btn-ghost" onclick="document.getElementById('modal-overlay').classList.remove('show')">Annuler</button>
+            <button class="btn btn-ghost" style="margin-top:12px;" onclick="document.getElementById('modal-overlay').classList.remove('show')">Annuler</button>
         </div>
     `;
     ov.classList.add('show');
