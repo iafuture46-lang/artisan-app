@@ -25,7 +25,6 @@ button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{cursor:pointer;border:none;background:none}
 a{color:var(--primary);text-decoration:none;cursor:pointer}
 
-/* HEADER PREMIUM */
 .hdr{background:var(--surface);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border)}
 .hdr-brand{display:flex;align-items:center;gap:14px;cursor:pointer}
 .hdr-mark{width:44px;height:44px;background:linear-gradient(135deg, var(--primary), #3B82F6);color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;box-shadow:0 4px 12px rgba(37,99,235,.3)}
@@ -33,25 +32,21 @@ a{color:var(--primary);text-decoration:none;cursor:pointer}
 .hdr-text p{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
 .hdr-nav{display:none}
 
-/* BOTTOM NAV PREMIUM (Glassmorphism) */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 24px 0;z-index:100;box-shadow:0 -10px 30px rgba(0,0,0,0.05)}
 .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);padding:6px 16px;border-radius:16px;transition:all .2s}
 .bottom-nav a.active{color:var(--primary);background:var(--primary-bg)}
 .bottom-nav svg{width:24px;height:24px;stroke-width:2.5}
 
-/* FLOATING ACTION BUTTON (FAB) */
 .fab{position:fixed;bottom:90px;right:20px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:300;box-shadow:0 12px 24px rgba(37,99,235,.4);z-index:99;transition:transform .2s}
 .fab:active{transform:scale(.9)}
 
 .wrap{max-width:1080px;margin:0 auto;padding:24px 16px 40px}
 
-/* CARTES */
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--sh-md)}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
 .card-title{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--text)}
 .card-sub{font-size:13px;color:var(--muted);font-weight:500;margin-top:4px}
 
-/* HERO ACTIONS */
 .hero-actions{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:24px}
 .btn-hero{display:flex;align-items:center;gap:20px;background:linear-gradient(135deg, var(--primary), #3B82F6);color:#fff;padding:24px;border-radius:24px;text-align:left;box-shadow:0 12px 24px rgba(37,99,235,.25);transition:transform .1s}
 .btn-hero:active{transform:scale(.98)}
@@ -64,7 +59,6 @@ a{color:var(--primary);text-decoration:none;cursor:pointer}
 .btn-hero-2 h3{font-size:20px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
 .btn-hero-2 p{font-size:13px;color:var(--muted);font-weight:500}
 
-/* KPI CARDS */
 .kpi-strip{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
 .kpi{background:var(--surface);border-radius:20px;padding:20px;box-shadow:var(--sh-sm);border:1px solid var(--border)}
 .kpi.full-width{grid-column:span 2;background:linear-gradient(to right, var(--surface), #F8FAFC)}
@@ -73,7 +67,6 @@ a{color:var(--primary);text-decoration:none;cursor:pointer}
 .kpi .val.pos{color:var(--green)}
 .kpi .sub{font-size:13px;color:var(--muted);margin-top:4px;font-weight:500}
 
-/* FORMULAIRES */
 .field{margin-bottom:20px}
 .field label{display:block;font-size:14px;font-weight:700;margin-bottom:8px;color:var(--text)}
 .field .req{color:var(--red);margin-left:2px}
@@ -82,7 +75,6 @@ a{color:var(--primary);text-decoration:none;cursor:pointer}
 textarea.inp{resize:vertical;min-height:100px}
 .row-2,.row-3{display:grid;grid-template-columns:1fr;gap:16px}
 
-/* BOUTONS */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:16px;font-size:16px;font-weight:700;background:var(--primary);color:#fff;transition:all .2s;width:100%;box-shadow:0 4px 12px rgba(37,99,235,.2)}
 .btn:active{transform:scale(.98)}
 .btn:disabled{background:var(--surface-2);color:var(--muted-2);box-shadow:none;transform:none}
@@ -91,7 +83,6 @@ textarea.inp{resize:vertical;min-height:100px}
 .btn-danger{background:var(--red);box-shadow:0 4px 12px rgba(220,38,38,.2)}
 .back-btn{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--muted);margin-bottom:20px;padding:10px 16px;background:var(--surface);border-radius:12px;border:1px solid var(--border);box-shadow:var(--sh-sm)}
 
-/* LISTES CLIENTS / DEVIS */
 .list-row{display:flex;align-items:center;gap:16px;padding:16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
 .list-row:last-child{border-bottom:none}
 .list-row:active{background:var(--surface-2)}
@@ -103,7 +94,6 @@ textarea.inp{resize:vertical;min-height:100px}
 .list-right .sub{font-size:12px;color:var(--muted);font-weight:600;margin-top:4px}
 .list-row-chev{color:var(--muted-2);font-size:20px;font-weight:300}
 
-/* IA & QUESTIONS */
 .ai-section{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--sh-md);border:1px solid var(--primary-bg)}
 .ai-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
 .ai-icon{width:48px;height:48px;background:linear-gradient(135deg, var(--primary), #3B82F6);color:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;box-shadow:0 4px 12px rgba(37,99,235,.3)}
@@ -126,7 +116,6 @@ textarea.inp{resize:vertical;min-height:100px}
 .q-opt{padding:12px 20px;border:2px solid var(--border);border-radius:16px;background:var(--surface);font-size:14px;font-weight:700;transition:all .1s;color:var(--muted)}
 .q-opt.selected{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.2)}
 
-/* DEVIS LIGNES & TOTAUX */
 .section-label{font-size:15px;font-weight:900;margin:24px 0 12px;display:flex;align-items:center;gap:10px;letter-spacing:-.3px}
 .section-label .bdg-pill{padding:2px 10px;border-radius:12px;font-size:12px}
 .section-label.demande .bdg-pill{background:var(--green-bg);color:var(--green)}
@@ -149,7 +138,6 @@ textarea.inp{resize:vertical;min-height:100px}
 .totaux .tr.total{font-weight:900;font-size:24px;border-top:2px solid var(--border-2);padding-top:20px;margin-top:12px;color:var(--text)}
 .totaux .tr.total .v{color:var(--primary)}
 
-/* DIVERS */
 .bdg{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.03em}
 .bdg.ok,.bdg.accepted{background:var(--green-bg);color:var(--green)}
 .bdg.warn,.bdg.sent{background:var(--amber-bg);color:var(--amber)}
@@ -219,10 +207,8 @@ textarea.inp{resize:vertical;min-height:100px}
   </div>
 </header>
 
-<!-- BOUTON FLOTTANT (FAB) -->
 <a class="fab" onclick="naviguer('nouveau-devis')">+</a>
 
-<!-- BARRE DE NAVIGATION MOBILE -->
 <nav class="bottom-nav">
   <a onclick="retourAccueil()" id="nav-accueil">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -245,7 +231,7 @@ textarea.inp{resize:vertical;min-height:100px}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   ARTISANAPP V5 — Intelligence & Design Premium
+   ARTISANAPP V6 — Intelligence Métier (Matériaux & Variantes)
    ═══════════════════════════════════════════════════════════════════ */
 
 window.addEventListener('error', function(e){
@@ -274,7 +260,7 @@ function chargerConfig() {
 function sauverConfig(c) { try { localStorage.setItem('artisanapp_config', JSON.stringify(c)); } catch(e) {} }
 var CONFIG = chargerConfig();
 
-/* ─── Base tarifaire ─── */
+/* ─── Base tarifaire avec VARIANTES (Matériaux) ─── */
 var TARIFS = { postes: {
   'elec.prise.neuve':{d:'Pose prise 16A neuve',u:'u',pu:85,partF:0.15,tempsH:0.6},
   'elec.prise.rempl':{d:'Remplacement prise existante',u:'u',pu:45,partF:0.20,tempsH:0.4},
@@ -285,15 +271,19 @@ var TARIFS = { postes: {
   'elec.tableau.neuf':{d:'Fourniture et pose tableau electrique',u:'forfait',pu:1100,partF:0.55,tempsH:6},
   'elec.consuel':{d:'Essais et attestation Consuel',u:'forfait',pu:280,partF:0,tempsH:2},
   'elec.diagnostic':{d:'Diagnostic tableau existant',u:'forfait',pu:120,partF:0,tempsH:1.5},
+  
   'plomb.fuite':{d:'Recherche et reparation de fuite',u:'forfait',pu:280,partF:0.15,tempsH:2},
   'plomb.robinet':{d:'Remplacement robinet',u:'u',pu:135,partF:0.35,tempsH:1},
   'plomb.chauffeEau':{d:'Fourniture et pose chauffe-eau 200L',u:'u',pu:1450,partF:0.55,tempsH:3},
-  'plomb.wc':{d:'Fourniture et pose WC complet',u:'u',pu:650,partF:0.55,tempsH:2.5},
+  'plomb.wc.std':{d:'Fourniture et pose WC classique',u:'u',pu:650,partF:0.55,tempsH:2.5},
+  'plomb.wc.suspendu':{d:'Fourniture et pose WC suspendu (bati-support)',u:'u',pu:1100,partF:0.60,tempsH:4},
+  
   'peint.mur.2c':{d:'Peinture murs 2 couches',u:'m2',pu:18,partF:0.25,tempsH:0.15},
   'peint.plafond.2c':{d:'Peinture plafond 2 couches',u:'m2',pu:22,partF:0.25,tempsH:0.18},
   'peint.prep.simple':{d:'Preparation simple',u:'m2',pu:6,partF:0.10,tempsH:0.08},
   'peint.prep.lourde':{d:'Preparation lourde',u:'m2',pu:18,partF:0.15,tempsH:0.25},
   'peint.protection':{d:'Protection sols et mobilier',u:'forfait',pu:80,partF:0.30,tempsH:1},
+  
   'mac.fondation':{d:'Fondation semelle filante',u:'ml',pu:95,partF:0.35,tempsH:0.8},
   'mac.mur.parpaing.20':{d:'Elevation mur parpaing 20cm',u:'m2',pu:75,partF:0.40,tempsH:0.5},
   'mac.mur.brique':{d:'Elevation mur brique',u:'m2',pu:95,partF:0.45,tempsH:0.55},
@@ -304,37 +294,49 @@ var TARIFS = { postes: {
   'mac.couronnement':{d:'Couronnement de mur',u:'ml',pu:45,partF:0.35,tempsH:0.25},
   'mac.dalle.beton':{d:'Dalle beton arme',u:'m2',pu:85,partF:0.45,tempsH:0.6},
   'mac.evacuation':{d:'Evacuation des gravats',u:'forfait',pu:320,partF:0,tempsH:3},
-  'carr.sol.pose':{d:'Pose carrelage sol',u:'m2',pu:55,partF:0.35,tempsH:0.5},
-  'carr.prep.support':{d:'Preparation support',u:'m2',pu:16,partF:0.30,tempsH:0.15},
+  
+  'carr.sol.std':{d:'Pose carrelage sol standard',u:'m2',pu:55,partF:0.35,tempsH:0.5},
+  'carr.sol.grand':{d:'Pose carrelage grand format (60x60+)',u:'m2',pu:80,partF:0.45,tempsH:0.8},
+  'carr.sol.mosaique':{d:'Pose mosaïque / pâte de verre',u:'m2',pu:110,partF:0.50,tempsH:1.2},
+  'carr.mur.std':{d:'Pose faïence standard',u:'m2',pu:65,partF:0.35,tempsH:0.6},
+  'carr.mur.mosaique':{d:'Pose faïence mosaïque',u:'m2',pu:95,partF:0.50,tempsH:1.0},
+  'carr.prep.support':{d:'Preparation support (ragreage)',u:'m2',pu:16,partF:0.30,tempsH:0.15},
   'carr.depose':{d:'Depose carrelage existant',u:'m2',pu:22,partF:0,tempsH:0.3},
   'carr.etancheite':{d:'Etancheite liquide',u:'m2',pu:28,partF:0.35,tempsH:0.15},
+  
   'placo.ossature':{d:'Ossature metallique',u:'m2',pu:22,partF:0.35,tempsH:0.15},
   'placo.ba13':{d:'Pose plaque BA13',u:'m2',pu:28,partF:0.40,tempsH:0.18},
   'placo.bande.enduit':{d:'Bandes et enduit',u:'m2',pu:14,partF:0.20,tempsH:0.12},
   'placo.finition':{d:'Finition N2',u:'m2',pu:6,partF:0.10,tempsH:0.06},
+  
   'men.depose.ouvrant':{d:'Depose ancien ouvrant',u:'u',pu:85,partF:0,tempsH:1},
   'men.porte.interieure':{d:'Fourniture et pose porte',u:'u',pu:390,partF:0.55,tempsH:2},
   'men.fenetre.alu':{d:'Fourniture et pose fenetre alu',u:'u',pu:750,partF:0.65,tempsH:3},
   'men.volet.roulant':{d:'Fourniture et pose volet',u:'u',pu:450,partF:0.60,tempsH:2},
+  
   'toit.depose':{d:'Depose couverture existante',u:'m2',pu:25,partF:0,tempsH:0.25},
   'toit.tuile.pose':{d:'Pose couverture tuiles',u:'m2',pu:85,partF:0.45,tempsH:0.5},
   'toit.ardoise.pose':{d:'Pose couverture ardoises',u:'m2',pu:120,partF:0.45,tempsH:0.7},
+  
   'sdb.depose.carrelage':{d:'Depose carrelage existant',u:'m2',pu:22,partF:0,tempsH:0.3},
   'sdb.depose.sanitaires':{d:'Depose sanitaires',u:'forfait',pu:180,partF:0,tempsH:2},
   'sdb.plomberie':{d:'Plomberie SDB',u:'forfait',pu:850,partF:0.30,tempsH:8},
   'sdb.etancheite':{d:'Etancheite sous carrelage',u:'m2',pu:32,partF:0.30,tempsH:0.15},
-  'sdb.faience':{d:'Pose faience murale',u:'m2',pu:62,partF:0.35,tempsH:0.6},
-  'sdb.carrelage.sol':{d:'Pose carrelage sol',u:'m2',pu:58,partF:0.35,tempsH:0.5},
+  'sdb.faience':{d:'Pose faience murale',u:'m2',pu:65,partF:0.35,tempsH:0.6},
+  'sdb.carrelage.sol':{d:'Pose carrelage sol',u:'m2',pu:60,partF:0.35,tempsH:0.5},
   'sdb.sanitaires':{d:'Fourniture et pose sanitaires',u:'forfait',pu:1400,partF:0.60,tempsH:5},
   'sdb.peinture.plafond':{d:'Peinture plafond',u:'m2',pu:22,partF:0.25,tempsH:0.18},
+  
   'cuis.depose':{d:'Depose ancienne cuisine',u:'forfait',pu:450,partF:0,tempsH:5},
   'cuis.plomberie':{d:'Plomberie cuisine',u:'forfait',pu:650,partF:0.30,tempsH:6},
   'cuis.elec':{d:'Electricite cuisine',u:'forfait',pu:750,partF:0.30,tempsH:6},
   'cuis.pose.meubles':{d:'Pose mobilier cuisine',u:'forfait',pu:950,partF:0.10,tempsH:10},
+  
   'terr.prep':{d:'Preparation et terrassement',u:'m2',pu:28,partF:0,tempsH:0.3},
   'terr.lambourdes':{d:'Structure et lambourdes',u:'m2',pu:45,partF:0.45,tempsH:0.35},
   'terr.lames.bois':{d:'Pose lames bois',u:'m2',pu:75,partF:0.60,tempsH:0.4},
   'terr.lames.composite':{d:'Pose lames composite',u:'m2',pu:110,partF:0.65,tempsH:0.45},
+  
   'iso.combles':{d:'Isolation combles',u:'m2',pu:25,partF:0.55,tempsH:0.15},
   'iso.mur.interieur':{d:'Isolation mur',u:'m2',pu:32,partF:0.50,tempsH:0.2}
 }};
@@ -349,7 +351,7 @@ var METIERS_MOTS = {
   plomberie: ['plomberie','plombier','fuite','chauffe-eau','robinet','wc','toilette','evier','douche','baignoire'],
   peinture: ['peinture','peindre','repeindre','peint','plafond','enduit','sous-couche','lessivage'],
   maconnerie: ['maconnerie','mur','parpaing','agglo','brique','pierre','dalle','fondation','terrassement','chape','chainage','cloture','muret'],
-  carrelage: ['carrelage','faience','plinthe','ragreage'],
+  carrelage: ['carrelage','faience','plinthe','ragreage','mosaique','grand format'],
   plaquiste: ['placo','plaquiste','ba13','cloison','doublage','faux plafond'],
   menuiserie: ['menuiserie','porte','fenetre','volet','placard'],
   toiture: ['toiture','toit','tuile','ardoise','couverture','charpente','gouttiere'],
@@ -362,8 +364,7 @@ var METIERS_MOTS = {
 function parserDescription(texte) {
   var raw = texte;
   var t = ' ' + normaliser(texte).replace(/,/g, '.') + ' ';
-  // Amélioration de la détection : on cherche plus large
-  var r = { brut:raw, metier:null, longueur:null, hauteur:null, surface:null, distanceEquipement:null, quantiteEquipement:null, materiau:null, exclusions:[], motsInclus:[], nouvelles:false, remplacement:false, depose:false };
+  var r = { brut:raw, metier:null, longueur:null, hauteur:null, surface:null, distanceEquipement:null, quantiteEquipement:null, materiau:null, exclusions:[], motsInclus:[], nouvelles:false, remplacement:false, depose:false, formatMat:null };
   var m;
 
   var reLong = /(\d+(?:\.\d+)?)\s*(?:metres?|m(?![\w])|ml|lineaire)\s*(?:de\s+long)?/gi;
@@ -403,11 +404,14 @@ function parserDescription(texte) {
   else if (/\bbriques?\b/.test(t)) r.materiau = 'brique';
   else if (/\bpierres?\b/.test(t)) r.materiau = 'pierre';
 
-  // IA Plus intelligente : Fourniture vs Pose
+  // Détection des formats pour les carrelages et finitions
+  if (/\bgrand\s+format\b|\b60x60\b|\b80x80\b|\b120x120\b/.test(t)) r.formatMat = 'grand';
+  else if (/\bmosaique\b|\bpetit\s+format\b/.test(t)) r.formatMat = 'mosaique';
+  else if (/\bstandard\b|\b30x30\b|\b45x45\b/.test(t)) r.formatMat = 'std';
+
   if (/\bfourni(e?s?)?\s*(et\s*)?pose/.test(t) || /\bfourniture\s+et\s+pose\b/.test(t) || /\bpose\s+et\s+fourniture\b/.test(t)) r.motsInclus.push('fourniture_et_pose');
   if (/\bpose\s+seule?\b/.test(t) || /\bjuste\s+pose\b/.test(t) || /\bmain\s+d.oeuvre\s+seule\b/.test(t)) r.motsInclus.push('pose_seule');
   
-  // IA Plus intelligente : Dépose / Evacuation
   if (/\bdepose\b/.test(t) || /\bcasse\b/.test(t) || /\bdemolition\b/.test(t)) r.depose = true;
   if (/\bsans\s+evacuation\b/.test(t) || /\bpas\s+d.evacuation\b/.test(t)) r.exclusions.push('evacuation');
 
@@ -433,7 +437,6 @@ function genererQuestions(parsed, metier) {
   var qs = [];
   var t = normaliser(parsed.brut);
 
-  // On ne demande QUE si l'info n'est pas déjà dans le texte
   var aDejaFourniture = parsed.motsInclus.indexOf('fourniture_et_pose') !== -1;
   var aDejaPoseSeule = parsed.motsInclus.indexOf('pose_seule') !== -1;
   
@@ -455,9 +458,15 @@ function genererQuestions(parsed, metier) {
         options:[{v:'direct',label:'Direct'},{v:'detour',label:'Avec detours'},{v:'inconnu',label:'A verifier'}] });
     }
   }
-  if (metier === 'plomberie' && /\bfuite/.test(t) && !parsed.remplacement) {
-    qs.push({ id:'plomb.fuite.type', texte:'Type de fuite :',
-      options:[{v:'apparente',label:'Apparente'},{v:'encastree',label:'Encastree'},{v:'inconnue',label:'Inconnue'}] });
+  if (metier === 'plomberie') {
+    if (/\bfuite/.test(t) && !parsed.remplacement) {
+      qs.push({ id:'plomb.fuite.type', texte:'Type de fuite :',
+        options:[{v:'apparente',label:'Apparente'},{v:'encastree',label:'Encastree'},{v:'inconnue',label:'Inconnue'}] });
+    }
+    if (/\bwc\b|\btoilette/.test(t) && !/suspendu|classique|standard/.test(t)) {
+      qs.push({ id:'plomb.wc.type', texte:'Type de WC :',
+        options:[{v:'classique',label:'Classique (sur pied)'},{v:'suspendu',label:'Suspendu (bati-support)'}] });
+    }
   }
   if (metier === 'peinture') {
     qs.push({ id:'peint.etat', texte:'Etat des supports :',
@@ -491,9 +500,16 @@ function genererQuestions(parsed, metier) {
         options:[{v:'conserves',label:'Conserves'},{v:'remplaces',label:'Remplaces'}] });
     }
   }
-  if (metier === 'carrelage' && !parsed.depose && !/depose|existant/.test(t)) {
-    qs.push({ id:'carr.depose', texte:'Deposer l ancien carrelage ?',
-      options:[{v:'oui',label:'Oui'},{v:'non',label:'Non'}] });
+  if (metier === 'carrelage' || metier === 'sdb') {
+    if (!parsed.depose && !/depose|existant/.test(t)) {
+      qs.push({ id:'carr.depose', texte:'Deposer l ancien carrelage ?',
+        options:[{v:'oui',label:'Oui'},{v:'non',label:'Non'}] });
+    }
+    // NOUVEAU : Question sur le format/qualité du carrelage
+    if (!parsed.formatMat) {
+      qs.push({ id:'carr.format', texte:'Quel type/format de carrelage ?',
+        options:[{v:'std',label:'Standard (30x30, 45x45)'},{v:'grand',label:'Grand format (60x60+)'},{v:'mosaique',label:'Mosaïque'}] });
+    }
   }
   return qs;
 }
@@ -574,7 +590,12 @@ function construireLignes(parsed, metier, reponses, lignesExistantes) {
       if (qr && /robinet/.test(qr.type)) ajouter('plomb.robinet', qr.val, 'Quantite explicite', 'demande', 'confirme');
       else ajouter('plomb.robinet', null, 'Nombre a preciser', 'demande', 'a_renseigner');
     }
-    if (/\bwc\b|\btoilette/.test(t)) ajouter('plomb.wc', null, 'Type a preciser', 'a_confirmer', 'a_renseigner');
+    if (/\bwc\b|\btoilette/.test(t)) {
+      var typeWC = reponses['plomb.wc.type'];
+      if (typeWC === 'suspendu') ajouter('plomb.wc.suspendu', 1, 'WC suspendu', 'demande', 'confirme');
+      else if (typeWC === 'classique') ajouter('plomb.wc.std', 1, 'WC classique', 'demande', 'confirme');
+      else ajouter('plomb.wc.std', null, 'Type de WC a preciser', 'a_confirmer', 'a_renseigner');
+    }
     if (/\bchauffe[- ]?eau/.test(t)) ajouter('plomb.chauffeEau', 1, 'Remplacement', 'demande', 'confirme');
   }
   if (metier === 'peinture') {
@@ -625,6 +646,12 @@ function construireLignes(parsed, metier, reponses, lignesExistantes) {
     var ampl = reponses['sdb.ampleur'];
     var sanit = reponses['sdb.sanitaires'];
     var ss = parsed.surface;
+    
+    // Détermination du format carrelage pour SDB
+    var formatC = reponses['carr.format'] || parsed.formatMat || 'std';
+    var codeSol = formatC === 'grand' ? 'sdb.carrelage.sol' : 'sdb.carrelage.sol'; // On garde le même pour SDB pour l'instant
+    var codeFaience = formatC === 'mosaique' ? 'carr.mur.mosaique' : 'sdb.faience';
+
     if (ss === null || ss <= 0) {
       ajouter('sdb.carrelage.sol', null, 'Surface SDB a preciser', 'demande', 'a_renseigner');
     } else {
@@ -634,8 +661,8 @@ function construireLignes(parsed, metier, reponses, lignesExistantes) {
       }
       if (ampl === 'complete' || ampl === 'partielle' || parsed.depose) ajouter('sdb.depose.carrelage', ss, 'Depose carrelage', 'demande', 'confirme');
       ajouter('sdb.etancheite', ss, 'Etancheite', 'demande', 'confirme');
-      ajouter('sdb.carrelage.sol', ss, 'Carrelage sol', 'demande', 'confirme');
-      ajouter('sdb.faience', Math.round(ss * 2.5 * 10) / 10, 'Faience estimee', 'demande', 'hypothese');
+      ajouter('sdb.carrelage.sol', ss, 'Carrelage sol ' + (formatC === 'grand' ? 'grand format' : ''), 'demande', 'confirme');
+      ajouter(codeFaience, Math.round(ss * 2.5 * 10) / 10, 'Faience murale', 'demande', 'hypothese');
       ajouter('sdb.peinture.plafond', ss, 'Peinture plafond', 'demande', 'confirme');
     }
     if (sanit === 'remplaces') ajouter('sdb.sanitaires', 1, 'Sanitaires remplaces', 'demande', 'confirme');
@@ -643,11 +670,14 @@ function construireLignes(parsed, metier, reponses, lignesExistantes) {
   }
   if (metier === 'carrelage') {
     var sc = parsed.surface;
-    if (sc === null || sc <= 0) ajouter('carr.sol.pose', null, 'Surface a preciser', 'demande', 'a_renseigner');
+    if (sc === null || sc <= 0) ajouter('carr.sol.std', null, 'Surface a preciser', 'demande', 'a_renseigner');
     else {
+      var formatC2 = reponses['carr.format'] || parsed.formatMat || 'std';
+      var codePose = formatC2 === 'grand' ? 'carr.sol.grand' : (formatC2 === 'mosaique' ? 'carr.sol.mosaique' : 'carr.sol.std');
+      
       if (reponses['carr.depose'] === 'oui' || parsed.depose) ajouter('carr.depose', sc, 'Depose', 'demande', 'confirme');
       ajouter('carr.prep.support', sc, 'Preparation', 'demande', 'confirme');
-      ajouter('carr.sol.pose', sc, 'Pose carrelage sol', 'demande', 'confirme');
+      ajouter(codePose, sc, 'Pose ' + (formatC2 === 'grand' ? 'grand format' : formatC2), 'demande', 'confirme');
     }
   }
   if (metier === 'plaquiste') {
@@ -810,7 +840,6 @@ function updateNavBar(active) {
   if(document.getElementById('nav-' + active)) {
     document.getElementById('nav-' + active).classList.add('active');
   }
-  // Cacher le FAB sur les écrans de création
   var fab = document.querySelector('.fab');
   if(active === 'accueil' || active === 'clients' || active === 'devis') { fab.style.display = 'flex'; }
   else { fab.style.display = 'none'; }
@@ -1342,7 +1371,7 @@ function renderNouveauDevis() {
   html += '</select></div>';
   
   html += '<div class="ai-section"><div class="ai-head"><div class="ai-icon">IA</div><div class="ai-head-txt"><h2>Décrivez vos travaux</h2><p>Soyez précis : dimensions, matériaux, fourniture...</p></div></div>';
-  html += '<div class="ai-input-row"><input class="inp" id="ia-texte" placeholder="Ex : mur de cloture 17m x 1.5m" value="' + esc(DEV_STATE.parsed ? DEV_STATE.parsed.brut : '') + '"><button class="btn" onclick="analyserDevis()">Analyser le texte</button></div>';
+  html += '<div class="ai-input-row"><input class="inp" id="ia-texte" placeholder="Ex : pose de 20m2 de carrelage grand format" value="' + esc(DEV_STATE.parsed ? DEV_STATE.parsed.brut : '') + '"><button class="btn" onclick="analyserDevis()">Analyser le texte</button></div>';
   html += '<div id="analyse-result"></div></div>';
   
   html += '<div id="devis-suite"></div></div>';
@@ -1377,6 +1406,7 @@ function renderDevisSuite() {
     if (p.hauteur) faits.push({t:'fact', l:'Hauteur', v:p.hauteur + ' m'});
     if (p.surface) faits.push({t:'fact', l:'Surface', v:p.surface + ' m2'});
     if (p.materiau) faits.push({t:'fact', l:'Materiau', v:p.materiau});
+    if (p.formatMat) faits.push({t:'fact', l:'Format', v:p.formatMat});
     if (faits.length) {
       ah += '<div class="analyse-section" style="margin-top:16px"><h4>Faits extraits</h4>';
       faits.forEach(function(f){
@@ -1460,7 +1490,6 @@ function renderLignesBloc() {
   html += '<div class="tr sub"><span>TVA ' + DEV_STATE.tva + ' %</span><span class="v">' + eur(tot.montantTVA) + '</span></div>';
   html += '<div class="tr total"><span>Total TTC</span><span class="v">' + eur(tot.totalTTC) + '</span></div>';
   
-  // Affichage de la marge (Rentabilité)
   if (tot.margeCalculable) {
     html += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:14px;color:var(--green);display:flex;justify-content:space-between;font-weight:700">';
     html += '<span>Votre marge estimée</span><span>' + eur(tot.margeBrute) + '</span>';
