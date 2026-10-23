@@ -22,6 +22,8 @@
   --primary-light: #eff6ff;
   --danger: #ef4444;
   --danger-light: #fef2f2;
+  --success: #10b981;
+  --success-light: #ecfdf5;
   --radius: 16px;
   --font-main: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -84,6 +86,8 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .btn-sm{padding:10px 16px;font-size:12px;width:auto;border-radius:8px}
 .btn-danger{background:var(--danger-light);color:var(--danger);border:1px solid #fca5a5}
 .btn-danger:hover{background:var(--danger);color:#fff}
+.btn-success{background:var(--success-light);color:var(--success);border:1px solid #6ee7b7}
+.btn-success:hover{background:var(--success);color:#fff}
 
 /* FORMULAIRES */
 .field{margin-bottom:20px}
@@ -170,6 +174,10 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <div id="pdf-template"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════════
+   MOTEUR V13 (Corrigé et stabilisé)
+   ═══════════════════════════════════════════════════════════════════ */
+
 const DEFAULT_SETTINGS = {
     nom_entreprise: "", siret: "", adresse: "", cp: "", ville: "",
     tel: "", email: "", iban: "", bic: "", assurance: "",
@@ -214,11 +222,17 @@ function toast(m) {
     clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-let STACK = []; let CURRENT_ID = null; let DEV_LIGNES = [];
+// Gestion de l'état de navigation
+let STACK = []; let CURRENT_ID = null; let CURRENT_MODE = 'new'; let DEV_LIGNES = [];
 
-function go(page, id) { CURRENT_ID = id || null; STACK.push({ page, id }); render(); }
-function back() { if (STACK.length > 1) { STACK.pop(); const p = STACK[STACK.length-1]; CURRENT_ID = p.id; render(); } else { go('accueil'); } }
-function home() { STACK = [{ page: 'accueil', id: null }]; CURRENT_ID = null; render(); }
+function go(page, id, mode) {
+    CURRENT_ID = id || null;
+    CURRENT_MODE = mode || 'new';
+    STACK.push({ page, id, mode });
+    render();
+}
+function back() { if (STACK.length > 1) { STACK.pop(); const p = STACK[STACK.length-1]; CURRENT_ID = p.id; CURRENT_MODE = p.mode; render(); } else { go('accueil'); } }
+function home() { STACK = [{ page: 'accueil', id: null, mode: 'new' }]; CURRENT_ID = null; CURRENT_MODE = 'new'; render(); }
 
 function render() {
     const cur = STACK[STACK.length - 1];
@@ -250,12 +264,10 @@ function render() {
             case 'parametres': html = viewParametres(); break;
             case 'equipe': html = viewEquipe(); break;
             case 'clients': html = viewClients(); break;
-            case 'nouveau-client': html = viewNouveauClient(); break;
-            case 'edit-client': html = viewNouveauClient(); break;
+            case 'nouveau-client': html = viewFormClient(); break;
             case 'fiche-client': html = viewFicheClient(); break;
             case 'devis': html = viewDevis(); break;
-            case 'nouveau-devis': html = viewNouveauDevis(); break;
-            case 'edit-devis': html = viewNouveauDevis(); break;
+            case 'nouveau-devis': html = viewFormDevis(); break;
             case 'detail-devis': html = viewDetailDevis(); break;
         }
     } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${e.message}</p></div>`; }
@@ -330,16 +342,14 @@ function viewParametres() {
             <div class="field"><label>EmailJS Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
             <div class="field"><label>EmailJS Public Key</label><input class="inp" id="s-ejs-public" value="${esc(s.emailjs_public)}"></div>
         </div>
-        
         <div class="card">
-            <div class="card-head"><div class="card-title">Sauvegarde des Données</div><div class="card-sub">Exportez pour changer d'appareil</div></div>
+            <div class="card-head"><div class="card-title">Sauvegarde des Données</div></div>
             <div class="row-2">
                 <button class="btn btn-ghost" onclick="exportData()">⬇️ Exporter (JSON)</button>
                 <button class="btn btn-ghost" onclick="importData()">⬆️ Importer</button>
             </div>
             <input type="file" id="file-import" style="display:none" accept=".json" onchange="processImport(event)">
         </div>
-
         <button class="btn" onclick="saveParam()">Enregistrer les paramètres</button>
     `;
 }
@@ -430,8 +440,8 @@ function viewClients() {
     `;
 }
 
-function viewNouveauClient() {
-    const isEdit = STACK[STACK.length - 1].page === 'edit-client';
+function viewFormClient() {
+    const isEdit = CURRENT_MODE === 'edit';
     let c = { nom: '', ville: '', cp: '', email: '', tel: '' };
     if (isEdit) {
         const d = getData(); c = d.clients.find(x => x.id === CURRENT_ID);
@@ -446,13 +456,13 @@ function viewNouveauClient() {
             </div>
             <div class="field"><label>Email</label><input class="inp" id="c-email" type="email" value="${esc(c.email)}"></div>
             <div class="field"><label>Téléphone</label><input class="inp" id="c-tel" type="tel" value="${esc(c.tel)}"></div>
-            <button class="btn" onclick="saveClient('${isEdit ? 'edit' : 'new'}')">${isEdit ? 'Mettre à jour' : 'Créer le client'}</button>
+            <button class="btn" onclick="saveClient()">${isEdit ? 'Mettre à jour' : 'Créer le client'}</button>
             <button class="btn btn-ghost" style="margin-top:12px;" onclick="back()">Annuler</button>
         </div>
     `;
 }
 
-function saveClient(mode) {
+function saveClient() {
     const nom = document.getElementById('c-nom').value.trim();
     const ville = document.getElementById('c-ville').value.trim();
     if (!nom || !ville) { toast("Nom et ville obligatoires"); return; }
@@ -463,15 +473,20 @@ function saveClient(mode) {
         email: document.getElementById('c-email').value, tel: document.getElementById('c-tel').value
     };
 
-    if (mode === 'edit') {
+    if (CURRENT_MODE === 'edit') {
         const idx = d.clients.findIndex(x => x.id === CURRENT_ID);
         if (idx > -1) d.clients[idx] = { ...d.clients[idx], ...data };
+        toast("Client modifié"); 
+        saveData(d);
+        go('fiche-client', CURRENT_ID);
     } else {
         d.cpt.c++;
         const id = 'C-' + new Date().getFullYear() + '-' + String(d.cpt.c).padStart(4, '0');
         d.clients.push({ id, date: new Date().toISOString(), ...data });
+        toast("Client créé"); 
+        saveData(d);
+        home();
     }
-    saveData(d); toast(mode === 'edit' ? "Client modifié" : "Client créé"); back();
 }
 
 function viewFicheClient() {
@@ -482,8 +497,8 @@ function viewFicheClient() {
             <div class="card-head">
                 <div class="card-title">${c.nom}</div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn btn-sm btn-ghost" onclick="go('edit-client', '${c.id}')">Modifier</button>
-                    <button class="btn btn-sm btn-danger" onclick="delClient('${c.id}')">Supprimer</button>
+                    <button class="btn btn-sm btn-ghost" onclick="go('nouveau-client', '${c.id}', 'edit')">Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="delClient('${c.id}')">Suppr</button>
                 </div>
             </div>
             <div class="sub" style="margin-bottom:24px;">${c.email || 'Pas d\'email'} - ${c.tel || 'Pas de tél'}</div>
@@ -503,7 +518,7 @@ function viewFicheClient() {
 }
 
 function delClient(id) {
-    if (!confirm("Supprimer ce client ET tous ses devis ? Cette action est irréversible.")) return;
+    if (!confirm("Supprimer ce client ET tous ses devis ? Irréversible.")) return;
     let d = getData();
     d.clients = d.clients.filter(x => x.id !== id);
     d.devis = d.devis.filter(x => x.clientId !== id);
@@ -526,16 +541,20 @@ function viewDevis() {
     `;
 }
 
-function viewNouveauDevis() {
-    const isEdit = STACK[STACK.length - 1].page === 'edit-devis';
+function viewFormDevis() {
+    const isEdit = CURRENT_MODE === 'edit';
     const d = getData();
+    let dev = null;
     
     if (isEdit) {
-        const dev = d.devis.find(x => x.id === CURRENT_ID);
+        dev = d.devis.find(x => x.id === CURRENT_ID);
+        // On recharge les lignes pour l'édition
         DEV_LIGNES = dev.lignes.map(l => {
-            const t = TARIFS[l.code] || TARIFS['carr.sol.std']; // fallback
-            return { code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu, puBase: t.pu };
+            const base = TARIFS[l.code] || { pu: l.pu }; // fallback si code inconnu
+            return { code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu, puBase: base.pu };
         });
+    } else {
+        DEV_LIGNES = [];
     }
 
     return `
@@ -545,7 +564,10 @@ function viewNouveauDevis() {
                 <label>Client</label>
                 <select class="inp" id="d-client" ${isEdit ? 'disabled' : ''}>
                     <option value="">-- Choisir --</option>
-                    ${d.clients.map(c => `<option value="${c.id}" ${c.id === CURRENT_ID || (isEdit && c.id === d.devis.find(x=>x.id===CURRENT_ID).clientId) ? 'selected' : ''}>${c.nom}</option>`).join('')}
+                    ${d.clients.map(c => {
+                        let sel = (c.id === CURRENT_ID || (isEdit && c.id === dev.clientId)) ? 'selected' : '';
+                        return `<option value="${c.id}" ${sel}>${c.nom}</option>`;
+                    }).join('')}
                 </select>
             </div>
             ${!isEdit ? `
@@ -558,6 +580,9 @@ function viewNouveauDevis() {
         </div>
     `;
 }
+
+// On appelle renderLines() après avoir injecté le HTML pour que le conteneur existe
+function afterRenderFormDevis() { renderLines(); }
 
 function parseIA() {
     const t = document.getElementById('ia-text').value.toLowerCase();
@@ -617,7 +642,7 @@ function renderLines() {
             <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (10%)</span><span>${eur(tva)}</span></div>
             <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(totalTTC)}</span></div>
         </div>
-        <button class="btn" style="margin-top:24px;" onclick="saveDevis('${STACK[STACK.length - 1].page === 'edit-devis' ? 'edit' : 'new'}')">Enregistrer</button>
+        <button class="btn" style="margin-top:24px;" onclick="saveDevis()">Enregistrer</button>
     `;
     cont.innerHTML = html;
 }
@@ -637,10 +662,12 @@ function resetLine(i) {
     renderLines();
 }
 
-function saveDevis(mode) {
+function saveDevis() {
     let cid;
-    if (mode === 'edit') {
-        const d = getData(); cid = d.devis.find(x => x.id === CURRENT_ID).clientId;
+    const d = getData();
+    
+    if (CURRENT_MODE === 'edit') {
+        cid = d.devis.find(x => x.id === CURRENT_ID).clientId;
     } else {
         cid = document.getElementById('d-client').value;
     }
@@ -649,16 +676,16 @@ function saveDevis(mode) {
     let totalHT = 0; DEV_LIGNES.forEach(l => totalHT += l.q * l.pu);
     const aleas = totalHT * (SETTINGS.aleas / 100); const totalHTF = totalHT + aleas;
     const tva = totalHTF * 0.10; const ttc = totalHTF + tva;
-
-    const d = getData(); const c = d.clients.find(x => x.id === cid);
+    const c = d.clients.find(x => x.id === cid);
     
-    if (mode === 'edit') {
+    if (CURRENT_MODE === 'edit') {
         const idx = d.devis.findIndex(x => x.id === CURRENT_ID);
         if (idx > -1) {
             d.devis[idx].lignes = DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu }));
             d.devis[idx].aleas = aleas; d.devis[idx].totalHT = totalHTF; d.devis[idx].tva = tva; d.devis[idx].totalTTC = ttc;
         }
-        saveData(d); toast("Devis mis à jour"); go('detail-devis', CURRENT_ID);
+        saveData(d); toast("Devis mis à jour"); 
+        go('detail-devis', CURRENT_ID, 'view');
     } else {
         d.cpt.d++; const id = 'DEV-' + new Date().getFullYear() + '-' + String(d.cpt.d).padStart(4, '0');
         d.devis.push({
@@ -666,7 +693,8 @@ function saveDevis(mode) {
             lignes: DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu })),
             aleas, totalHT: totalHTF, tva, totalTTC: ttc
         });
-        saveData(d); toast("Devis enregistré"); go('detail-devis', id);
+        saveData(d); toast("Devis enregistré"); 
+        go('detail-devis', id, 'view');
     }
 }
 
@@ -697,9 +725,9 @@ function viewDetailDevis() {
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
                 <button class="btn" onclick="genPDF('${dev.id}')">Générer le PDF</button>
                 <button class="btn btn-ghost" onclick="sendMail('${dev.id}')">Envoyer par Email</button>
-                ${dev.statut !== 'accepte' ? `<button class="btn btn-ghost" style="color:var(--success); border-color:var(--success);" onclick="acceptDevis('${dev.id}')">Marquer comme Accepté</button>` : ''}
+                ${dev.statut !== 'accepte' ? `<button class="btn btn-success" onclick="acceptDevis('${dev.id}')">Marquer comme Accepté</button>` : ''}
                 <div class="row-2" style="margin-top:12px;">
-                    <button class="btn btn-ghost" onclick="go('edit-devis', '${dev.id}')">Modifier</button>
+                    <button class="btn btn-ghost" onclick="go('nouveau-devis', '${dev.id}', 'edit')">Modifier</button>
                     <button class="btn btn-ghost btn-danger" onclick="delDevis('${dev.id}')">Supprimer</button>
                 </div>
             </div>
@@ -771,6 +799,17 @@ function execMail(id) {
     }
 }
 
+// Correction d'un bug de rendu pour les lignes du devis en édition
+const originalRender = render;
+render = function() {
+    originalRender();
+    if (STACK[STACK.length - 1].page === 'nouveau-devis' && STACK[STACK.length - 1].mode === 'edit') {
+        // On s'assure que les lignes sont affichées après l'édition
+        setTimeout(() => renderLines(), 10);
+    }
+}
+
+// Init
 home();
 </script>
 </body>
