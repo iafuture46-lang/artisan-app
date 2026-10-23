@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArtisanApp</title>
+<style>
+:root{
+  --bg:#f7f8fa;--surface:#fff;--surface-2:#fbfbfc;
+  --border:#e4e7ec;--border-2:#d0d5dd;
+  --text:#101828;--muted:#667085;--muted-2:#98a2b3;
+  --primary:#155eef;--primary-h:#004eeb;--primary-bg:#eff4ff;
+  --green:#067647;--green-bg:#ecfdf3;--green-b:#abefc6;
+  --amber:#b54708;--amber-bg:#fffaeb;--amber-b:#fedf89;
+  --red:#b42318;--red-bg:#fef3f2;--red-b:#fecdca;
+  --gray-bg:#f2f4f7;
+  --sh-xs:0 1px 2px rgba(16,24,40,.05);
+  --sh-md:0 4px 8px -2px rgba(16,24,40,.1);
+  --sh-lg:0 12px 24px -6px rgba(16,24,40,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:var(--primary);text-decoration:none;cursor:pointer}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hdr-brand{display:flex;align-items:center;gap:12px;cursor:pointer}
+.hdr-mark{width:36px;height:36px;background:var(--primary);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.hdr-text h1{font-size:15px;font-weight:700}
+.hdr-text p{font-size:11.5px;color:var(--muted);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:16px}
+.hdr-nav{display:flex;gap:8px}
+.hdr-nav a{font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:6px}
+.hdr-nav a:hover{background:var(--gray-bg);color:var(--text)}
+.hdr-meta{font-size:12px;color:var(--muted)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 80px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:var(--sh-xs)}
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
+.card-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.card-sub{font-size:13px;color:var(--muted)}
+.hero-actions{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:20px}
+.btn-hero{display:flex;align-items:center;gap:16px;background:var(--primary);color:#fff;padding:24px 26px;border-radius:12px;font-weight:600;text-align:left;min-height:88px;transition:all .15s}
+.btn-hero:hover{background:var(--primary-h);transform:translateY(-1px)}
+.btn-hero .hi{width:48px;height:48px;background:rgba(255,255,255,.18);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.btn-hero h3{font-size:17px;font-weight:700;margin-bottom:2px}
+.btn-hero p{font-size:12.5px;opacity:.85;font-weight:400}
+.btn-hero-2{display:flex;align-items:center;gap:14px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:24px;border-radius:12px;text-align:left;min-height:88px;transition:all .15s}
+.btn-hero-2:hover{border-color:var(--primary);background:var(--primary-bg)}
+.btn-hero-2 .hi{width:44px;height:44px;background:var(--primary-bg);color:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.btn-hero-2 h3{font-size:14.5px;font-weight:700}
+.btn-hero-2 p{font-size:11.5px;color:var(--muted)}
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.kpi{padding:16px 20px;border-right:1px solid var(--border);cursor:pointer}
+.kpi:last-child{border-right:none}
+.kpi:hover{background:var(--surface-2)}
+.kpi .lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.kpi .val{font-size:22px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.kpi .val.pos{color:var(--green)}
+.kpi .val.warn{color:var(--amber)}
+.kpi .sub{font-size:11px;color:var(--muted-2);margin-top:2px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.field .req{color:var(--red);margin-left:2px}
+.inp{width:100%;padding:10px 12px;font-size:14px;background:var(--surface);border:1px solid var(--border-2);border-radius:8px;transition:all .12s;outline:none}
+.inp:hover{border-color:#98a2b3}
+.inp:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(21,94,239,.12)}
+textarea.inp{resize:vertical;min-height:80px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:8px;font-size:13.5px;font-weight:600;background:var(--primary);color:#fff;transition:all .12s}
+.btn:hover{background:var(--primary-h)}
+.btn:disabled{background:var(--gray-bg);color:var(--muted-2);cursor:not-allowed}
+.btn-block{width:100%;padding:14px 20px;font-size:14px}
+.btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--border-2)}
+.btn-ghost:hover{background:var(--gray-bg)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-danger{background:var(--red)}
+.btn-danger:hover{background:#912018}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:16px;padding:6px 10px;border-radius:6px}
+.back-btn:hover{background:var(--gray-bg);color:var(--text)}
+.list-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.list-row:last-child{border-bottom:none}
+.list-row:hover{background:var(--surface-2)}
+.list-avatar{width:38px;height:38px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#155eef,#004eeb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.list-body{flex:1;min-width:0}
+.list-title{font-size:13.5px;font-weight:600;margin-bottom:1px}
+.list-sub{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-right{font-size:13px;font-weight:600;text-align:right;flex-shrink:0}
+.list-right .sub{font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.list-row-chev{color:var(--muted-2);font-size:18px;flex-shrink:0}
+.tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl th{text-align:left;padding:9px 14px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--border)}
+.tbl th.num{text-align:right}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--surface-2)}
+.tbl td.num{text-align:right;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.tbl td.mono{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:600}
+.bdg.ok,.bdg.accepted{background:var(--green-bg);color:var(--green)}
+.bdg.warn,.bdg.sent{background:var(--amber-bg);color:var(--amber)}
+.bdg.draft{background:var(--gray-bg);color:var(--muted)}
+.bdg.refused{background:var(--red-bg);color:var(--red)}
+.ai-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:20px}
+.ai-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.ai-icon{width:40px;height:40px;background:linear-gradient(135deg,#155eef,#004eeb);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ai-head-txt h2{font-size:15px;font-weight:700;margin-bottom:2px}
+.ai-head-txt p{font-size:12.5px;color:var(--muted)}
+.ai-input-row{display:flex;gap:10px}
+.ai-input-row .inp{flex:1}
+.analyse-box{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-top:14px}
+.analyse-section{margin-bottom:14px}
+.analyse-section:last-child{margin-bottom:0}
+.analyse-section h4{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.analyse-fact{display:flex;align-items:baseline;gap:8px;padding:3px 0;font-size:13px}
+.analyse-fact .dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.analyse-fact .dot.fact{background:var(--green)}
+.analyse-fact .dot.calc{background:var(--primary)}
+.analyse-fact .v{font-weight:600}
+.analyse-fact .lbl{color:var(--muted)}
+.q-box{background:var(--amber-bg);border:1px solid var(--amber-b);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.q-box h3{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:12px}
+.q-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.q-item:last-child{margin-bottom:0}
+.q-item .q-txt{font-size:13px;font-weight:500;margin-bottom:8px}
+.q-item .q-opts{display:flex;flex-wrap:wrap;gap:6px}
+.q-opt{padding:6px 12px;border:1px solid var(--border-2);border-radius:20px;background:var(--surface);font-size:12.5px;font-weight:500}
+.q-opt:hover{border-color:var(--primary);color:var(--primary)}
+.q-opt.selected{background:var(--primary);border-color:var(--primary);color:#fff}
+.q-opt.skip{color:var(--muted);border-style:dashed}
+.section-label{font-size:13px;font-weight:700;margin:20px 0 8px;display:flex;align-items:center;gap:8px}
+.section-label .bdg-pill{padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600}
+.section-label.demande .bdg-pill{background:var(--green-bg);color:var(--green)}
+.section-label.aConfirmer .bdg-pill{background:var(--amber-bg);color:var(--amber)}
+.section-label.option .bdg-pill{background:var(--primary-bg);color:var(--primary)}
+.lines-table{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:4px}
+.lines-table table{width:100%;border-collapse:collapse}
+.lines-table th{text-align:left;padding:10px 12px;font-size:10.5px;font-weight:600;text-transform:uppercase;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--border)}
+.lines-table th.num{text-align:right}
+.lines-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:top}
+.lines-table tr:last-child td{border-bottom:none}
+.lines-table input{width:100%;border:1px solid transparent;background:transparent;padding:4px 6px;border-radius:5px;font-size:13px}
+.lines-table input:hover{border-color:var(--border)}
+.lines-table input:focus{outline:none;border-color:var(--primary);background:#fff}
+.lines-table td.num{text-align:right;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.lines-table td.motif{font-size:11px;color:var(--muted);font-style:italic;padding-top:2px}
+.src-badge{display:inline-block;background:var(--gray-bg);color:var(--muted);font-size:10px;padding:1px 5px;border-radius:3px;margin-left:4px;cursor:help}
+.totaux{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:16px}
+.totaux .tr{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}
+.totaux .tr .v{font-family:ui-monospace,Consolas,monospace;font-weight:500}
+.totaux .tr.sub{color:var(--muted);font-size:13px}
+.totaux .tr.total{font-weight:700;font-size:20px;border-top:1px solid var(--border);padding-top:12px;margin-top:8px;color:var(--primary)}
+.banner{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;border:1px solid;display:flex;gap:10px}
+.banner.warn{background:var(--amber-bg);border-color:var(--amber-b);color:var(--amber)}
+.banner.err{background:var(--red-bg);border-color:var(--red-b);color:var(--red)}
+.banner.ok{background:var(--green-bg);border-color:var(--green-b);color:var(--green)}
+.banner.info{background:var(--primary-bg);border-color:#b2ccff;color:#003eb3}
+.empty{padding:40px 20px;text-align:center;color:var(--muted-2);font-style:italic;font-size:13px}
+.success-wrap{max-width:640px;margin:40px auto;text-align:center}
+.success-check{width:72px;height:72px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;font-weight:300}
+.success-wrap h1{font-size:22px;font-weight:700;margin-bottom:8px}
+.success-wrap p{color:var(--muted);margin-bottom:24px;font-size:14px}
+#toast{position:fixed;top:20px;right:20px;z-index:1000;background:var(--text);color:#fff;padding:12px 18px;border-radius:10px;font-size:13.5px;font-weight:500;box-shadow:var(--sh-lg);opacity:0;transform:translateY(-10px);transition:all .2s;pointer-events:none;max-width:340px}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.ok{background:var(--green)}
+#toast.err{background:var(--red)}
+#error-banner{position:fixed;bottom:20px;left:20px;right:20px;max-width:600px;margin:0 auto;background:var(--red);color:#fff;padding:14px 18px;border-radius:10px;font-size:13px;box-shadow:var(--sh-lg);display:none;z-index:1001;cursor:pointer}
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .15s;pointer-events:none}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{background:var(--surface);border-radius:12px;padding:24px;max-width:440px;width:100%;box-shadow:var(--sh-lg)}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--muted);font-size:13.5px;margin-bottom:20px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+@media (max-width:720px){
+  .hdr{padding:12px 16px}
+  .hdr-nav{display:none}
+  .wrap{padding:16px 14px 60px}
+  .hero-actions{grid-template-columns:1fr}
+  .row-2,.row-3{grid-template-columns:1fr}
+  .card{padding:18px 16px}
+  .ai-input-row{flex-direction:column}
+  .lines-table th,.lines-table td{padding:8px 6px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-brand" onclick="retourAccueil()">
+    <div class="hdr-mark">A</div>
+    <div class="hdr-text">
+      <h1>ArtisanApp</h1>
+      <p>Le copilote des artisans</p>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <nav class="hdr-nav">
+      <a onclick="retourAccueil()">Tableau de bord</a>
+      <a onclick="naviguer('liste-clients')">Clients</a>
+      <a onclick="naviguer('liste-devis')">Devis</a>
+    </nav>
+    <div class="hdr-meta" id="hdr-date"></div>
+  </div>
+</header>
+
+<div id="toast"></div>
+<div id="error-banner" onclick="this.style.display='none'"></div>
+<div class="modal-overlay" id="modal-overlay"></div>
+<div class="wrap" id="root"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   ARTISANAPP V3 — Le copilote des artisans
+   Fichier unique. Aucune dépendance. localStorage.
+   ═══════════════════════════════════════════════════════════════════ */
+
+window.addEventListener('error', function(e){
+  var el = document.getElementById('error-banner');
+  if (el) {
+    el.textContent = 'Erreur : ' + (e.message || 'inconnue') + ' — cliquez pour masquer';
+    el.style.display = 'block';
+  }
+  console.error(e);
+});
+
+/* ─── Configuration ─── */
+var DEFAULT_CONFIG = { tauxHoraireInterne: 25, fraisGenerauxPct: 15, zone: 'province' };
+var ZONES = {
+  paris:        { label:'Paris (75)',      coeff:1.25 },
+  idf:          { label:'Ile-de-France',   coeff:1.15 },
+  grande_ville: { label:'Grande ville',    coeff:1.08 },
+  province:     { label:'Province',        coeff:1.00 },
+  rural:        { label:'Rural',           coeff:0.95 }
+};
+function chargerConfig() {
+  try {
+    var raw = localStorage.getItem('artisanapp_config');
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+    var c = JSON.parse(raw);
+    for (var k in DEFAULT_CONFIG) if (c[k] === undefined) c[k] = DEFAULT_CONFIG[k];
+    return c;
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_CONFIG)); }
+}
+function sauverConfig(c) { try { localStorage.setItem('artisanapp_config', JSON.stringify(c)); } catch(e) {} }
+var CONFIG = chargerConfig();
+
+/* ─── Base tarifaire ─── */
+var TARIFS = { postes: {
+  'elec.prise.neuve':{d:'Pose prise 16A neuve',u:'u',pu:85,partF:0.15,tempsH:0.6,src:'interne',dateRef:'2025-10'},
+  'elec.prise.rempl':{d:'Remplacement prise existante',u:'u',pu:45,partF:0.20,tempsH:0.4,src:'interne',dateRef:'2025-10'},
+  'elec.interrupteur':{d:'Pose interrupteur / va-et-vient',u:'u',pu:75,partF:0.18,tempsH:0.5,src:'interne',dateRef:'2025-10'},
+  'elec.cable.ml':{d:'Cable sous gaine ICTA',u:'ml',pu:14,partF:0.50,tempsH:0.08,src:'interne',dateRef:'2025-10'},
+  'elec.disj.16A':{d:'Disjoncteur 16A fourni et pose',u:'u',pu:65,partF:0.40,tempsH:0.3,src:'interne',dateRef:'2025-10'},
+  'elec.tableau.depose':{d:'Depose ancien tableau electrique',u:'forfait',pu:180,partF:0,tempsH:2,src:'interne',dateRef:'2025-10'},
+  'elec.tableau.neuf':{d:'Fourniture et pose tableau electrique',u:'forfait',pu:1100,partF:0.55,tempsH:6,src:'interne',dateRef:'2025-10'},
+  'elec.consuel':{d:'Essais et attestation Consuel',u:'forfait',pu:280,partF:0,tempsH:2,src:'interne',dateRef:'2025-10'},
+  'elec.diagnostic':{d:'Diagnostic tableau existant',u:'forfait',pu:120,partF:0,tempsH:1.5,src:'interne',dateRef:'2025-10'},
+  'plomb.fuite':{d:'Recherche et reparation de fuite',u:'forfait',pu:280,partF:0.15,tempsH:2,src:'interne',dateRef:'2025-10'},
+  'plomb.robinet':{d:'Remplacement robinet',u:'u',pu:135,partF:0.35,tempsH:1,src:'interne',dateRef:'2025-10'},
+  'plomb.chauffeEau':{d:'Fourniture et pose chauffe-eau 200L',u:'u',pu:1450,partF:0.55,tempsH:3,src:'interne',dateRef:'2025-10'},
+  'plomb.wc':{d:'Fourniture et pose WC complet',u:'u',pu:650,partF:0.55,tempsH:2.5,src:'interne',dateRef:'2025-10'},
+  'peint.mur.2c':{d:'Peinture murs 2 couches',u:'m2',pu:18,partF:0.25,tempsH:0.15,src:'interne',dateRef:'2025-10'},
+  'peint.plafond.2c':{d:'Peinture plafond 2 couches',u:'m2',pu:22,partF:0.25,tempsH:0.18,src:'interne',dateRef:'2025-10'},
+  'peint.prep.simple':{d:'Preparation simple (rebouchage, poncage)',u:'m2',pu:6,partF:0.10,tempsH:0.08,src:'interne',dateRef:'2025-10'},
+  'peint.prep.lourde':{d:'Preparation lourde (enduit, ratissage)',u:'m2',pu:18,partF:0.15,tempsH:0.25,src:'interne',dateRef:'2025-10'},
+  'peint.protection':{d:'Protection sols et mobilier',u:'forfait',pu:80,partF:0.30,tempsH:1,src:'interne',dateRef:'2025-10'},
+  'mac.fondation':{d:'Fondation semelle filante beton arme',u:'ml',pu:95,partF:0.35,tempsH:0.8,src:'interne',dateRef:'2025-10'},
+  'mac.mur.parpaing.20':{d:'Elevation mur parpaing 20cm',u:'m2',pu:75,partF:0.40,tempsH:0.5,src:'interne',dateRef:'2025-10'},
+  'mac.mur.brique':{d:'Elevation mur brique',u:'m2',pu:95,partF:0.45,tempsH:0.55,src:'interne',dateRef:'2025-10'},
+  'mac.mur.pierre':{d:'Elevation mur pierre',u:'m2',pu:220,partF:0.35,tempsH:1.8,src:'interne',dateRef:'2025-10'},
+  'mac.chainage':{d:'Chainage horizontal beton arme',u:'ml',pu:65,partF:0.35,tempsH:0.4,src:'interne',dateRef:'2025-10'},
+  'mac.enduit.1face':{d:'Enduit exterieur 1 face',u:'m2',pu:32,partF:0.25,tempsH:0.25,src:'interne',dateRef:'2025-10'},
+  'mac.enduit.2faces':{d:'Enduit exterieur 2 faces',u:'m2',pu:58,partF:0.25,tempsH:0.45,src:'interne',dateRef:'2025-10'},
+  'mac.couronnement':{d:'Couronnement / chaperon de mur',u:'ml',pu:45,partF:0.35,tempsH:0.25,src:'interne',dateRef:'2025-10'},
+  'mac.dalle.beton':{d:'Dalle beton arme',u:'m2',pu:85,partF:0.45,tempsH:0.6,src:'interne',dateRef:'2025-10'},
+  'mac.evacuation':{d:'Evacuation des gravats',u:'forfait',pu:320,partF:0,tempsH:3,src:'interne',dateRef:'2025-10'},
+  'carr.sol.pose':{d:'Pose carrelage sol',u:'m2',pu:55,partF:0.35,tempsH:0.5,src:'interne',dateRef:'2025-10'},
+  'carr.prep.support':{d:'Preparation support (ragreage)',u:'m2',pu:16,partF:0.30,tempsH:0.15,src:'interne',dateRef:'2025-10'},
+  'carr.depose':{d:'Depose carrelage existant',u:'m2',pu:22,partF:0,tempsH:0.3,src:'interne',dateRef:'2025-10'},
+  'carr.etancheite':{d:'Etancheite liquide sous carrelage',u:'m2',pu:28,partF:0.35,tempsH:0.15,src:'interne',dateRef:'2025-10'},
+  'placo.ossature':{d:'Ossature metallique',u:'m2',pu:22,partF:0.35,tempsH:0.15,src:'interne',dateRef:'2025-10'},
+  'placo.ba13':{d:'Pose plaque BA13',u:'m2',pu:28,partF:0.40,tempsH:0.18,src:'interne',dateRef:'2025-10'},
+  'placo.bande.enduit':{d:'Bandes et enduit',u:'m2',pu:14,partF:0.20,tempsH:0.12,src:'interne',dateRef:'2025-10'},
+  'placo.finition':{d:'Finition N2 (poncage)',u:'m2',pu:6,partF:0.10,tempsH:0.06,src:'interne',dateRef:'2025-10'},
+  'men.depose.ouvrant':{d:'Depose ancien ouvrant',u:'u',pu:85,partF:0,tempsH:1,src:'interne',dateRef:'2025-10'},
+  'men.porte.interieure':{d:'Fourniture et pose porte interieure',u:'u',pu:390,partF:0.55,tempsH:2,src:'interne',dateRef:'2025-10'},
+  'men.fenetre.alu':{d:'Fourniture et pose fenetre alu DV',u:'u',pu:750,partF:0.65,tempsH:3,src:'interne',dateRef:'2025-10'},
+  'men.volet.roulant':{d:'Fourniture et pose volet roulant',u:'u',pu:450,partF:0.60,tempsH:2,src:'interne',dateRef:'2025-10'},
+  'toit.depose':{d:'Depose couverture existante',u:'m2',pu:25,partF:0,tempsH:0.25,src:'interne',dateRef:'2025-10'},
+  'toit.tuile.pose':{d:'Pose couverture tuiles',u:'m2',pu:85,partF:0.45,tempsH:0.5,src:'interne',dateRef:'2025-10'},
+  'toit.ardoise.pose':{d:'Pose couverture ardoises',u:'m2',pu:120,partF:0.45,tempsH:0.7,src:'interne',dateRef:'2025-10'},
+  'sdb.depose.carrelage':{d:'Depose carrelage existant',u:'m2',pu:22,partF:0,tempsH:0.3,src:'interne',dateRef:'2025-10'},
+  'sdb.depose.sanitaires':{d:'Depose sanitaires existants',u:'forfait',pu:180,partF:0,tempsH:2,src:'interne',dateRef:'2025-10'},
+  'sdb.plomberie':{d:'Plomberie alimentation et evacuation',u:'forfait',pu:850,partF:0.30,tempsH:8,src:'interne',dateRef:'2025-10'},
+  'sdb.etancheite':{d:'Etancheite sous carrelage (SPEC)',u:'m2',pu:32,partF:0.30,tempsH:0.15,src:'interne',dateRef:'2025-10'},
+  'sdb.faience':{d:'Pose faience murale',u:'m2',pu:62,partF:0.35,tempsH:0.6,src:'interne',dateRef:'2025-10'},
+  'sdb.carrelage.sol':{d:'Pose carrelage sol',u:'m2',pu:58,partF:0.35,tempsH:0.5,src:'interne',dateRef:'2025-10'},
+  'sdb.sanitaires':{d:'Fourniture et pose sanitaires',u:'forfait',pu:1400,partF:0.60,tempsH:5,src:'interne',dateRef:'2025-10'},
+  'sdb.peinture.plafond':{d:'Peinture plafond',u:'m2',pu:22,partF:0.25,tempsH:0.18,src:'interne',dateRef:'2025-10'},
+  'cuis.depose':{d:'Depose ancienne cuisine',u:'forfait',pu:450,partF:0,tempsH:5,src:'interne',dateRef:'2025-10'},
+  'cuis.plomberie':{d:'Plomberie et evacuation',u:'forfait',pu:650,partF:0.30,tempsH:6,src:'interne',dateRef:'2025-10'},
+  'cuis.elec':{d:'Electricite et prises',u:'forfait',pu:750,partF:0.30,tempsH:6,src:'interne',dateRef:'2025-10'},
+  'cuis.pose.meubles':{d:'Pose mobilier cuisine',u:'forfait',pu:950,partF:0.10,tempsH:10,src:'interne',dateRef:'2025-10'},
+  'terr.prep':{d:'Preparation et terrassement',u:'m2',pu:28,partF:0,tempsH:0.3,src:'interne',dateRef:'2025-10'},
+  'terr.lambourdes':{d:'Structure et lambourdes',u:'m2',pu:45,partF:0.45,tempsH:0.35,src:'interne',dateRef:'2025-10'},
+  'terr.lames.bois':{d:'Pose lames terrasse bois',u:'m2',pu:75,partF:0.60,tempsH:0.4,src:'interne',dateRef:'2025-10'},
+  'terr.lames.composite':{d:'Pose lames terrasse composite',u:'m2',pu:110,partF:0.65,tempsH:0.45,src:'interne',dateRef:'2025-10'},
+  'iso.combles':{d:'Isolation combles',u:'m2',pu:25,partF:0.55,tempsH:0.15,src:'interne',dateRef:'2025-10'},
+  'iso.mur.interieur':{d:'Isolation mur par l interieur',u:'m2',pu:32,partF:0.50,tempsH:0.2,src:'interne',dateRef:'2025-10'}
+}};
+
+/* ─── Normalisation ─── */
+function normaliser(s) {
+  if (!s) return '';
+  return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+
+/* ─── Métiers ─── */
+var METIERS_MOTS = {
+  electricite: ['electricite','prise','interrupteur','disjoncteur','tableau','cable','terre','consuel','coffret'],
+  plomberie: ['plomberie','plombier','fuite','chauffe-eau','robinet','wc','toilette','evier','douche','baignoire'],
+  peinture: ['peinture','peindre','repeindre','peint','plafond','enduit','sous-couche','lessivage'],
+  maconnerie: ['maconnerie','mur','parpaing','agglo','brique','pierre','dalle','fondation','terrassement','chape','chainage','cloture','muret'],
+  carrelage: ['carrelage','faience','plinthe','ragreage'],
+  plaquiste: ['placo','plaquiste','ba13','cloison','doublage','faux plafond'],
+  menuiserie: ['menuiserie','porte','fenetre','volet','placard'],
+  toiture: ['toiture','toit','tuile','ardoise','couverture','charpente','gouttiere'],
+  sdb: ['salle de bain','sdb','salle d eau','vasque','sanitaire'],
+  cuisine: ['cuisine','plan de travail','meuble','hotte'],
+  isolation: ['isolation','isolant','laine de verre'],
+  terrasse: ['terrasse','lame','composite','lambourde']
+};
+
+/* ─── Parser ─── */
+function parserDescription(texte) {
+  var raw = texte;
+  var t = ' ' + normaliser(texte).replace(/,/g, '.') + ' ';
+  var r = { brut:raw, metier:null, longueur:null, hauteur:null, surface:null,
+            distanceEquipement:null, quantiteEquipement:null, materiau:null,
+            exclusions:[], motsInclus:[], nouvelles:false, remplacement:false };
+  var m;
+
+  var reLong = /(\d+(?:\.\d+)?)\s*(?:metres?|m(?![\w])|ml|lineaire)\s*(?:de\s+long)?/gi;
+  while ((m = reLong.exec(t)) !== null) {
+    var v = parseFloat(m[1]);
+    if (v > 0 && v < 500) {
+      if (/a\s*$/.test(t.substring(Math.max(0, m.index - 8), m.index))) continue;
+      if (r.longueur === null || v > r.longueur) r.longueur = v;
+    }
+  }
+
+  var reH = /(?:hauteur\s*(?:de\s*)?(\d+(?:\.\d+)?)|(\d+(?:\.\d+)?)\s*(?:metres?|m)?\s*(?:de\s+)?(?:haut(?:eur)?))/gi;
+  while ((m = reH.exec(t)) !== null) {
+    var vh = parseFloat(m[1] || m[2]);
+    if (vh > 0 && vh < 15) { r.hauteur = vh; break; }
+  }
+
+  var reS = /(\d+(?:\.\d+)?)\s*m\s*[²2]/gi;
+  while ((m = reS.exec(t)) !== null) {
+    var vs = parseFloat(m[1]);
+    if (vs > 0) { r.surface = vs; break; }
+  }
+
+  var reD = /a\s*(\d+(?:\.\d+)?)\s*(metres?|m|cm)\s*(?:du|de\s+la|de\s+l|des|de)\s+(\w+)/i;
+  m = reD.exec(t);
+  if (m) {
+    var dv = parseFloat(m[1]);
+    if (m[2] === 'cm') dv /= 100;
+    r.distanceEquipement = { val:dv, cible:m[3] };
+  }
+
+  var reQ = /(\d+)\s+(prises?|interrupteurs?|disjoncteurs?|spots?|radiateurs?|fenetres?|portes?|volets?|wc|toilettes?|eviers?|robinets?|luminaires?)/gi;
+  m = reQ.exec(t);
+  if (m) r.quantiteEquipement = { val:parseInt(m[1]), type:m[2].toLowerCase() };
+
+  if (/\bparpaings?\b|\bagglos?\b/.test(t)) r.materiau = 'parpaing';
+  else if (/\bbriques?\b/.test(t)) r.materiau = 'brique';
+  else if (/\bpierres?\b/.test(t)) r.materiau = 'pierre';
+
+  if (/\bfourni(e?s?)?\s*(et\s*)?pose/.test(t) || /\bfourniture\s+et\s+pose\b/.test(t)) r.motsInclus.push('fourniture_et_pose');
+  if (/\bpose\s+seule?\b/.test(t)) r.motsInclus.push('pose_seule');
+
+  if (/\bremplacement\b/.test(t) || /\bremplacer\b/.test(t)) r.remplacement = true;
+  if (/\bneuf(ve)?s?\b/.test(t) || /\bcreation\b/.test(t)) r.nouvelles = true;
+
+  var reEx = /\b(?:sans|hors|exclu(?:re|ant)?|pas\s+de|ne\s+pas)\s+([^.,;!?]+)/gi;
+  while ((m = reEx.exec(t)) !== null) r.exclusions.push(m[1].trim());
+
+  var scores = {};
+  for (var k in METIERS_MOTS) {
+    var sc = 0;
+    for (var i = 0; i < METIERS_MOTS[k].length; i++) if (t.indexOf(METIERS_MOTS[k][i]) !== -1) sc += METIERS_MOTS[k][i].length;
+    if (sc > 0) scores[k] = sc;
+  }
+  var best = null, bestSc = 0;
+  for (var kk in scores) if (scores[kk] > bestSc) { bestSc = scores[kk]; best = kk; }
+  r.metier = best;
+  return r;
+}
+
+/* ─── Questions ─── */
+function genererQuestions(parsed, metier) {
+  var qs = [];
+  var t = normaliser(parsed.brut);
+
+  if (!parsed.motsInclus.length) {
+    qs.push({ id:'fourniture', texte:'Qui fournit les materiaux principaux ?',
+      options:[{v:'fourniture_et_pose',label:'Fourniture + pose (par vous)'},{v:'pose_seule',label:'Pose seule (client fournit)'}] });
+  }
+  if (metier === 'electricite') {
+    if (parsed.quantiteEquipement && /prise|interrupteur|disjoncteur/.test(parsed.quantiteEquipement.type)) {
+      qs.push({ id:'elec.type', texte:'Les ' + parsed.quantiteEquipement.val + ' ' + parsed.quantiteEquipement.type + ' sont :',
+        options:[{v:'neuf',label:'Nouvelles (creation)'},{v:'remplacement',label:'En remplacement'}] });
+    }
+    if (parsed.quantiteEquipement || /disjoncteur|circuit/.test(t)) {
+      qs.push({ id:'elec.tableau', texte:'Le tableau existant permet-il d ajouter ces circuits ?',
+        options:[{v:'oui',label:'Oui'},{v:'non',label:'Non, a remplacer'},{v:'inconnu',label:'A verifier'}] });
+    }
+    if (parsed.distanceEquipement) {
+      qs.push({ id:'elec.cheminement', texte:'Le cheminement sur ' + parsed.distanceEquipement.val + ' m est :',
+        options:[{v:'direct',label:'Direct'},{v:'detour',label:'Avec detours'},{v:'inconnu',label:'A verifier'}] });
+    }
+  }
+  if (metier === 'plomberie' && /\bfuite/.test(t)) {
+    qs.push({ id:'plomb.fuite.type', texte:'Type de fuite :',
+      options:[{v:'apparente',label:'Apparente'},{v:'encastree',label:'Encastree'},{v:'inconnue',label:'Inconnue'}] });
+  }
+  if (metier === 'peinture') {
+    qs.push({ id:'peint.etat', texte:'Etat des supports :',
+      options:[{v:'bon',label:'Bon'},{v:'moyen',label:'Moyen'},{v:'mauvais',label:'Mauvais'}] });
+    qs.push({ id:'peint.occupation', texte:'Le logement est-il occupe ?',
+      options:[{v:'vide',label:'Vide'},{v:'occupe',label:'Occupe'}] });
+  }
+  if (metier === 'maconnerie' && /cloture|muret|mur/.test(t)) {
+    qs.push({ id:'mac.fondation', texte:'Des fondations sont-elles necessaires ?',
+      options:[{v:'oui',label:'Oui, a creer'},{v:'existante',label:'Existent deja'},{v:'inconnu',label:'A verifier'}] });
+    qs.push({ id:'mac.finition', texte:'Finition du mur :',
+      options:[{v:'brut',label:'Brut'},{v:'enduit_1',label:'Enduit 1 face'},{v:'enduit_2',label:'Enduit 2 faces'}] });
+    qs.push({ id:'mac.evacuation', texte:'Evacuation des gravats a votre charge ?',
+      options:[{v:'oui',label:'Oui'},{v:'non',label:'Non'},{v:'inconnu',label:'A preciser'}] });
+  }
+  if (metier === 'sdb') {
+    qs.push({ id:'sdb.ampleur', texte:'Ampleur des travaux :',
+      options:[{v:'rajeunissement',label:'Rajeunissement'},{v:'partielle',label:'Partielle'},{v:'complete',label:'Complete'}] });
+    qs.push({ id:'sdb.sanitaires', texte:'Les sanitaires sont :',
+      options:[{v:'conserves',label:'Conserves'},{v:'remplaces',label:'Remplaces'}] });
+  }
+  if (metier === 'carrelage' && !/depose|existant/.test(t)) {
+    qs.push({ id:'carr.depose', texte:'Deposer l ancien carrelage ?',
+      options:[{v:'oui',label:'Oui'},{v:'non',label:'Non'}] });
+  }
+  return qs;
+}
+
+/* ─── Lignes ─── */
+function nouvelleLigne(code, qte, motif, categorie, confiance) {
+  var p = TARIFS.postes[code];
+  if (!p) return null;
+  var valide = (qte !== null && qte !== undefined && !isNaN(qte) && qte > 0);
+  return {
+    code: code, designation: p.d, quantite: valide ? Math.round(qte * 100) / 100 : null,
+    unite: p.u, pu: p.pu, partF: p.partF || 0, tempsH: p.tempsH || 0,
+    motif: motif, categorie: categorie,
+    confiance: confiance || (valide ? 'confirme' : 'a_renseigner'),
+    inclus: valide && categorie === 'demande',
+    src: p.src, dateRef: p.dateRef, _manual: false
+  };
+}
+
+function construireLignes(parsed, metier, reponses, lignesExistantes) {
+  var manuelles = [];
+  if (lignesExistantes && lignesExistantes.length) {
+    lignesExistantes.forEach(function(l){ if (l._manual) manuelles.push(l); });
+  }
+  var lignes = [];
+  var t = normaliser(parsed.brut);
+  var surf = parsed.surface || (parsed.longueur && parsed.hauteur ? parsed.longueur * parsed.hauteur : null);
+  var L = parsed.longueur, H = parsed.hauteur;
+  var poseSeule = reponses.fourniture === 'pose_seule' || parsed.motsInclus.indexOf('pose_seule') !== -1;
+
+  function ajouter(code, qte, motif, categorie, conf) {
+    for (var i = 0; i < manuelles.length; i++) if (manuelles[i].code === code) return;
+    var l = nouvelleLigne(code, qte, motif, categorie, conf);
+    if (!l) return;
+    if (poseSeule && l.partF > 0) {
+      l.pu = Math.round((l.pu * (1 - l.partF * 0.7)) * 100) / 100;
+      l.partF = 0;
+    }
+    lignes.push(l);
+  }
+
+  if (metier === 'electricite') {
+    var qe = parsed.quantiteEquipement;
+    var typeE = reponses['elec.type'] || (parsed.remplacement ? 'remplacement' : (parsed.nouvelles ? 'neuf' : null));
+    if (qe && /prise/.test(qe.type)) {
+      var codeP = typeE === 'remplacement' ? 'elec.prise.rempl' : 'elec.prise.neuve';
+      ajouter(codeP, qe.val, 'Quantite explicite : ' + qe.val, 'demande', 'confirme');
+    } else if (/prise/.test(t) && !qe) {
+      ajouter('elec.prise.neuve', null, 'Prises sans quantite', 'demande', 'a_renseigner');
+    }
+    if (qe && /interrupteur/.test(qe.type)) ajouter('elec.interrupteur', qe.val, 'Quantite explicite', 'demande', 'confirme');
+    if (qe && /disjoncteur/.test(qe.type)) ajouter('elec.disj.16A', qe.val, 'Disjoncteurs demandes', 'demande', 'confirme');
+    if (parsed.distanceEquipement) {
+      var ch = reponses['elec.cheminement'];
+      if (ch === 'direct' || ch === 'detour') {
+        var coeff = ch === 'direct' ? 1 : 1.6;
+        var ml = parsed.distanceEquipement.val * coeff * (qe ? qe.val : 1);
+        ajouter('elec.cable.ml', ml, 'Distance ' + parsed.distanceEquipement.val + ' m x ' + coeff, 'demande', 'hypothese');
+      } else {
+        ajouter('elec.cable.ml', null, 'Cheminement a preciser', 'a_confirmer', 'a_renseigner');
+      }
+    }
+    var tab = reponses['elec.tableau'];
+    if (tab === 'non') {
+      ajouter('elec.tableau.depose', 1, 'Tableau remplace', 'demande', 'confirme');
+      ajouter('elec.tableau.neuf', 1, 'Tableau remplace', 'demande', 'confirme');
+      ajouter('elec.consuel', 1, 'Obligatoire si tableau neuf', 'demande', 'confirme');
+    } else if (tab === 'inconnu') {
+      ajouter('elec.diagnostic', 1, 'Diagnostic necessaire', 'a_confirmer', 'hypothese');
+    }
+  }
+  if (metier === 'plomberie') {
+    if (/\bfuite/.test(t)) {
+      var tf = reponses['plomb.fuite.type'];
+      if (tf === 'apparente' || tf === 'encastree') ajouter('plomb.fuite', 1, 'Fuite ' + tf, 'demande', 'confirme');
+      else ajouter('plomb.fuite', 1, 'Fuite a preciser', 'a_confirmer', 'a_renseigner');
+    }
+    if (/\brobinet/.test(t)) {
+      var qr = parsed.quantiteEquipement;
+      if (qr && /robinet/.test(qr.type)) ajouter('plomb.robinet', qr.val, 'Quantite explicite', 'demande', 'confirme');
+      else ajouter('plomb.robinet', null, 'Nombre a preciser', 'demande', 'a_renseigner');
+    }
+    if (/\bwc\b|\btoilette/.test(t)) ajouter('plomb.wc', null, 'Type a preciser', 'a_confirmer', 'a_renseigner');
+    if (/\bchauffe[- ]?eau/.test(t)) ajouter('plomb.chauffeEau', 1, 'Remplacement chauffe-eau', 'demande', 'confirme');
+  }
+  if (metier === 'peinture') {
+    if (surf === null || surf <= 0) {
+      ajouter('peint.mur.2c', null, 'Surface a renseigner', 'demande', 'a_renseigner');
+    } else {
+      var etat = reponses['peint.etat'];
+      var occupe = reponses['peint.occupation'] === 'occupe';
+      if (occupe) ajouter('peint.protection', 1, 'Logement occupe', 'demande', 'confirme');
+      if (etat === 'mauvais') ajouter('peint.prep.lourde', surf, 'Etat mauvais', 'demande', 'confirme');
+      else if (etat === 'moyen') ajouter('peint.prep.simple', surf, 'Etat moyen', 'demande', 'confirme');
+      else ajouter('peint.prep.simple', surf, 'Etat non precise', 'a_confirmer', 'hypothese');
+      var cibleP = /\bplafond/.test(t);
+      var cibleM = /\bmurs?\b/.test(t);
+      if (cibleP) ajouter('peint.plafond.2c', surf, 'Plafond mentionne', 'demande', 'confirme');
+      if (cibleM && !cibleP) ajouter('peint.mur.2c', surf, 'Murs mentionnes', 'demande', 'confirme');
+      if (!cibleP && !cibleM) ajouter('peint.mur.2c', surf, 'Hypothese murs', 'demande', 'hypothese');
+    }
+  }
+  if (metier === 'maconnerie') {
+    if (/cloture|muret|\bmur\b/.test(t)) {
+      if (L !== null && H !== null) {
+        var S = L * H;
+        var codeM = 'mac.mur.parpaing.20';
+        if (parsed.materiau === 'brique') codeM = 'mac.mur.brique';
+        else if (parsed.materiau === 'pierre') codeM = 'mac.mur.pierre';
+        ajouter(codeM, S, 'Surface = ' + L + ' x ' + H + ' = ' + S.toFixed(2) + ' m2', 'demande', 'confirme');
+      } else {
+        ajouter('mac.mur.parpaing.20', null, 'Dimensions a preciser (L x H)', 'demande', 'a_renseigner');
+      }
+      var fond = reponses['mac.fondation'];
+      if (fond === 'oui') ajouter('mac.fondation', L, 'Fondations a creer', 'demande', 'confirme');
+      else if (fond !== 'existante') ajouter('mac.fondation', L, 'Fondations a confirmer', 'a_confirmer', 'hypothese');
+      ajouter('mac.chainage', L, 'Chainage recommande', 'option', 'hypothese');
+      var fin = reponses['mac.finition'];
+      if (fin === 'enduit_1' && surf) ajouter('mac.enduit.1face', surf, 'Enduit 1 face', 'demande', 'confirme');
+      else if (fin === 'enduit_2' && surf) ajouter('mac.enduit.2faces', surf, 'Enduit 2 faces', 'demande', 'confirme');
+      else if (!fin && surf) ajouter('mac.enduit.2faces', surf, 'Finition non precisee', 'a_confirmer', 'hypothese');
+      ajouter('mac.couronnement', L, 'Couronnement recommande', 'option', 'hypothese');
+      var evac = reponses['mac.evacuation'];
+      if (evac === 'oui') ajouter('mac.evacuation', 1, 'Evacuation confirmee', 'demande', 'confirme');
+      else if (evac !== 'non') ajouter('mac.evacuation', 1, 'Evacuation a confirmer', 'a_confirmer', 'hypothese');
+    }
+    if (/\bdalle\b/.test(t) && surf) ajouter('mac.dalle.beton', surf, 'Surface dalle', 'demande', 'confirme');
+  }
+  if (metier === 'sdb') {
+    var ampl = reponses['sdb.ampleur'];
+    var sanit = reponses['sdb.sanitaires'];
+    var ss = parsed.surface;
+    if (ss === null || ss <= 0) {
+      ajouter('sdb.carrelage.sol', null, 'Surface SDB a preciser', 'demande', 'a_renseigner');
+    } else {
+      if (ampl === 'complete') {
+        ajouter('sdb.depose.sanitaires', 1, 'Renovation complete', 'demande', 'confirme');
+        ajouter('sdb.plomberie', 1, 'Renovation complete', 'demande', 'confirme');
+      }
+      if (ampl === 'complete' || ampl === 'partielle') ajouter('sdb.depose.carrelage', ss, 'Depose carrelage', 'demande', 'confirme');
+      ajouter('sdb.etancheite', ss, 'Etancheite zone humide', 'demande', 'confirme');
+      ajouter('sdb.carrelage.sol', ss, 'Carrelage sol', 'demande', 'confirme');
+      ajouter('sdb.faience', Math.round(ss * 2.5 * 10) / 10, 'Faience estimee (2,5 x sol)', 'demande', 'hypothese');
+      ajouter('sdb.peinture.plafond', ss, 'Peinture plafond', 'demande', 'confirme');
+    }
+    if (sanit === 'remplaces') ajouter('sdb.sanitaires', 1, 'Sanitaires remplaces', 'demande', 'confirme');
+    else if (!sanit) ajouter('sdb.sanitaires', 1, 'Sanitaires a preciser', 'a_confirmer', 'hypothese');
+  }
+  if (metier === 'carrelage') {
+    var sc = parsed.surface;
+    if (sc === null || sc <= 0) ajouter('carr.sol.pose', null, 'Surface a preciser', 'demande', 'a_renseigner');
+    else {
+      if (reponses['carr.depose'] === 'oui') ajouter('carr.depose', sc, 'Depose', 'demande', 'confirme');
+      ajouter('carr.prep.support', sc, 'Preparation', 'demande', 'confirme');
+      ajouter('carr.sol.pose', sc, 'Pose carrelage sol', 'demande', 'confirme');
+    }
+  }
+  if (metier === 'plaquiste') {
+    if (surf) {
+      ajouter('placo.ossature', surf, 'Ossature', 'demande', 'confirme');
+      ajouter('placo.ba13', surf, 'Plaques', 'demande', 'confirme');
+      ajouter('placo.bande.enduit', surf, 'Bandes et enduit', 'demande', 'confirme');
+      ajouter('placo.finition', surf, 'Finition N2', 'demande', 'confirme');
+    } else ajouter('placo.ba13', null, 'Surface a preciser', 'demande', 'a_renseigner');
+  }
+  if (metier === 'menuiserie') {
+    var qm = parsed.quantiteEquipement;
+    var n = qm ? qm.val : null;
+    if (/\bfenetre/.test(t)) {
+      ajouter('men.depose.ouvrant', n, 'Depose', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
+      ajouter('men.fenetre.alu', n, 'Fenetres alu', n ? 'demande' : 'a_confirmer', n ? 'hypothese' : 'a_renseigner');
+    } else if (/\bporte/.test(t)) {
+      ajouter('men.depose.ouvrant', n, 'Depose', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
+      ajouter('men.porte.interieure', n, 'Portes', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
+    } else if (/\bvolet/.test(t)) {
+      ajouter('men.volet.roulant', n, 'Volets', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
+    }
+  }
+  if (metier === 'toiture') {
+    if (surf) {
+      ajouter('toit.depose', surf, 'Depose', 'demande', 'confirme');
+      if (/\bardoise/.test(t)) ajouter('toit.ardoise.pose', surf, 'Couverture ardoise', 'demande', 'confirme');
+      else ajouter('toit.tuile.pose', surf, 'Couverture tuiles', 'demande', 'hypothese');
+    } else ajouter('toit.tuile.pose', null, 'Surface a preciser', 'demande', 'a_renseigner');
+  }
+  if (metier === 'isolation' && surf) {
+    if (/\bcombles/.test(t)) ajouter('iso.combles', surf, 'Combles', 'demande', 'confirme');
+    else ajouter('iso.mur.interieur', surf, 'Isolation interieure', 'demande', 'hypothese');
+  }
+  if (metier === 'terrasse' && surf) {
+    ajouter('terr.prep', surf, 'Preparation', 'demande', 'confirme');
+    ajouter('terr.lambourdes', surf, 'Lambourdes', 'demande', 'confirme');
+    if (/\bcomposite/.test(t)) ajouter('terr.lames.composite', surf, 'Composite', 'demande', 'confirme');
+    else ajouter('terr.lames.bois', surf, 'Bois', 'demande', 'hypothese');
+  }
+  if (metier === 'cuisine') {
+    ajouter('cuis.depose', 1, 'Depose', 'demande', 'confirme');
+    ajouter('cuis.plomberie', 1, 'Plomberie a confirmer', 'a_confirmer', 'hypothese');
+    ajouter('cuis.elec', 1, 'Elec a confirmer', 'a_confirmer', 'hypothese');
+    ajouter('cuis.pose.meubles', 1, 'Pose meubles', 'demande', 'confirme');
+  }
+
+  manuelles.forEach(function(l){ lignes.push(l); });
+  return lignes;
+}
+
+/* ─── Totaux ─── */
+function calculerTotaux(lignes, tvaPct, zone) {
+  var zoneCoeff = ZONES[zone] ? ZONES[zone].coeff : 1;
+  var totalHT = 0, coutF = 0, coutMO = 0, lignesIncl = 0, lignesAvecCout = 0;
+
+  for (var i = 0; i < lignes.length; i++) {
+    var l = lignes[i];
+    if (!l.inclus || l.quantite === null) continue;
+    lignesIncl++;
+    var tot = l.quantite * l.pu * zoneCoeff;
+    totalHT += tot;
+    if (l.partF > 0) coutF += tot * l.partF;
+    if (l.tempsH > 0 && CONFIG.tauxHoraireInterne > 0) coutMO += l.quantite * l.tempsH * CONFIG.tauxHoraireInterne;
+    if (l.partF > 0 || l.tempsH > 0) lignesAvecCout++;
+    else if (l._manual) lignesAvecCout = -9999;
+  }
+
+  var fg = coutMO * (CONFIG.fraisGenerauxPct / 100);
+  var coutRevient = coutF + coutMO + fg;
+  var margeCalc = lignesIncl > 0 && lignesAvecCout === lignesIncl;
+
+  totalHT = Math.round(totalHT * 100) / 100;
+  var mtva = Math.round(totalHT * tvaPct / 100 * 100) / 100;
+  var ttc = Math.round((totalHT + mtva) * 100) / 100;
+
+  var margeB = null, tauxM = null;
+  if (margeCalc) {
+    margeB = Math.round((totalHT - coutRevient) * 100) / 100;
+    tauxM = totalHT > 0 ? Math.round(margeB / totalHT * 1000) / 10 : 0;
+  }
+  return {
+    totalHT: totalHT, montantTVA: mtva, totalTTC: ttc,
+    coutFournitures: Math.round(coutF * 100) / 100,
+    coutMOInterne: Math.round(coutMO * 100) / 100,
+    coutRevient: Math.round(coutRevient * 100) / 100,
+    margeBrute: margeB, tauxMarge: tauxM, margeCalculable: margeCalc,
+    lignesIncluses: lignesIncl, zoneCoeff: zoneCoeff
+  };
+}
+
+/* ─── Storage ─── */
+function charger() {
+  try {
+    var raw = localStorage.getItem('artisanapp');
+    if (!raw) return { clients: [], devis: [], compteurs: { clients: 0, devis: 0 } };
+    var d = JSON.parse(raw);
+    if (!d.clients) d.clients = [];
+    if (!d.devis) d.devis = [];
+    if (!d.compteurs) d.compteurs = { clients: 0, devis: 0 };
+    return d;
+  } catch(e) { return { clients: [], devis: [], compteurs: { clients: 0, devis: 0 } }; }
+}
+function sauver(d) { try { localStorage.setItem('artisanapp', JSON.stringify(d)); } catch(e) { toast('Erreur de sauvegarde', 'err'); } }
+function chargerDraft() { try { var raw = localStorage.getItem('artisanapp_draft'); return raw ? JSON.parse(raw) : null; } catch(e) { return null; } }
+function sauverDraft() {
+  try {
+    if (!DEV_STATE.parsed) { localStorage.removeItem('artisanapp_draft'); return; }
+    localStorage.setItem('artisanapp_draft', JSON.stringify({
+      parsed: DEV_STATE.parsed, metier: DEV_STATE.metier,
+      reponses: DEV_STATE.reponses, lignes: DEV_STATE.lignes,
+      tva: DEV_STATE.tva, clientId: DEV_STATE.clientId, editeId: DEV_STATE.editeId
+    }));
+  } catch(e) {}
+}
+function effacerDraft() { try { localStorage.removeItem('artisanapp_draft'); } catch(e) {} }
+
+/* ─── Helpers ─── */
+function esc(s) { if (s === null || s === undefined) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function eur(n) { if (n === null || n === undefined) return '-'; return (parseFloat(n) || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' EUR'; }
+function dateFr(iso) { try { return new Date(iso).toLocaleDateString('fr-FR'); } catch(e) { return '-'; } }
+function initiales(nom) { if (!nom) return '?'; var p = nom.split(/\s+/).filter(function(x){ return x.length; }); if (!p.length) return '?'; if (p.length === 1) return p[0].substring(0,2).toUpperCase(); return (p[0][0] + p[1][0]).toUpperCase(); }
+var toastTimer = null;
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type === 'err' ? 'err' : (type === 'ok' ? 'ok' : ''));
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.className = ''; }, 3200);
+}
+var MODAL_CB = null;
+function confirmer(titre, message, cbOui, libelleOui) {
+  MODAL_CB = cbOui;
+  var overlay = document.getElementById('modal-overlay');
+  overlay.innerHTML = '<div class="modal"><h3>' + esc(titre) + '</h3><p>' + esc(message) + '</p><div class="modal-actions"><button class="btn btn-ghost" onclick="fermerModal()">Annuler</button><button class="btn btn-danger" onclick="validerModal()">' + esc(libelleOui || 'Confirmer') + '</button></div></div>';
+  overlay.classList.add('show');
+}
+function fermerModal() { document.getElementById('modal-overlay').classList.remove('show'); MODAL_CB = null; }
+function validerModal() { var cb = MODAL_CB; fermerModal(); if (cb) cb(); }
+
+/* ─── Navigation ─── */
+var NAV_STACK = [];
+var NAV_LOCK = false;
+function naviguer(ecran, params, remplacer) {
+  params = params || {};
+  if (remplacer && NAV_STACK.length) NAV_STACK[NAV_STACK.length - 1] = { ecran: ecran, params: params };
+  else NAV_STACK.push({ ecran: ecran, params: params });
+  try { history.pushState({ idx: NAV_STACK.length - 1 }, '', '#' + ecran); } catch(e) {}
+  rendreEcran();
+}
+function retour() { if (NAV_STACK.length > 1) { NAV_STACK.pop(); rendreEcran(); } else retourAccueil(); }
+function retourAccueil() {
+  NAV_STACK = [{ ecran: 'accueil', params: {} }];
+  try { history.replaceState({ idx: 0 }, '', '#accueil'); } catch(e) {}
+  rendreEcran();
+}
+window.addEventListener('popstate', function() { if (NAV_STACK.length > 1) { NAV_STACK.pop(); rendreEcran(); } });
+
+function rendreEcran() {
+  var current = NAV_STACK[NAV_STACK.length - 1];
+  if (!current) { NAV_STACK = [{ ecran: 'accueil', params: {} }]; current = NAV_STACK[0]; }
+  var root = document.getElementById('root');
+  var html = '';
+  try {
+    switch (current.ecran) {
+      case 'accueil':        html = ecranAccueil(); break;
+      case 'nouveau-client': html = ecranNouveauClient(); break;
+      case 'client-cree':    html = ecranClientCree(current.params.clientId); break;
+      case 'client-edit':    html = ecranClientEdit(current.params.clientId); break;
+      case 'fiche-client':   html = ecranFicheClient(current.params.clientId); break;
+      case 'liste-clients':  html = ecranListeClients(current.params.filtre || ''); break;
+      case 'liste-devis':    html = ecranListeDevis(current.params.filtre || ''); break;
+      case 'devis-detail':   html = ecranDevisDetail(current.params.devisId); break;
+      case 'nouveau-devis':  html = ecranNouveauDevis(current.params.clientId); break;
+      case 'devis-edit':     html = ecranDevisEdit(current.params.devisId); break;
+      default:               html = ecranAccueil();
+    }
+  } catch(e) {
+    console.error(e);
+    html = '<div class="banner err">Erreur : ' + esc(e.message) + '</div>' +
+           '<div class="card"><button class="btn" onclick="retourAccueil()">Retour a l accueil</button></div>';
+  }
+  root.innerHTML = html;
+  window.scrollTo(0, 0);
+  setTimeout(function(){ var e = root.querySelector('[autofocus]'); if (e) e.focus(); }, 50);
+}
+
+function boutonRetour(texte) {
+  if (NAV_STACK.length <= 1) return '';
+  return '<button class="back-btn" onclick="retour()">Retour</button>';
+}
+
+/* ─── ACCUEIL ─── */
+function ecranAccueil() {
+  var data = charger();
+  var devis = data.devis;
+  var clients = data.clients;
+  var parStatut = { brouillon: {n:0,m:0}, 'envoye': {n:0,m:0}, 'accepte': {n:0,m:0}, 'refuse': {n:0,m:0} };
+  var caAccepte = 0, caEnAttente = 0;
+  devis.forEach(function(d){
+    var s = d.statut || 'brouillon';
+    var key = s === 'envoye' ? 'envoye' : (s === 'accepte' ? 'accepte' : (s === 'refuse' ? 'refuse' : 'brouillon'));
+    if (!parStatut[key]) parStatut[key] = { n:0, m:0 };
+    parStatut[key].n++;
+    parStatut[key].m += d.totalTTC || 0;
+    if (s === 'accepte') caAccepte += d.totalTTC || 0;
+    if (s === 'envoye') caEnAttente += d.totalTTC || 0;
+  });
+
+  var recent = clients.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); }).slice(0, 4);
+  var recentD = devis.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); }).slice(0, 4);
+  var draft = chargerDraft();
+
+  var html = '';
+
+  if (draft && draft.parsed) {
+    html += '<div class="banner warn">' +
+      '<div style="flex:1"><strong>Devis en cours de saisie</strong><br>' +
+      esc((draft.parsed.brut || '').substring(0, 100)) + (draft.parsed.brut && draft.parsed.brut.length > 100 ? '...' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-shrink:0">' +
+      '<button class="btn btn-ghost btn-sm" onclick="abandonnerDraft()">Abandonner</button>' +
+      '<button class="btn btn-sm" onclick="reprendreDraft()">Reprendre</button>' +
+      '</div></div>';
+  }
+
+  html += '<div class="hero-actions">';
+  html += '<button class="btn-hero" onclick="naviguer(\'nouveau-client\')"><div class="hi">+</div><div><h3>Nouveau client</h3><p>Saisir une fiche en 30 secondes</p></div></button>';
+  html += '<button class="btn-hero-2" onclick="naviguer(\'nouveau-devis\')"><div class="hi">D</div><div><h3>Nouveau devis</h3><p>Chiffrer avec le copilote</p></div></button>';
+  html += '</div>';
+
+  html += '<div class="kpi-strip">';
+  html += '<div class="kpi" onclick="naviguer(\'liste-clients\')"><div class="lbl">Clients</div><div class="val">' + clients.length + '</div><div class="sub">Voir la liste</div></div>';
+  html += '<div class="kpi" onclick="naviguer(\'liste-devis\')"><div class="lbl">Devis</div><div class="val">' + devis.length + '</div><div class="sub">Voir la liste</div></div>';
+  html += '<div class="kpi" onclick="naviguer(\'liste-devis\')"><div class="lbl">Brouillons</div><div class="val warn">' + parStatut.brouillon.n + '</div><div class="sub">A finaliser</div></div>';
+  html += '<div class="kpi" onclick="naviguer(\'liste-devis\')"><div class="lbl">Envoyes</div><div class="val">' + parStatut.envoye.n + '</div><div class="sub">' + eur(caEnAttente) + '</div></div>';
+  html += '<div class="kpi" onclick="naviguer(\'liste-devis\')"><div class="lbl">Acceptes</div><div class="val pos">' + parStatut.accepte.n + '</div><div class="sub">' + eur(caAccepte) + '</div></div>';
+  html += '</div>';
+
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Derniers clients</div><div class="card-sub">Cliquez pour ouvrir</div></div><button class="btn btn-ghost btn-sm" onclick="naviguer(\'liste-clients\')">Tout voir</button></div>';
+  if (!recent.length) html += '<div class="empty">Aucun client enregistre.</div>';
+  else {
+    html += '<div style="margin:-24px;margin-top:0">';
+    recent.forEach(function(c){
+      html += '<div class="list-row" onclick="naviguer(\'fiche-client\', {clientId:\'' + c.id + '\'})">';
+      html += '<div class="list-avatar">' + initiales(c.nom) + '</div>';
+      html += '<div class="list-body"><div class="list-title">' + esc(c.nom) + '</div><div class="list-sub">' + esc(c.ville || '') + (c.tel ? ' / ' + esc(c.tel) : '') + '</div></div>';
+      html += '<div class="list-row-chev">&rsaquo;</div></div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Derniers devis</div><div class="card-sub">Historique</div></div><button class="btn btn-ghost btn-sm" onclick="naviguer(\'liste-devis\')">Tout voir</button></div>';
+  if (!recentD.length) html += '<div class="empty">Aucun devis enregistre.</div>';
+  else {
+    html += '<div style="margin:-24px;margin-top:0">';
+    recentD.forEach(function(d){
+      var cls = d.statut === 'accepte' ? 'accepted' : (d.statut === 'envoye' ? 'sent' : (d.statut === 'refuse' ? 'refused' : 'draft'));
+      html += '<div class="list-row" onclick="naviguer(\'devis-detail\', {devisId:\'' + d.id + '\'})">';
+      html += '<div class="list-avatar">' + esc((d.id || '').substring(4, 7)) + '</div>';
+      html += '<div class="list-body"><div class="list-title">' + esc(d.id) + ' - ' + esc(d.clientNom || '') + '</div><div class="list-sub">' + esc(d.domaine || '') + ' / ' + dateFr(d.dateCreation) + '</div></div>';
+      html += '<div class="list-right"><div>' + eur(d.totalTTC) + '</div><div class="sub"><span class="bdg ' + cls + '">' + esc(d.statut) + '</span></div></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Mes parametres</div><div class="card-sub">Utilises pour le calcul de marge</div></div></div>';
+  html += '<div class="row-3">';
+  html += '<div class="field"><label>Taux horaire interne (EUR/h)</label><input class="inp" type="number" id="cfg-taux" value="' + CONFIG.tauxHoraireInterne + '"></div>';
+  html += '<div class="field"><label>Frais generaux (%)</label><input class="inp" type="number" id="cfg-fg" value="' + CONFIG.fraisGenerauxPct + '"></div>';
+  html += '<div class="field"><label>Zone</label><select class="inp" id="cfg-zone">';
+  for (var k in ZONES) html += '<option value="' + k + '"' + (CONFIG.zone === k ? ' selected' : '') + '>' + ZONES[k].label + ' (x' + ZONES[k].coeff + ')</option>';
+  html += '</select></div></div>';
+  html += '<button class="btn btn-sm" onclick="sauverConfigUI()">Enregistrer</button>';
+  html += '<p style="font-size:11px;color:var(--muted);margin-top:12px;font-style:italic">Ces parametres s appliquent uniquement aux nouveaux devis. Les devis enregistres conservent leurs montants.</p>';
+  html += '</div>';
+
+  return html;
+}
+
+function sauverConfigUI() {
+  CONFIG.tauxHoraireInterne = parseFloat(document.getElementById('cfg-taux').value) || 25;
+  CONFIG.fraisGenerauxPct = parseFloat(document.getElementById('cfg-fg').value) || 15;
+  CONFIG.zone = document.getElementById('cfg-zone').value;
+  sauverConfig(CONFIG);
+  toast('Parametres enregistres', 'ok');
+}
+function reprendreDraft() {
+  var draft = chargerDraft();
+  if (!draft || !draft.parsed) { toast('Aucun brouillon', 'err'); return; }
+  if (draft.editeId) { naviguer('devis-edit', { devisId: draft.editeId }); return; }
+  DEV_STATE = { parsed: draft.parsed, metier: draft.metier, reponses: draft.reponses || {}, lignes: draft.lignes || [], tva: draft.tva || 20, clientId: draft.clientId || null, editeId: null };
+  naviguer('nouveau-devis', { clientId: draft.clientId });
+}
+function abandonnerDraft() {
+  confirmer('Abandonner le brouillon ?', 'Les informations saisies seront perdues.', function() {
+    effacerDraft(); toast('Brouillon efface', 'ok'); rendreEcran();
+  }, 'Abandonner');
+}
+
+/* ─── NOUVEAU CLIENT ─── */
+function ecranNouveauClient() {
+  var html = boutonRetour('Retour');
+  html += '<div class="card" style="max-width:640px;margin:0 auto">';
+  html += '<div class="card-head"><div><div class="card-title">Nouveau client</div><div class="card-sub">Nom et ville obligatoires</div></div></div>';
+  html += '<div class="field"><label>Nom <span class="req">*</span></label><input class="inp" id="c-nom" autofocus placeholder="ex : Mme Dupont"></div>';
+  html += '<div class="row-2"><div class="field"><label>Ville <span class="req">*</span></label><input class="inp" id="c-ville" placeholder="ex : Lyon"></div><div class="field"><label>Code postal</label><input class="inp" id="c-cp" placeholder="ex : 69003"></div></div>';
+  html += '<div class="row-2"><div class="field"><label>Telephone</label><input class="inp" id="c-tel" type="tel"></div><div class="field"><label>Email</label><input class="inp" id="c-email" type="email"></div></div>';
+  html += '<div class="field"><label>Adresse chantier</label><input class="inp" id="c-adresse"></div>';
+  html += '<button class="btn btn-block" id="c-submit" onclick="enregistrerClient()" style="margin-top:12px">Enregistrer</button>';
+  html += '</div>';
+  return html;
+}
+
+function enregistrerClient() {
+  if (NAV_LOCK) return;
+  NAV_LOCK = true;
+  var btn = document.getElementById('c-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enregistrement...'; }
+
+  var nom = (document.getElementById('c-nom').value || '').trim();
+  var ville = (document.getElementById('c-ville').value || '').trim();
+  if (!nom) { toast('Nom obligatoire', 'err'); NAV_LOCK = false; if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; } return; }
+  if (!ville) { toast('Ville obligatoire', 'err'); NAV_LOCK = false; if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; } return; }
+
+  try {
+    var data = charger();
+    var doublon = null;
+    for (var i = 0; i < data.clients.length; i++) {
+      if (normaliser(data.clients[i].nom) === normaliser(nom) && normaliser(data.clients[i].ville) === normaliser(ville)) {
+        doublon = data.clients[i]; break;
+      }
+    }
+    if (doublon) {
+      NAV_LOCK = false;
+      if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; }
+      confirmer('Client deja existant', 'Un client avec le meme nom et la meme ville existe : ' + doublon.nom + '.', function() {
+        naviguer('fiche-client', { clientId: doublon.id }, true);
+      }, 'Ouvrir la fiche');
+      return;
+    }
+    data.compteurs.clients = (data.compteurs.clients || 0) + 1;
+    var annee = new Date().getFullYear();
+    var id = 'C-' + annee + '-' + String(data.compteurs.clients).padStart(4, '0');
+    data.clients.push({
+      id: id, nom: nom, ville: ville,
+      codePostal: (document.getElementById('c-cp').value || '').trim(),
+      tel: (document.getElementById('c-tel').value || '').trim(),
+      email: (document.getElementById('c-email').value || '').trim(),
+      adresse: (document.getElementById('c-adresse').value || '').trim(),
+      dateCreation: new Date().toISOString()
+    });
+    sauver(data);
+    toast('Client ' + id + ' cree', 'ok');
+    NAV_STACK[NAV_STACK.length - 1] = { ecran: 'client-cree', params: { clientId: id } };
+    rendreEcran();
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; }
+  } finally { NAV_LOCK = false; }
+}
+
+function ecranClientCree(clientId) {
+  var data = charger();
+  var c = null;
+  for (var i = 0; i < data.clients.length; i++) if (data.clients[i].id === clientId) c = data.clients[i];
+  if (!c) return '<div class="empty">Client introuvable.</div>';
+  return '<div class="success-wrap">' +
+    '<div class="success-check">V</div>' +
+    '<h1>Client enregistre</h1>' +
+    '<p>' + esc(c.nom) + ' - ' + esc(c.id) + ' / ' + esc(c.ville) + '</p>' +
+    '<div style="display:flex;flex-direction:column;gap:10px">' +
+    '<button class="btn btn-block" onclick="naviguer(\'nouveau-devis\', {clientId:\'' + c.id + '\'})">Creer un devis pour ce client</button>' +
+    '<button class="btn btn-ghost btn-block" onclick="naviguer(\'fiche-client\', {clientId:\'' + c.id + '\'})">Voir sa fiche</button>' +
+    '<button class="btn btn-ghost btn-block" onclick="retourAccueil()">Tableau de bord</button>' +
+    '</div></div>';
+}
+
+/* ─── LISTE CLIENTS ─── */
+function ecranListeClients(filtre) {
+  var data = charger();
+  var clients = data.clients.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); });
+  var f = normaliser(filtre);
+  var filtered = f ? clients.filter(function(c){ return normaliser(c.nom + ' ' + c.ville + ' ' + (c.tel||'') + ' ' + (c.email||'')).indexOf(f) !== -1; }) : clients;
+
+  var html = boutonRetour('Retour');
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Clients (' + clients.length + ')</div><div class="card-sub">Recherche tolerante aux accents</div></div><button class="btn btn-sm" onclick="naviguer(\'nouveau-client\')">+ Nouveau</button></div>';
+  html += '<div class="field" style="margin-bottom:12px"><input class="inp" id="search-client" placeholder="Rechercher nom, ville, telephone..." value="' + esc(filtre) + '" oninput="rechercherClients(this.value)"></div>';
+  html += '<div id="liste-clients-body">' + renderListeClientsBody(filtered, data) + '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderListeClientsBody(clients, data) {
+  if (!clients.length) return '<div class="empty">Aucun client trouve.</div>';
+  var h = '<div style="margin:-24px;margin-top:0">';
+  clients.forEach(function(c){
+    var dv = data.devis.filter(function(d){ return d.clientId === c.id; });
+    var ca = 0; dv.forEach(function(d){ ca += d.totalTTC || 0; });
+    h += '<div class="list-row" onclick="naviguer(\'fiche-client\', {clientId:\'' + c.id + '\'})">';
+    h += '<div class="list-avatar">' + initiales(c.nom) + '</div>';
+    h += '<div class="list-body"><div class="list-title">' + esc(c.nom) + '</div><div class="list-sub">' + esc(c.ville || '') + (c.tel ? ' / ' + esc(c.tel) : '') + ' / ' + dv.length + ' devis</div></div>';
+    h += '<div class="list-right"><div>' + eur(ca) + '</div><div class="sub">cumul</div></div>';
+    h += '<div class="list-row-chev">&rsaquo;</div></div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+var searchTimer = null;
+function rechercherClients(val) {
+  if (searchTimer) clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() {
+    var current = NAV_STACK[NAV_STACK.length - 1];
+    if (current.ecran !== 'liste-clients') return;
+    current.params.filtre = val;
+    var data = charger();
+    var clients = data.clients.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); });
+    var f = normaliser(val);
+    var filtered = f ? clients.filter(function(c){ return normaliser(c.nom + ' ' + c.ville + ' ' + (c.tel||'') + ' ' + (c.email||'')).indexOf(f) !== -1; }) : clients;
+    var body = document.getElementById('liste-clients-body');
+    if (body) body.innerHTML = renderListeClientsBody(filtered, data);
+  }, 150);
+}
+
+/* ─── FICHE CLIENT ─── */
+function ecranFicheClient(clientId) {
+  var data = charger();
+  var c = null;
+  for (var i = 0; i < data.clients.length; i++) if (data.clients[i].id === clientId) c = data.clients[i];
+  if (!c) return '<div class="empty">Client introuvable.</div>';
+  var dv = data.devis.filter(function(d){ return d.clientId === clientId; });
+  var ca = 0; dv.forEach(function(d){ ca += d.totalTTC || 0; });
+
+  var html = boutonRetour('Retour');
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">' + esc(c.nom) + '</div><div class="card-sub">' + esc(c.id) + ' / Client depuis le ' + dateFr(c.dateCreation) + '</div></div><button class="btn btn-ghost btn-sm" onclick="naviguer(\'client-edit\', {clientId:\'' + c.id + '\'})">Modifier</button></div>';
+  html += '<div class="row-3">';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Ville</div><div>' + esc(c.ville || '-') + '</div></div>';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Code postal</div><div>' + esc(c.codePostal || '-') + '</div></div>';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Telephone</div><div>' + esc(c.tel || '-') + '</div></div>';
+  html += '</div>';
+  html += '<div class="row-3" style="margin-top:12px">';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Email</div><div>' + esc(c.email || '-') + '</div></div>';
+  html += '<div style="grid-column:span 2"><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Adresse</div><div>' + esc(c.adresse || '-') + '</div></div>';
+  html += '</div>';
+  html += '<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)"><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:4px">CA cumule TTC</div><div style="font-size:26px;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums">' + eur(ca) + '</div></div>';
+  html += '</div>';
+
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Devis (' + dv.length + ')</div><div class="card-sub">Cliquez pour ouvrir</div></div><button class="btn btn-sm" onclick="naviguer(\'nouveau-devis\', {clientId:\'' + c.id + '\'})">+ Nouveau devis</button></div>';
+  if (!dv.length) html += '<div class="empty">Aucun devis pour ce client.</div>';
+  else {
+    html += '<table class="tbl"><thead><tr><th>N</th><th>Date</th><th>Domaine</th><th class="num">TTC</th><th>Statut</th></tr></thead><tbody>';
+    dv.forEach(function(d){
+      var cls = d.statut === 'accepte' ? 'accepted' : (d.statut === 'envoye' ? 'sent' : (d.statut === 'refuse' ? 'refused' : 'draft'));
+      html += '<tr onclick="naviguer(\'devis-detail\', {devisId:\'' + d.id + '\'})">';
+      html += '<td class="mono">' + esc(d.id) + '</td><td>' + dateFr(d.dateCreation) + '</td><td>' + esc(d.domaine || '-') + '</td>';
+      html += '<td class="num">' + eur(d.totalTTC) + '</td><td><span class="bdg ' + cls + '">' + esc(d.statut || '') + '</span></td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ─── EDIT CLIENT ─── */
+function ecranClientEdit(clientId) {
+  var data = charger();
+  var c = null;
+  for (var i = 0; i < data.clients.length; i++) if (data.clients[i].id === clientId) c = data.clients[i];
+  if (!c) return '<div class="empty">Client introuvable.</div>';
+  var html = boutonRetour('Retour');
+  html += '<div class="card" style="max-width:640px;margin:0 auto">';
+  html += '<div class="card-head"><div><div class="card-title">Modifier le client</div><div class="card-sub">' + esc(c.id) + '</div></div></div>';
+  html += '<div class="field"><label>Nom <span class="req">*</span></label><input class="inp" id="ce-nom" autofocus value="' + esc(c.nom) + '"></div>';
+  html += '<div class="row-2"><div class="field"><label>Ville <span class="req">*</span></label><input class="inp" id="ce-ville" value="' + esc(c.ville || '') + '"></div><div class="field"><label>Code postal</label><input class="inp" id="ce-cp" value="' + esc(c.codePostal || '') + '"></div></div>';
+  html += '<div class="row-2"><div class="field"><label>Telephone</label><input class="inp" id="ce-tel" type="tel" value="' + esc(c.tel || '') + '"></div><div class="field"><label>Email</label><input class="inp" id="ce-email" type="email" value="' + esc(c.email || '') + '"></div></div>';
+  html += '<div class="field"><label>Adresse</label><input class="inp" id="ce-adresse" value="' + esc(c.adresse || '') + '"></div>';
+  html += '<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost" onclick="retour()">Annuler</button><button class="btn" id="ce-submit" onclick="sauverClientEdit(\'' + c.id + '\')" style="flex:1">Enregistrer</button></div>';
+  html += '</div>';
+  return html;
+}
+
+function sauverClientEdit(clientId) {
+  if (NAV_LOCK) return;
+  NAV_LOCK = true;
+  var btn = document.getElementById('ce-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enregistrement...'; }
+  var nom = (document.getElementById('ce-nom').value || '').trim();
+  var ville = (document.getElementById('ce-ville').value || '').trim();
+  if (!nom || !ville) {
+    toast('Nom et ville obligatoires', 'err');
+    NAV_LOCK = false;
+    if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; }
+    return;
+  }
+  try {
+    var data = charger();
+    for (var i = 0; i < data.clients.length; i++) {
+      if (data.clients[i].id === clientId) {
+        data.clients[i].nom = nom;
+        data.clients[i].ville = ville;
+        data.clients[i].codePostal = (document.getElementById('ce-cp').value || '').trim();
+        data.clients[i].tel = (document.getElementById('ce-tel').value || '').trim();
+        data.clients[i].email = (document.getElementById('ce-email').value || '').trim();
+        data.clients[i].adresse = (document.getElementById('ce-adresse').value || '').trim();
+        break;
+      }
+    }
+    for (var j = 0; j < data.devis.length; j++) if (data.devis[j].clientId === clientId) data.devis[j].clientNom = nom;
+    sauver(data);
+    toast('Client modifie', 'ok');
+    retour();
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer'; }
+  } finally { NAV_LOCK = false; }
+}
+
+/* ─── LISTE DEVIS ─── */
+function ecranListeDevis(filtre) {
+  var data = charger();
+  var devis = data.devis.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); });
+  var f = normaliser(filtre);
+  var filtered = f ? devis.filter(function(d){ return normaliser((d.id||'') + ' ' + (d.clientNom||'') + ' ' + (d.domaine||'') + ' ' + (d.description||'')).indexOf(f) !== -1; }) : devis;
+
+  var caAccepte = 0, caEnAttente = 0;
+  devis.forEach(function(d){
+    if (d.statut === 'accepte') caAccepte += d.totalTTC || 0;
+    else if (d.statut === 'envoye') caEnAttente += d.totalTTC || 0;
+  });
+
+  var html = boutonRetour('Retour');
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Devis (' + devis.length + ')</div><div class="card-sub">Accepte : ' + eur(caAccepte) + ' / En attente : ' + eur(caEnAttente) + '</div></div><button class="btn btn-sm" onclick="naviguer(\'nouveau-devis\')">+ Nouveau</button></div>';
+  html += '<div class="field" style="margin-bottom:12px"><input class="inp" id="search-devis" placeholder="Rechercher N, client, domaine..." value="' + esc(filtre) + '" oninput="rechercherDevis(this.value)"></div>';
+  html += '<div id="liste-devis-body">' + renderListeDevisBody(filtered) + '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderListeDevisBody(devis) {
+  if (!devis.length) return '<div class="empty">Aucun devis trouve.</div>';
+  var h = '<table class="tbl"><thead><tr><th>N</th><th>Date</th><th>Client</th><th>Domaine</th><th class="num">TTC</th><th>Statut</th></tr></thead><tbody>';
+  devis.forEach(function(d){
+    var cls = d.statut === 'accepte' ? 'accepted' : (d.statut === 'envoye' ? 'sent' : (d.statut === 'refuse' ? 'refused' : 'draft'));
+    h += '<tr onclick="naviguer(\'devis-detail\', {devisId:\'' + d.id + '\'})">';
+    h += '<td class="mono">' + esc(d.id) + '</td><td>' + dateFr(d.dateCreation) + '</td><td>' + esc(d.clientNom || '-') + '</td><td>' + esc(d.domaine || '-') + '</td><td class="num">' + eur(d.totalTTC) + '</td><td><span class="bdg ' + cls + '">' + esc(d.statut || '') + '</span></td></tr>';
+  });
+  h += '</tbody></table>';
+  return h;
+}
+
+function rechercherDevis(val) {
+  if (searchTimer) clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() {
+    var current = NAV_STACK[NAV_STACK.length - 1];
+    if (current.ecran !== 'liste-devis') return;
+    current.params.filtre = val;
+    var data = charger();
+    var devis = data.devis.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); });
+    var f = normaliser(val);
+    var filtered = f ? devis.filter(function(d){ return normaliser((d.id||'') + ' ' + (d.clientNom||'') + ' ' + (d.domaine||'') + ' ' + (d.description||'')).indexOf(f) !== -1; }) : devis;
+    var body = document.getElementById('liste-devis-body');
+    if (body) body.innerHTML = renderListeDevisBody(filtered);
+  }, 150);
+}
+
+/* ─── DETAIL DEVIS ─── */
+function ecranDevisDetail(devisId) {
+  var data = charger();
+  var d = null;
+  for (var i = 0; i < data.devis.length; i++) if (data.devis[i].id === devisId) d = data.devis[i];
+  if (!d) return '<div class="empty">Devis introuvable.</div>';
+  var lignes = Array.isArray(d.lignes) ? d.lignes : [];
+
+  var html = boutonRetour('Retour');
+  html += '<div class="card"><div class="card-head"><div><div class="card-title">Devis ' + esc(d.id) + '</div><div class="card-sub">' + esc(d.clientNom || '') + ' / ' + dateFr(d.dateCreation) + '</div></div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  html += '<button class="btn btn-ghost btn-sm" onclick="naviguer(\'devis-edit\', {devisId:\'' + d.id + '\'})">Editer</button>';
+  html += '<button class="btn btn-ghost btn-sm" onclick="dupliquerDevis(\'' + d.id + '\')">Dupliquer</button>';
+  html += '<button class="btn btn-ghost btn-sm" onclick="changerStatutDevis(\'' + d.id + '\')">Changer statut</button>';
+  html += '<button class="btn btn-ghost btn-sm" onclick="supprimerDevis(\'' + d.id + '\')">Supprimer</button>';
+  html += '</div></div>';
+
+  var statutClass = d.statut === 'accepte' ? 'accepted' : (d.statut === 'envoye' ? 'sent' : (d.statut === 'refuse' ? 'refused' : 'draft'));
+  html += '<div class="row-3" style="margin-bottom:16px">';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Metier</div><div>' + esc(d.metier || d.domaine || '-') + '</div></div>';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">Statut</div><div><span class="bdg ' + statutClass + '">' + esc(d.statut || '') + '</span></div></div>';
+  html += '<div><div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-bottom:2px">TVA</div><div>' + (d.tauxTVA || 20) + ' %</div></div>';
+  html += '</div>';
+
+  if (d.description) {
+    html += '<div style="background:var(--surface-2);padding:12px 14px;border-radius:8px;margin-bottom:16px;font-size:12.5px;color:var(--muted);font-style:italic">' + esc(d.description) + '</div>';
+  }
+
+  if (lignes.length) {
+    var incluses = lignes.filter(function(l){ return l.inclus; });
+    var hors = lignes.filter(function(l){ return !l.inclus; });
+    if (incluses.length) {
+      html += '<div class="section-label demande">Prestations facturees <span class="bdg-pill">' + incluses.length + '</span></div>';
+      html += '<div class="lines-table"><table><thead><tr><th>Designation</th><th class="num">Qte</th><th>Unite</th><th class="num">PU HT</th><th class="num">Total</th></tr></thead><tbody>';
+      incluses.forEach(function(l){
+        var srcB = l.src ? ' <span class="src-badge" title="' + esc(l.src) + ' / ' + esc(l.dateRef || '') + '">src</span>' : '';
+        html += '<tr><td>' + esc(l.designation) + srcB + '</td><td class="num">' + (l.quantite !== null ? l.quantite : '-') + '</td><td>' + esc(l.unite) + '</td><td class="num">' + eur(l.prixUnitaireHT) + '</td><td class="num">' + (l.quantite !== null ? eur(l.quantite * l.prixUnitaireHT) : '-') + '</td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+    if (hors.length) {
+      html += '<div class="section-label aConfirmer">Non facture <span class="bdg-pill">' + hors.length + '</span></div>';
+      html += '<div class="lines-table"><table><thead><tr><th>Designation</th><th class="num">Qte</th><th>Unite</th><th class="num">PU HT</th><th class="num">Total</th></tr></thead><tbody>';
+      hors.forEach(function(l){
+        html += '<tr><td>' + esc(l.designation) + '</td><td class="num">' + (l.quantite !== null ? l.quantite : '-') + '</td><td>' + esc(l.unite) + '</td><td class="num">' + eur(l.prixUnitaireHT) + '</td><td class="num">' + (l.quantite !== null ? eur(l.quantite * l.prixUnitaireHT) : '-') + '</td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+  } else {
+    html += '<div class="empty">Ce devis ne contient aucune ligne.</div>';
+  }
+
+  html += '<div class="totaux">';
+  html += '<div class="tr"><span>Total HT</span><span class="v">' + eur(d.totalHT) + '</span></div>';
+  html += '<div class="tr sub"><span>TVA ' + (d.tauxTVA || 20) + ' %</span><span class="v">' + eur(d.montantTVA) + '</span></div>';
+  html += '<div class="tr total"><span>Total TTC</span><span class="v">' + eur(d.totalTTC) + '</span></div>';
+  if (d.margeBrute !== null && d.margeBrute !== undefined) {
+    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12.5px;color:var(--green);display:flex;justify-content:space-between"><span>Marge brute estimee</span><span style="font-family:monospace">' + eur(d.margeBrute) + '</span></div>';
+  } else {
+    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);font-style:italic">Marge non calculable avec les informations disponibles.</div>';
+  }
+  html += '</div>';
+
+  if (Array.isArray(d.historiqueStatut) && d.historiqueStatut.length > 0) {
+    html += '<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted)">';
+    html += '<strong>Historique des statuts</strong>';
+    d.historiqueStatut.slice(-5).forEach(function(h){
+      html += '<div>' + dateFr(h.date) + ' - ' + esc(h.ancien) + ' vers ' + esc(h.nouveau) + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function changerStatutDevis(devisId) {
+  var data = charger();
+  var d = null;
+  for (var i = 0; i < data.devis.length; i++) if (data.devis[i].id === devisId) d = data.devis[i];
+  if (!d) return;
+  var statuts = ['brouillon', 'envoye', 'accepte', 'refuse'];
+  var idx = statuts.indexOf(d.statut || 'brouillon');
+  var ancien = d.statut || 'brouillon';
+  var nouveau = statuts[(idx + 1) % statuts.length];
+  d.statut = nouveau;
+  if (!Array.isArray(d.historiqueStatut)) d.historiqueStatut = [];
+  d.historiqueStatut.push({ ancien: ancien, nouveau: nouveau, date: new Date().toISOString() });
+  sauver(data);
+  toast('Statut : ' + ancien + ' vers ' + nouveau, 'ok');
+  rendreEcran();
+}
+
+function dupliquerDevis(devisId) {
+  var data = charger();
+  var src = null;
+  for (var i = 0; i < data.devis.length; i++) if (data.devis[i].id === devisId) src = data.devis[i];
+  if (!src) return;
+  confirmer('Dupliquer ce devis ?', 'Une copie sera creee avec un nouveau numero.', function() {
+    data.compteurs.devis = (data.compteurs.devis || 0) + 1;
+    var annee = new Date().getFullYear();
+    var idNew = 'DEV-' + annee + '-' + String(data.compteurs.devis).padStart(4, '0');
+    var copie = JSON.parse(JSON.stringify(src));
+    copie.id = idNew;
+    copie.statut = 'brouillon';
+    copie.dateCreation = new Date().toISOString();
+    copie.description = (src.description || '') + ' [copie de ' + src.id + ']';
+    delete copie.dateModification;
+    delete copie.historiqueStatut;
+    data.devis.push(copie);
+    sauver(data);
+    toast('Devis duplique : ' + idNew, 'ok');
+    naviguer('devis-detail', { devisId: idNew }, true);
+  }, 'Dupliquer');
+}
+
+function supprimerDevis(devisId) {
+  confirmer('Supprimer ce devis ?', 'Cette action est definitive.', function() {
+    var data = charger();
+    data.devis = data.devis.filter(function(d){ return d.id !== devisId; });
+    sauver(data);
+    toast('Devis supprime', 'ok');
+    retour();
+  }, 'Supprimer');
+}
+
+/* ─── DEVIS — NOUVEAU / EDIT ─── */
+var DEV_STATE = { parsed:null, metier:null, reponses:{}, lignes:[], tva:20, clientId:null, editeId:null };
+
+function ecranNouveauDevis(clientId) {
+  var draft = chargerDraft();
+  if (draft && draft.parsed && draft.clientId === clientId && !draft.editeId) {
+    DEV_STATE = { parsed: draft.parsed, metier: draft.metier, reponses: draft.reponses || {}, lignes: draft.lignes || [], tva: draft.tva || 20, clientId: draft.clientId || null, editeId: null };
+  } else {
+    DEV_STATE = { parsed:null, metier:null, reponses:{}, lignes:[], tva:20, clientId: clientId || null, editeId:null };
+  }
+  return renderNouveauDevis();
+}
+
+function ecranDevisEdit(devisId) {
+  var data = charger();
+  var d = null;
+  for (var i = 0; i < data.devis.length; i++) if (data.devis[i].id === devisId) d = data.devis[i];
+  if (!d) return '<div class="empty">Devis introuvable.</div>';
+  DEV_STATE = {
+    parsed: { brut: d.description || '', metier: d.metier },
+    metier: d.metier || d.domaine,
+    reponses: {},
+    lignes: (Array.isArray(d.lignes) ? d.lignes : []).map(function(l){
+      return {
+        code: 'manual.' + l.designation,
+        designation: l.designation, quantite: l.quantite, unite: l.unite, pu: l.prixUnitaireHT,
+        partF: 0, tempsH: 0, motif: l.motif || 'Ligne importee',
+        categorie: l.categorie || (l.inclus ? 'demande' : 'option'),
+        confiance: l.confiance || (l.quantite !== null ? 'confirme' : 'a_renseigner'),
+        inclus: l.inclus,
+        src: l.src || 'Import', dateRef: l.dateRef || '-',
+        _manual: true
+      };
+    }),
+    tva: d.tauxTVA || 20,
+    clientId: d.clientId,
+    editeId: d.id
+  };
+  return renderNouveauDevis();
+}
+
+function renderNouveauDevis() {
+  var data = charger();
+  var html = boutonRetour('Retour');
+  html += '<div class="card">';
+  html += '<div class="card-head"><div><div class="card-title">' + (DEV_STATE.editeId ? 'Modifier ' + esc(DEV_STATE.editeId) : 'Nouveau devis') + '</div><div class="card-sub">Decrivez les travaux, le copilote chiffre</div></div></div>';
+  html += '<div class="field"><label>Client <span class="req">*</span></label><select class="inp" id="d-client"><option value="">- Selectionner -</option>';
+  data.clients.forEach(function(c){
+    var sel = DEV_STATE.clientId && DEV_STATE.clientId === c.id ? ' selected' : '';
+    html += '<option value="' + esc(c.id) + '"' + sel + '>' + esc(c.nom) + ' - ' + esc(c.ville) + '</option>';
+  });
+  html += '</select></div>';
+  html += '<div class="ai-section"><div class="ai-head"><div class="ai-icon">AI</div><div class="ai-head-txt"><h2>Decrivez les travaux</h2><p>Donnez un maximum de details. Le copilote posera uniquement les questions manquantes.</p></div></div>';
+  html += '<div class="ai-input-row"><input class="inp" id="ia-texte" placeholder="Ex : mur de cloture 17 m x 1,50 m en parpaings, fourni pose" value="' + esc(DEV_STATE.parsed ? DEV_STATE.parsed.brut : '') + '"><button class="btn" onclick="analyserDevis()">Analyser</button></div>';
+  html += '<div id="analyse-result"></div></div>';
+  html += '<div id="devis-suite"></div></div>';
+  setTimeout(function(){ renderDevisSuite(); }, 0);
+  return html;
+}
+
+function analyserDevis() {
+  var txt = (document.getElementById('ia-texte').value || '').trim();
+  if (!txt) { toast('Decrivez les travaux', 'err'); return; }
+  var p = parserDescription(txt);
+  if (!p.metier) { toast('Metier non reconnu. Precisez : electricite, maconnerie, peinture...', 'err'); return; }
+  var manuelles = (DEV_STATE.lignes || []).filter(function(l){ return l._manual; });
+  DEV_STATE.parsed = p;
+  DEV_STATE.metier = p.metier;
+  DEV_STATE.reponses = {};
+  DEV_STATE.lignes = construireLignes(p, p.metier, {}, manuelles);
+  sauverDraft();
+  renderDevisSuite();
+}
+
+function renderDevisSuite() {
+  var p = DEV_STATE.parsed;
+  if (!p) return;
+  var ar = document.getElementById('analyse-result');
+  if (ar) {
+    var ah = '<div class="analyse-box">';
+    ah += '<div class="analyse-section"><h4>Metier detecte</h4><div style="display:inline-block;background:var(--gray-bg);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600">' + esc(p.metier || DEV_STATE.metier) + '</div></div>';
+    var faits = [];
+    if (p.quantiteEquipement) faits.push({t:'fact', l:'Quantite', v:p.quantiteEquipement.val + ' ' + p.quantiteEquipement.type});
+    if (p.longueur) faits.push({t:'fact', l:'Longueur', v:p.longueur + ' m'});
+    if (p.hauteur) faits.push({t:'fact', l:'Hauteur', v:p.hauteur + ' m'});
+    if (p.surface) faits.push({t:'fact', l:'Surface', v:p.surface + ' m2'});
+    if (p.materiau) faits.push({t:'fact', l:'Materiau', v:p.materiau});
+    if (p.distanceEquipement) faits.push({t:'fact', l:'Distance', v:p.distanceEquipement.val + ' m du ' + p.distanceEquipement.cible});
+    if (faits.length) {
+      ah += '<div class="analyse-section"><h4>Faits extraits</h4>';
+      faits.forEach(function(f){
+        ah += '<div class="analyse-fact"><div class="dot ' + f.t + '"></div><div><span class="lbl">' + esc(f.l) + ' :</span> <span class="v">' + esc(f.v) + '</span></div></div>';
+      });
+      ah += '</div>';
+    }
+    if (p.longueur && p.hauteur) {
+      ah += '<div class="analyse-section"><h4>Calculs geometriques</h4><div class="analyse-fact"><div class="dot calc"></div><div><span class="lbl">Surface mur (L x H) :</span> <span class="v">' + (p.longueur * p.hauteur).toFixed(2) + ' m2</span></div></div></div>';
+    }
+    ah += '</div>';
+    ar.innerHTML = ah;
+  }
+  var suite = document.getElementById('devis-suite');
+  if (suite) suite.innerHTML = renderQuestionsBloc() + renderLignesBloc();
+}
+
+function renderQuestionsBloc() {
+  if (!DEV_STATE.parsed || !DEV_STATE.metier) return '';
+  var qs = genererQuestions(DEV_STATE.parsed, DEV_STATE.metier);
+  if (!qs.length) return '';
+  var html = '<div class="q-box"><h3>' + qs.length + ' question(s) - vos reponses modifient le devis</h3>';
+  qs.forEach(function(q){
+    html += '<div class="q-item"><div class="q-txt">' + esc(q.texte) + '</div><div class="q-opts">';
+    q.options.forEach(function(o){
+      var sel = DEV_STATE.reponses[q.id] === o.v ? ' selected' : '';
+      html += '<button class="q-opt' + sel + '" onclick="repondreDevis(\'' + q.id + '\',\'' + o.v + '\')">' + esc(o.label) + '</button>';
+    });
+    var selInc = DEV_STATE.reponses[q.id] === 'inconnu' ? ' selected' : '';
+    html += '<button class="q-opt skip' + selInc + '" onclick="repondreDevis(\'' + q.id + '\',\'inconnu\')">Je ne sais pas</button>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function repondreDevis(qid, val) {
+  DEV_STATE.reponses[qid] = val;
+  var manuelles = (DEV_STATE.lignes || []).filter(function(l){ return l._manual; });
+  DEV_STATE.lignes = construireLignes(DEV_STATE.parsed, DEV_STATE.metier, DEV_STATE.reponses, manuelles);
+  sauverDraft();
+  renderDevisSuite();
+}
+
+function renderLignesBloc() {
+  var L = DEV_STATE.lignes || [];
+  if (!L.length) return '';
+  var dem = L.filter(function(l){ return l.categorie === 'demande'; });
+  var aCf = L.filter(function(l){ return l.categorie === 'a_confirmer'; });
+  var opt = L.filter(function(l){ return l.categorie === 'option'; });
+
+  function tbl(lignes, classe, avecValid, avecRetrait) {
+    var t = '<div class="lines-table"><table><thead><tr><th>Designation</th><th class="num" style="width:90px">Qte</th><th style="width:60px">Unite</th><th class="num" style="width:90px">PU HT</th><th class="num" style="width:100px">Total</th><th style="width:160px"></th></tr></thead><tbody>';
+    lignes.forEach(function(l){
+      var idx = L.indexOf(l);
+      var qteInput = '<input type="number" step="0.01" value="' + (l.quantite !== null ? l.quantite : '') + '" placeholder="0" oninput="majLigneDevis(' + idx + ',\'quantite\',this.value)" style="text-align:right">';
+      var puInput = '<input type="number" step="0.01" value="' + l.pu + '" oninput="majLigneDevis(' + idx + ',\'pu\',this.value)" style="text-align:right">';
+      var badge = l.quantite === null ? '<span class="bdg warn">A renseigner</span>' : l.confiance === 'confirme' ? '<span class="bdg ok">Confirme</span>' : l.confiance === 'hypothese' ? '<span class="bdg warn">Hypothese</span>' : '';
+      var srcB = l.src ? '<span class="src-badge" title="' + esc(l.src) + ' / ' + esc(l.dateRef || '') + '">src</span>' : '';
+      t += '<tr><td><input value="' + esc(l.designation) + '" oninput="majLigneDevis(' + idx + ',\'designation\',this.value)">' + srcB + '<div class="motif">' + esc(l.motif) + (l._manual ? ' / edite' : '') + '</div></td>';
+      t += '<td class="num">' + qteInput + '</td><td>' + esc(l.unite) + '</td>';
+      t += '<td class="num">' + puInput + '</td>';
+      t += '<td class="num" style="font-weight:600">' + (l.quantite !== null ? eur(l.quantite * l.pu) : '-') + '</td>';
+      t += '<td>' + badge;
+      if (avecValid || (l._manual && !l.inclus)) t += ' <button class="btn btn-sm" onclick="validerLigneDevis(' + idx + ')">Valider</button>';
+      if (avecRetrait) t += ' <button class="btn btn-ghost btn-sm" onclick="rejeterLigneDevis(' + idx + ')">Retirer</button>';
+      t += '</td></tr>';
+    });
+    t += '</tbody></table></div>';
+    return t;
+  }
+
+  var html = '';
+  if (dem.length) {
+    html += '<div class="section-label demande">Prestations demandees <span class="bdg-pill">' + dem.length + '</span></div>';
+    html += tbl(dem, 'demande', false, false);
+  }
+  if (aCf.length) {
+    html += '<div class="section-label aConfirmer">A confirmer <span class="bdg-pill">' + aCf.length + '</span></div>';
+    html += '<div class="banner warn">Ces prestations ne sont pas facturees. Validez apres verification.</div>';
+    html += tbl(aCf, 'aConfirmer', true, true);
+  }
+  if (opt.length) {
+    html += '<div class="section-label option">Options <span class="bdg-pill">' + opt.length + '</span></div>';
+    html += tbl(opt, 'option', true, true);
+  }
+
+  var tot = calculerTotaux(L, DEV_STATE.tva, CONFIG.zone);
+  html += '<div class="totaux">';
+  html += '<div class="tr"><span>Total HT</span><span class="v">' + eur(tot.totalHT) + '</span></div>';
+  html += '<div class="tr sub"><span>TVA ' + DEV_STATE.tva + ' %</span><span class="v">' + eur(tot.montantTVA) + '</span></div>';
+  html += '<div class="tr total"><span>Total TTC</span><span class="v">' + eur(tot.totalTTC) + '</span></div>';
+  if (tot.margeCalculable) {
+    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12.5px;color:var(--green);display:flex;justify-content:space-between"><span>Marge brute estimee</span><span style="font-family:monospace">' + eur(tot.margeBrute) + ' / ' + tot.tauxMarge + ' % du CA</span></div>';
+  } else {
+    html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);font-style:italic">Marge non calculable : renseignez le cout interne dans TARIFS pour chaque poste.</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="row-2" style="margin-top:16px">';
+  html += '<div class="field"><label>TVA</label><select class="inp" onchange="DEV_STATE.tva=parseFloat(this.value);sauverDraft();renderDevisSuite()">';
+  [20, 10, 5.5, 0].forEach(function(t){
+    html += '<option value="' + t + '"' + (DEV_STATE.tva === t ? ' selected' : '') + '>' + t + ' %' + (t === 0 ? ' (franchise)' : '') + '</option>';
+  });
+  html += '</select></div>';
+  html += '<div class="field"><label>Zone</label><select class="inp" onchange="CONFIG.zone=this.value;sauverConfig(CONFIG);renderDevisSuite()">';
+  for (var k in ZONES) html += '<option value="' + k + '"' + (CONFIG.zone === k ? ' selected' : '') + '>' + ZONES[k].label + ' (x' + ZONES[k].coeff + ')</option>';
+  html += '</select></div></div>';
+
+  var statut = evaluerStatutDevis();
+  html += '<div class="banner ' + (statut.bloque ? 'warn' : 'ok') + '">' +
+    (statut.bloque ? statut.texte + ' - ' + statut.bloque : statut.texte) +
+    '</div>';
+
+  var label = DEV_STATE.editeId ? 'Mettre a jour le devis' : 'Enregistrer le devis';
+  html += '<div style="display:flex;gap:8px">';
+  html += '<button class="btn btn-ghost" onclick="annulerDevis()">Annuler</button>';
+  html += '<button class="btn" id="submit-devis" onclick="enregistrerDevis()" ' + (statut.bloque ? 'disabled' : '') + ' style="flex:1">' + label + '</button>';
+  html += '</div>';
+  return html;
+}
+
+function evaluerStatutDevis() {
+  if (!DEV_STATE.lignes.length) return { texte: 'Aucune prestation', bloque: 'Decrivez les travaux.' };
+  var clientId = document.getElementById('d-client') ? document.getElementById('d-client').value : '';
+  var incluses = DEV_STATE.lignes.filter(function(l){ return l.inclus; });
+  var demNull = DEV_STATE.lignes.filter(function(l){ return l.categorie === 'demande' && l.quantite === null; });
+  var bloqueurs = [];
+  if (!clientId) bloqueurs.push('Selectionnez un client.');
+  if (!incluses.length) bloqueurs.push('Aucune prestation avec quantite renseignee.');
+  if (demNull.length) bloqueurs.push(demNull.length + ' prestation(s) sans quantite.');
+  if (bloqueurs.length) return { texte: 'Devis provisoire', bloque: bloqueurs.join(' ') };
+  return { texte: 'Pret a enregistrer', bloque: null };
+}
+
+function majLigneDevis(i, champ, val) {
+  var l = DEV_STATE.lignes[i];
+  if (!l) return;
+  if (champ === 'designation') { l.designation = val; l._manual = true; }
+  else if (champ === 'quantite') {
+    var q = parseFloat(val);
+    l.quantite = (isNaN(q) || q < 0) ? null : q;
+    l.inclus = l.quantite !== null && l.quantite > 0 && l.categorie === 'demande';
+    if (l.quantite !== null && l.quantite > 0) { if (l.confiance === 'a_renseigner') l.confiance = 'confirme'; }
+    else l.confiance = 'a_renseigner';
+    l._manual = true;
+  } else if (champ === 'pu') { l.pu = parseFloat(val) || 0; l._manual = true; }
+  sauverDraft();
+  renderDevisSuite();
+}
+
+function validerLigneDevis(i) {
+  var l = DEV_STATE.lignes[i];
+  if (!l) return;
+  if (l.quantite === null || l.quantite <= 0) { toast('Renseignez une quantite', 'err'); return; }
+  l.categorie = 'demande'; l.confiance = 'confirme'; l.inclus = true;
+  sauverDraft(); renderDevisSuite();
+}
+function rejeterLigneDevis(i) {
+  var l = DEV_STATE.lignes[i];
+  if (!l) return;
+  l.inclus = false; l.categorie = 'option'; l.confiance = 'hypothese';
+  sauverDraft(); renderDevisSuite();
+}
+
+function annulerDevis() {
+  if (DEV_STATE.editeId) {
+    var idEdit = DEV_STATE.editeId;
+    DEV_STATE = { parsed:null, metier:null, reponses:{}, lignes:[], tva:20, clientId:null, editeId:null };
+    effacerDraft();
+    naviguer('devis-detail', { devisId: idEdit }, true);
+  } else {
+    confirmer('Annuler ce devis ?', 'Les informations saisies seront perdues.', function() {
+      DEV_STATE = { parsed:null, metier:null, reponses:{}, lignes:[], tva:20, clientId:null, editeId:null };
+      effacerDraft();
+      retour();
+    }, 'Annuler le devis');
+  }
+}
+
+function enregistrerDevis() {
+  if (NAV_LOCK) return;
+  NAV_LOCK = true;
+  var btn = document.getElementById('submit-devis');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enregistrement...'; }
+
+  try {
+    var clientId = document.getElementById('d-client').value;
+    if (!clientId) { toast('Selectionnez un client', 'err'); NAV_LOCK = false; if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer le devis'; } return; }
+    var statut = evaluerStatutDevis();
+    if (statut.bloque) { toast('Devis incomplet : ' + statut.bloque, 'err'); NAV_LOCK = false; if (btn) { btn.disabled = false; btn.textContent = 'Enregistrer le devis'; } return; }
+
+    var data = charger();
+    var client = null;
+    for (var i = 0; i < data.clients.length; i++) if (data.clients[i].id === clientId) client = data.clients[i];
+    var tot = calculerTotaux(DEV_STATE.lignes, DEV_STATE.tva, CONFIG.zone);
+    var lignesSerial = DEV_STATE.lignes.map(function(l){
+      return {
+        designation: l.designation, quantite: l.quantite, unite: l.unite,
+        prixUnitaireHT: l.pu, totalHT: l.quantite !== null ? l.quantite * l.pu : null,
+        motif: l.motif, confiance: l.confiance, categorie: l.categorie, inclus: l.inclus,
+        src: l.src, dateRef: l.dateRef
+      };
+    });
+
+    if (DEV_STATE.editeId) {
+      for (var j = 0; j < data.devis.length; j++) {
+        if (data.devis[j].id === DEV_STATE.editeId) {
+          data.devis[j].clientId = clientId;
+          data.devis[j].clientNom = client ? client.nom : '';
+          data.devis[j].domaine = DEV_STATE.parsed.metier || 'divers';
+          data.devis[j].description = DEV_STATE.parsed.brut;
+          data.devis[j].metier = DEV_STATE.metier;
+          data.devis[j].lignes = lignesSerial;
+          data.devis[j].totalHT = tot.totalHT;
+          data.devis[j].tauxTVA = DEV_STATE.tva;
+          data.devis[j].montantTVA = tot.montantTVA;
+          data.devis[j].totalTTC = tot.totalTTC;
+          data.devis[j].coutRevient = tot.margeCalculable ? tot.coutRevient : null;
+          data.devis[j].margeBrute = tot.margeCalculable ? tot.margeBrute : null;
+          data.devis[j].dateModification = new Date().toISOString();
+          break;
+        }
+      }
+      sauver(data);
+      effacerDraft();
+      toast('Devis ' + DEV_STATE.editeId + ' mis a jour', 'ok');
+      var idEdit = DEV_STATE.editeId;
+      DEV_STATE = { parsed:null, metier:null, reponses:{}, lignes:[], tva:20, clientId:null, editeId:null };
+      naviguer('devis-detail', { devisId: idEdit }, true);
+    } else {
+      data.compteurs.devis = (data.compteurs.devis || 0) + 1;
+      var annee = new Date().getFullYear();
+      var id = 'DEV-' + annee + '-' + String(data.compteurs.devis).padStart(4, '0');
+      data.devis.push({
+        id: id, clientId: clientId, clientNom: client ? client.nom : '',
+        domaine: DEV_STATE.parsed.metier || 'divers',
+        description: DEV_STATE.parsed.brut,
+        metier: DEV_STATE.metier,
+        lignes: lignesSerial,
+        totalHT: tot.totalHT, tauxTVA: DEV_STATE.tva,
+        montantTVA: tot.montantTVA, totalTTC: tot.totalTTC,
+        coutRevient: tot.margeCalculable ? tot.coutRevient : null,
+        margeBrute: tot.margeCalculable ? tot.margeBrute : null,
+        statut: 'brouillon',
+        dateCreation: new Date().toISOString()
+      });
+      sauver(data);
+      effacerDraft();
+      toast('Devis ' + id + ' enregistre - ' + eur(tot.totalTTC), 'ok');
+      DEV_STATE = { parsed:null, metier:null, reponses:{}, lignes:[], tva:20, clientId:null, editeId:null };
+      naviguer('devis-detail', { devisId: id }, true);
+    }
+  } catch(e) {
+    toast('Erreur : ' + e.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = DEV_STATE.editeId ? 'Mettre a jour le devis' : 'Enregistrer le devis'; }
+  } finally { NAV_LOCK = false; }
+}
+
+/* ─── Init ─── */
+(function(){
+  var d = document.getElementById('hdr-date');
+  if (d) d.textContent = new Date().toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric' });
+  NAV_STACK = [{ ecran:'accueil', params:{} }];
+  try { history.replaceState({ idx:0 }, '', '#accueil'); } catch(e) {}
+  rendreEcran();
+})();
+</script>
+
+</body>
+</html>

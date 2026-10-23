@@ -1,0 +1,5 @@
+.env
+.env.*
+.env.example
+*.bak.html
+node_modules/
