@@ -891,6 +891,7 @@ function viewFormDevis() {
     let dev = null;
     let tauxTVA = 10;
     let coutMateriaux = 0;
+    const hasApiKey = !!SETTINGS.openai_key;
     
     if (isEdit) {
         dev = d.devis.find(x => x.id === CURRENT_ID);
@@ -907,9 +908,15 @@ function viewFormDevis() {
         tauxTVA = 10;
     }
 
+    // Sécurité : ligne vide par défaut pour faciliter la saisie manuelle
+    if (!isEdit && DEV_LIGNES.length === 0) {
+        DEV_LIGNES.push({ code: 'custom', d: '', q: 1, u: 'forfait', pu: 0, puBase: 0 });
+    }
+
     return `
         <div class="card">
             <div class="card-head"><div class="card-title">${isEdit ? 'Modifier' : 'Nouveau'} Devis</div></div>
+            
             <div class="field">
                 <label>Client</label>
                 <select class="inp" id="d-client" ${isEdit ? 'disabled' : ''}>
@@ -920,20 +927,35 @@ function viewFormDevis() {
                     }).join('')}
                 </select>
             </div>
-            ${!isEdit ? `
-            <div class="field">
-                <label>Génération de devis par l'IA (GPT-4o)</label>
-                <textarea class="inp" id="ia-text" rows="3" placeholder="Ex: Rénovation complète d'une salle de bain de 6m2, dépose carrelage, pose faïence et sol, remplacement WC"></textarea>
-                <button class="btn btn-ghost" style="margin-top:12px;" id="btn-ia" onclick="parseIA()">Générer avec l’assistant bêta</button>
-            </div>` : ''}
-            
+
             <div class="field" style="margin-top:24px; background:var(--surface-hover); padding:16px; border-radius:12px; border:1px solid var(--border);">
                 <label style="color:var(--primary);">Coût Matériaux (Achat)</label>
                 <input class="inp" type="number" id="d-cout-materiaux" value="${coutMateriaux}" placeholder="0.00 €" style="background:var(--surface);">
                 <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Permet de calculer votre marge réelle sur ce chantier.</div>
             </div>
 
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:16px;">
+                <h3 class="card-title" style="font-size:16px;">Prestations</h3>
+                <div style="display:flex; gap:8px;">
+                    <select class="inp" style="padding:8px 12px; width:auto; font-size:13px;" onchange="addLine(this.value, 1); this.value='';">
+                        <option value="">+ Ajouter depuis le catalogue...</option>
+                        ${Object.keys(TARIFS).map(k => `<option value="${k}">${TARIFS[k].d}</option>`).join('')}
+                    </select>
+                    <button type="button" class="btn btn-ghost btn-sm" onclick="addLine('custom', 1)">+ Ligne libre</button>
+                </div>
+            </div>
+
             <div id="lines-container" data-tva="${tauxTVA}"></div>
+            
+            ${!isEdit ? `
+            <div style="margin-top:24px; border-top:1px solid var(--border); padding-top:16px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                    <span class="assistant-label" style="margin:0;">IA BÊTA</span>
+                    <span style="font-size:12px; color:var(--text-muted);">${hasApiKey ? 'Génération automatique de lignes' : 'Clé API non configurée (Paramètres)'}</span>
+                </div>
+                <textarea class="inp" id="ia-text" rows="2" placeholder="Ex: Rénovation complète d'une salle de bain de 6m2..." ${hasApiKey ? '' : 'disabled'}></textarea>
+                <button class="btn btn-ghost" style="margin-top:12px; width:auto;" id="btn-ia" onclick="parseIA()" ${hasApiKey ? '' : 'disabled'}>Générer avec l’assistant</button>
+            </div>` : ''}
         </div>
     `;
 }
@@ -941,21 +963,23 @@ function viewFormDevis() {
 async function parseIA() {
     const btn = document.getElementById('btn-ia');
     const text = document.getElementById('ia-text').value.trim();
-    if (!text) return;
+    if (!text) { toast("Décrivez les travaux."); return; }
 
     btn.textContent = "Analyse en cours…";
     btn.disabled = true;
 
     try {
         const result = await generateQuoteWithAI(text);
-        DEV_LIGNES = result;
+        // On garde les lignes existantes (hors ligne vide par défaut) et on ajoute les nouvelles
+        const lignesExistantes = DEV_LIGNES.filter(l => l.d.trim() !== '' || l.pu > 0);
+        DEV_LIGNES = lignesExistantes.concat(result);
         renderLines();
         toast("Lignes générées par l'IA !");
     } catch (e) {
         toast("Erreur IA : " + e.message);
         if (!e.message.startsWith('Assistant indisponible :')) console.error(e);
     } finally {
-        btn.textContent = "Générer avec l’assistant bêta";
+        btn.textContent = "Générer avec l’assistant";
         btn.disabled = false;
     }
 }
@@ -1005,7 +1029,7 @@ async function generateQuoteWithAI(texte) {
 
 function addLine(code, q) {
     if (code === 'custom') {
-        DEV_LIGNES.push({ code: 'custom', d: 'Nouvelle prestation', q: Number.isFinite(+q) ? +q : 1, u: 'forfait', pu: 0, puBase: 0 });
+        DEV_LIGNES.push({ code: 'custom', d: '', q: Number.isFinite(+q) ? +q : 1, u: 'forfait', pu: 0, puBase: 0 });
         renderLines();
         return;
     }
@@ -1028,12 +1052,11 @@ function renderLines() {
     const parsedTVA = parseFloat(cont.dataset.tva);
     const tauxTVA = Number.isFinite(parsedTVA) ? parsedTVA : 10;
     let html = '';
-    if (!DEV_LIGNES.length) html += '<div class="empty-state">Aucune ligne pour le moment. Ajoutez une prestation pour commencer.</div>';
     
     DEV_LIGNES.forEach((l, i) => {
         html += `
             <div class="line-item">
-                <div class="line-header"><div class="line-desc"><input class="inp" type="text" value="${esc(l.d)}" onchange="updateLine(${i}, 'd', this.value)" aria-label="Désignation de la ligne ${i + 1}"></div><div class="line-total">${eur(l.q * l.pu)}</div></div>
+                <div class="line-header"><div class="line-desc"><input class="inp" type="text" value="${esc(l.d)}" onchange="updateLine(${i}, 'd', this.value)" placeholder="Désignation de la prestation" aria-label="Désignation de la ligne ${i + 1}"></div><div class="line-total">${eur(l.q * l.pu)}</div></div>
                 <div class="line-inputs">
                     <input class="inp" type="number" step="0.01" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;" placeholder="Qté" aria-label="Quantité de la ligne ${i + 1}">
                     <div class="pu-wrapper">
@@ -1042,15 +1065,14 @@ function renderLines() {
                         </select>
                         <input class="inp" type="number" min="0" step="0.01" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;" placeholder="PU HT" aria-label="Prix unitaire HT de la ligne ${i + 1}">
                         ${l.code !== 'custom' && l.pu !== l.puBase ? `<button type="button" class="btn-reset" onclick="resetLine(${i})" title="Réinitialiser le prix">Réinit.</button>` : ''}
-                        <button type="button" class="btn-reset btn-danger" onclick="removeLine(${i})" aria-label="Supprimer la ligne ${i + 1}">Supprimer</button>
+                        <button type="button" class="btn-reset btn-danger" onclick="removeLine(${i})" aria-label="Supprimer la ligne ${i + 1}">Suppr.</button>
                     </div>
                 </div>
-                <div class="line-note">Recherche tarifaire en ligne indisponible; aucun prix automatique n'est appliqué.</div>
             </div>
         `;
     });
 
-    html += '<button type="button" class="btn btn-ghost add-line-button" onclick="addLine(\'custom\', 1)">Ajouter une ligne</button>';
+    html += '<button type="button" class="btn btn-ghost add-line-button" onclick="addLine(\'custom\', 1)">+ Ajouter une ligne vierge</button>';
 
     const tot = computeQuote(DEV_LIGNES, SETTINGS.aleas, tauxTVA);
     const coutMat = parseFloat(document.getElementById('d-cout-materiaux')?.value) || 0;
@@ -1086,7 +1108,7 @@ function renderLines() {
 
 function updateLine(i, f, v) {
     if (f === 'q') DEV_LIGNES[i].q = parseFloat(v) || 0;
-    if (f === 'd') DEV_LIGNES[i].d = v.trim() || 'Nouvelle prestation';
+    if (f === 'd') DEV_LIGNES[i].d = v.trim();
     if (f === 'u') DEV_LIGNES[i].u = v;
     if (f === 'pu') {
         DEV_LIGNES[i].pu = parseFloat(v) || 0;
@@ -1116,14 +1138,18 @@ function saveDevis() {
         cid = document.getElementById('d-client').value;
     }
     if (!cid) { toast("Sélectionnez un client"); return; }
+
+    // Filtrer les lignes complètement vides pour éviter de sauvegarder du vent
+    const lignesValides = DEV_LIGNES.filter(l => l.d.trim() !== '' || l.pu > 0);
+    if (lignesValides.length === 0) { toast("Ajoutez au moins une prestation."); return; }
     
-    const tot = computeQuote(DEV_LIGNES, SETTINGS.aleas, tauxTVA);
+    const tot = computeQuote(lignesValides, SETTINGS.aleas, tauxTVA);
     const c = d.clients.find(x => x.id === cid);
     
     if (CURRENT_MODE === 'edit') {
         const idx = d.devis.findIndex(x => x.id === CURRENT_ID);
         if (idx > -1) {
-            d.devis[idx].lignes = DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu }));
+            d.devis[idx].lignes = lignesValides.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu }));
             d.devis[idx].tauxTVA = tauxTVA;
             d.devis[idx].coutMateriaux = coutMateriaux;
             d.devis[idx].aleas = tot.aleasMontant;
@@ -1142,7 +1168,7 @@ function saveDevis() {
             id, uuid: uuid(), type: 'devis', clientId: cid, clientUuid: c.uuid, clientNom: c.nom,
             date: now, createdAt: now, updatedAt: now,
             statut: 'brouillon',
-            lignes: DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu })),
+            lignes: lignesValides.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu })),
             tauxTVA: tauxTVA,
             coutMateriaux: coutMateriaux,
             aleas: tot.aleasMontant,
