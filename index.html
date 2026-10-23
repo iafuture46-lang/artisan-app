@@ -62,6 +62,20 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .page-content{animation:fadeInUp 0.3s ease-out forwards}
 
+/* HERO BANNER (Nouveau) */
+.hero-banner {
+    background-image: linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.1) 100%), url('hero.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+}
+.hero-banner h2 { font-size: 28px; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-banner p { font-size: 15px; color: var(--text-muted); font-weight: 500; max-width: 60%; }
+
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all 0.3s ease}
 .card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg)}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
@@ -284,7 +298,17 @@ function viewAccueil() {
     const nbDevisEnCours = d.devis.filter(x => x.statut === 'brouillon').length;
     let ca = 0; d.devis.forEach(x => { if (x.statut === 'accepte') ca += x.totalTTC; });
 
+    // Déterminer le message d'accueil
+    const h = new Date().getHours();
+    let salut = "Bonjour";
+    if (h >= 18) salut = "Bonsoir";
+    
     return `
+        <div class="hero-banner">
+            <h2>${salut}, Chef !</h2>
+            <p>Prêt à chiffrer vos chantiers aujourd'hui ?</p>
+        </div>
+
         <div class="kpi-grid">
             <div class="kpi full" onclick="go('devis')">
                 <div class="lbl">Chiffre d'Affaires Validé</div>
