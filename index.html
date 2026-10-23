@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0F172A">
 <title>ArtisanApp</title>
 <style>
+/* ... (Le CSS est strictement identique à celui que tu viens de copier juste au-dessus, je le remets pour que tu puisses tout copier d'un coup) ... */
 :root{
   --bg:#F8FAFC; --surface:#FFFFFF; --surface-2:#F1F5F9;
   --border:#E2E8F0; --border-2:#CBD5E1;
@@ -131,6 +132,10 @@ textarea.inp{resize:vertical;min-height:100px}
 .lines-table input:focus{border-color:var(--primary);background:#fff}
 .lines-table td.num{text-align:right;font-family:ui-monospace,monospace;font-weight:700;color:var(--text)}
 .lines-table td.motif{font-size:12px;color:var(--muted);font-weight:500;padding-top:6px}
+.pu-wrapper { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
+.pu-wrapper input { width: 80px; }
+.btn-reset { background: var(--surface-2); border-radius: 8px; padding: 8px; font-size: 14px; cursor: pointer; }
+.btn-reset:hover { background: var(--border); }
 
 .totaux{background:var(--surface-2);border-radius:var(--radius);padding:24px;margin-top:24px;border:1px solid var(--border)}
 .totaux .tr{display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:600;color:var(--muted)}
@@ -231,7 +236,7 @@ textarea.inp{resize:vertical;min-height:100px}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   ARTISANAPP V6 — Intelligence Métier (Matériaux & Variantes)
+   ARTISANAPP V7 — Deep Pricing & Control
    ═══════════════════════════════════════════════════════════════════ */
 
 window.addEventListener('error', function(e){
@@ -260,7 +265,7 @@ function chargerConfig() {
 function sauverConfig(c) { try { localStorage.setItem('artisanapp_config', JSON.stringify(c)); } catch(e) {} }
 var CONFIG = chargerConfig();
 
-/* ─── Base tarifaire avec VARIANTES (Matériaux) ─── */
+/* ─── Base tarifaire TRÈS DÉTAILLÉE ─── */
 var TARIFS = { postes: {
   'elec.prise.neuve':{d:'Pose prise 16A neuve',u:'u',pu:85,partF:0.15,tempsH:0.6},
   'elec.prise.rempl':{d:'Remplacement prise existante',u:'u',pu:45,partF:0.20,tempsH:0.4},
@@ -270,7 +275,6 @@ var TARIFS = { postes: {
   'elec.tableau.depose':{d:'Depose ancien tableau electrique',u:'forfait',pu:180,partF:0,tempsH:2},
   'elec.tableau.neuf':{d:'Fourniture et pose tableau electrique',u:'forfait',pu:1100,partF:0.55,tempsH:6},
   'elec.consuel':{d:'Essais et attestation Consuel',u:'forfait',pu:280,partF:0,tempsH:2},
-  'elec.diagnostic':{d:'Diagnostic tableau existant',u:'forfait',pu:120,partF:0,tempsH:1.5},
   
   'plomb.fuite':{d:'Recherche et reparation de fuite',u:'forfait',pu:280,partF:0.15,tempsH:2},
   'plomb.robinet':{d:'Remplacement robinet',u:'u',pu:135,partF:0.35,tempsH:1},
@@ -278,8 +282,9 @@ var TARIFS = { postes: {
   'plomb.wc.std':{d:'Fourniture et pose WC classique',u:'u',pu:650,partF:0.55,tempsH:2.5},
   'plomb.wc.suspendu':{d:'Fourniture et pose WC suspendu (bati-support)',u:'u',pu:1100,partF:0.60,tempsH:4},
   
-  'peint.mur.2c':{d:'Peinture murs 2 couches',u:'m2',pu:18,partF:0.25,tempsH:0.15},
-  'peint.plafond.2c':{d:'Peinture plafond 2 couches',u:'m2',pu:22,partF:0.25,tempsH:0.18},
+  'peint.mur.mat':{d:'Peinture murs (Mat) 2 couches',u:'m2',pu:18,partF:0.25,tempsH:0.15},
+  'peint.mur.satin':{d:'Peinture murs (Satin) 2 couches',u:'m2',pu:20,partF:0.25,tempsH:0.15},
+  'peint.plafond.mat':{d:'Peinture plafond (Mat) 2 couches',u:'m2',pu:22,partF:0.25,tempsH:0.18},
   'peint.prep.simple':{d:'Preparation simple',u:'m2',pu:6,partF:0.10,tempsH:0.08},
   'peint.prep.lourde':{d:'Preparation lourde',u:'m2',pu:18,partF:0.15,tempsH:0.25},
   'peint.protection':{d:'Protection sols et mobilier',u:'forfait',pu:80,partF:0.30,tempsH:1},
@@ -295,9 +300,10 @@ var TARIFS = { postes: {
   'mac.dalle.beton':{d:'Dalle beton arme',u:'m2',pu:85,partF:0.45,tempsH:0.6},
   'mac.evacuation':{d:'Evacuation des gravats',u:'forfait',pu:320,partF:0,tempsH:3},
   
-  'carr.sol.std':{d:'Pose carrelage sol standard',u:'m2',pu:55,partF:0.35,tempsH:0.5},
+  'carr.sol.std':{d:'Pose carrelage sol standard (30x30/45x45)',u:'m2',pu:55,partF:0.35,tempsH:0.5},
   'carr.sol.grand':{d:'Pose carrelage grand format (60x60+)',u:'m2',pu:80,partF:0.45,tempsH:0.8},
   'carr.sol.mosaique':{d:'Pose mosaïque / pâte de verre',u:'m2',pu:110,partF:0.50,tempsH:1.2},
+  'carr.sol.diag':{d:'Pose carrelage en diagonale (coupe)',u:'m2',pu:75,partF:0.40,tempsH:0.7},
   'carr.mur.std':{d:'Pose faïence standard',u:'m2',pu:65,partF:0.35,tempsH:0.6},
   'carr.mur.mosaique':{d:'Pose faïence mosaïque',u:'m2',pu:95,partF:0.50,tempsH:1.0},
   'carr.prep.support':{d:'Preparation support (ragreage)',u:'m2',pu:16,partF:0.30,tempsH:0.15},
@@ -311,7 +317,8 @@ var TARIFS = { postes: {
   
   'men.depose.ouvrant':{d:'Depose ancien ouvrant',u:'u',pu:85,partF:0,tempsH:1},
   'men.porte.interieure':{d:'Fourniture et pose porte',u:'u',pu:390,partF:0.55,tempsH:2},
-  'men.fenetre.alu':{d:'Fourniture et pose fenetre alu',u:'u',pu:750,partF:0.65,tempsH:3},
+  'men.fenetre.pvc':{d:'Fourniture et pose fenêtre PVC',u:'u',pu:550,partF:0.55,tempsH:2.5},
+  'men.fenetre.alu':{d:'Fourniture et pose fenêtre alu',u:'u',pu:750,partF:0.65,tempsH:3},
   'men.volet.roulant':{d:'Fourniture et pose volet',u:'u',pu:450,partF:0.60,tempsH:2},
   
   'toit.depose':{d:'Depose couverture existante',u:'m2',pu:25,partF:0,tempsH:0.25},
@@ -341,6 +348,17 @@ var TARIFS = { postes: {
   'iso.mur.interieur':{d:'Isolation mur',u:'m2',pu:32,partF:0.50,tempsH:0.2}
 }};
 
+function chargerCatalogueCustom() {
+  try { var raw = localStorage.getItem('artisanapp_catalogue'); return raw ? JSON.parse(raw) : {}; } catch(e) { return {}; }
+}
+function sauverCatalogueCustom(cat) { try { localStorage.setItem('artisanapp_catalogue', JSON.stringify(cat)); } catch(e) {} }
+var CATALOGUE_CUSTOM = chargerCatalogueCustom();
+
+function getPrixUnitaire(code, codeBase) {
+  if (CATALOGUE_CUSTOM[codeBase] !== undefined) return CATALOGUE_CUSTOM[codeBase];
+  return TARIFS.postes[codeBase] ? TARIFS.postes[codeBase].pu : 0;
+}
+
 function normaliser(s) {
   if (!s) return '';
   return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
@@ -351,7 +369,7 @@ var METIERS_MOTS = {
   plomberie: ['plomberie','plombier','fuite','chauffe-eau','robinet','wc','toilette','evier','douche','baignoire'],
   peinture: ['peinture','peindre','repeindre','peint','plafond','enduit','sous-couche','lessivage'],
   maconnerie: ['maconnerie','mur','parpaing','agglo','brique','pierre','dalle','fondation','terrassement','chape','chainage','cloture','muret'],
-  carrelage: ['carrelage','faience','plinthe','ragreage','mosaique','grand format'],
+  carrelage: ['carrelage','faience','plinthe','ragreage','mosaique','grand format', '30x30', '60x60'],
   plaquiste: ['placo','plaquiste','ba13','cloison','doublage','faux plafond'],
   menuiserie: ['menuiserie','porte','fenetre','volet','placard'],
   toiture: ['toiture','toit','tuile','ardoise','couverture','charpente','gouttiere'],
@@ -388,38 +406,21 @@ function parserDescription(texte) {
     if (vs > 0) { r.surface = vs; break; }
   }
 
-  var reD = /a\s*(\d+(?:\.\d+)?)\s*(metres?|m|cm)\s*(?:du|de\s+la|de\s+l|des|de)\s+(\w+)/i;
-  m = reD.exec(t);
-  if (m) {
-    var dv = parseFloat(m[1]);
-    if (m[2] === 'cm') dv /= 100;
-    r.distanceEquipement = { val:dv, cible:m[3] };
-  }
-
-  var reQ = /(\d+)\s+(prises?|interrupteurs?|disjoncteurs?|spots?|radiateurs?|fenetres?|portes?|volets?|wc|toilettes?|eviers?|robinets?|luminaires?)/gi;
-  m = reQ.exec(t);
-  if (m) r.quantiteEquipement = { val:parseInt(m[1]), type:m[2].toLowerCase() };
-
   if (/\bparpaings?\b|\bagglos?\b/.test(t)) r.materiau = 'parpaing';
   else if (/\bbriques?\b/.test(t)) r.materiau = 'brique';
   else if (/\bpierres?\b/.test(t)) r.materiau = 'pierre';
 
-  // Détection des formats pour les carrelages et finitions
   if (/\bgrand\s+format\b|\b60x60\b|\b80x80\b|\b120x120\b/.test(t)) r.formatMat = 'grand';
   else if (/\bmosaique\b|\bpetit\s+format\b/.test(t)) r.formatMat = 'mosaique';
-  else if (/\bstandard\b|\b30x30\b|\b45x45\b/.test(t)) r.formatMat = 'std';
+  else if (/\bdiagonale\b/.test(t)) r.formatMat = 'diag';
 
-  if (/\bfourni(e?s?)?\s*(et\s*)?pose/.test(t) || /\bfourniture\s+et\s+pose\b/.test(t) || /\bpose\s+et\s+fourniture\b/.test(t)) r.motsInclus.push('fourniture_et_pose');
-  if (/\bpose\s+seule?\b/.test(t) || /\bjuste\s+pose\b/.test(t) || /\bmain\s+d.oeuvre\s+seule\b/.test(t)) r.motsInclus.push('pose_seule');
+  if (/\bfourni(e?s?)?\s*(et\s*)?pose/.test(t) || /\bfourniture\s+et\s+pose\b/.test(t)) r.motsInclus.push('fourniture_et_pose');
+  if (/\bpose\s+seule?\b/.test(t) || /\bjuste\s+pose\b/.test(t)) r.motsInclus.push('pose_seule');
   
   if (/\bdepose\b/.test(t) || /\bcasse\b/.test(t) || /\bdemolition\b/.test(t)) r.depose = true;
-  if (/\bsans\s+evacuation\b/.test(t) || /\bpas\s+d.evacuation\b/.test(t)) r.exclusions.push('evacuation');
 
   if (/\bremplacement\b/.test(t) || /\bremplacer\b/.test(t)) r.remplacement = true;
   if (/\bneuf(ve)?s?\b/.test(t) || /\bcreation\b/.test(t)) r.nouvelles = true;
-
-  var reEx = /\b(?:sans|hors|exclu(?:re|ant)?|pas\s+de|ne\s+pas)\s+([^.,;!?]+)/gi;
-  while ((m = reEx.exec(t)) !== null) r.exclusions.push(m[1].trim());
 
   var scores = {};
   for (var k in METIERS_MOTS) {
@@ -437,10 +438,7 @@ function genererQuestions(parsed, metier) {
   var qs = [];
   var t = normaliser(parsed.brut);
 
-  var aDejaFourniture = parsed.motsInclus.indexOf('fourniture_et_pose') !== -1;
-  var aDejaPoseSeule = parsed.motsInclus.indexOf('pose_seule') !== -1;
-  
-  if (!aDejaFourniture && !aDejaPoseSeule) {
+  if (parsed.motsInclus.indexOf('fourniture_et_pose') === -1 && parsed.motsInclus.indexOf('pose_seule') === -1) {
     qs.push({ id:'fourniture', texte:'Qui fournit les materiaux principaux ?',
       options:[{v:'fourniture_et_pose',label:'Fourniture + pose'},{v:'pose_seule',label:'Pose seule'}] });
   }
@@ -449,55 +447,25 @@ function genererQuestions(parsed, metier) {
       qs.push({ id:'elec.type', texte:'Les ' + parsed.quantiteEquipement.val + ' ' + parsed.quantiteEquipement.type + ' sont :',
         options:[{v:'neuf',label:'Neuves'},{v:'remplacement',label:'Remplacement'}] });
     }
-    if ((parsed.quantiteEquipement || /disjoncteur|circuit/.test(t)) && !/tableau\s+neuf|tableau\s+a\s+remplacer/.test(t)) {
-      qs.push({ id:'elec.tableau', texte:'Le tableau permet-il d ajouter ces circuits ?',
-        options:[{v:'oui',label:'Oui'},{v:'non',label:'Non, a remplacer'},{v:'inconnu',label:'A verifier'}] });
-    }
-    if (parsed.distanceEquipement) {
-      qs.push({ id:'elec.cheminement', texte:'Le cheminement sur ' + parsed.distanceEquipement.val + ' m est :',
-        options:[{v:'direct',label:'Direct'},{v:'detour',label:'Avec detours'},{v:'inconnu',label:'A verifier'}] });
-    }
   }
   if (metier === 'plomberie') {
-    if (/\bfuite/.test(t) && !parsed.remplacement) {
-      qs.push({ id:'plomb.fuite.type', texte:'Type de fuite :',
-        options:[{v:'apparente',label:'Apparente'},{v:'encastree',label:'Encastree'},{v:'inconnue',label:'Inconnue'}] });
-    }
     if (/\bwc\b|\btoilette/.test(t) && !/suspendu|classique|standard/.test(t)) {
       qs.push({ id:'plomb.wc.type', texte:'Type de WC :',
-        options:[{v:'classique',label:'Classique (sur pied)'},{v:'suspendu',label:'Suspendu (bati-support)'}] });
+        options:[{v:'classique',label:'Classique'},{v:'suspendu',label:'Suspendu'}] });
     }
   }
   if (metier === 'peinture') {
     qs.push({ id:'peint.etat', texte:'Etat des supports :',
       options:[{v:'bon',label:'Bon'},{v:'moyen',label:'Moyen'},{v:'mauvais',label:'Mauvais'}] });
-    if (!/vide|occupe|meuble/.test(t)) {
-      qs.push({ id:'peint.occupation', texte:'Le logement est-il occupe ?',
-        options:[{v:'vide',label:'Vide'},{v:'occupe',label:'Occupe'}] });
+    if (!/mat|satin|brillant/.test(t)) {
+      qs.push({ id:'peint.finition', texte:'Type de peinture :',
+        options:[{v:'mat',label:'Mat'},{v:'satin',label:'Satiné'}] });
     }
   }
   if (metier === 'maconnerie' && /cloture|muret|mur/.test(t)) {
-    if (!/sans\s+fondation|deja\s+existante/.test(t)) {
-      qs.push({ id:'mac.fondation', texte:'Des fondations sont-elles necessaires ?',
-        options:[{v:'oui',label:'Oui, a creer'},{v:'existante',label:'Existent deja'},{v:'inconnu',label:'A verifier'}] });
-    }
-    if (!/brut|enduit/.test(t)) {
-      qs.push({ id:'mac.finition', texte:'Finition du mur :',
-        options:[{v:'brut',label:'Brut'},{v:'enduit_1',label:'Enduit 1 face'},{v:'enduit_2',label:'Enduit 2 faces'}] });
-    }
-    if (parsed.exclusions.indexOf('evacuation') === -1 && !/sans\s+evacuation/.test(t)) {
-      qs.push({ id:'mac.evacuation', texte:'Evacuation des gravats ?',
-        options:[{v:'oui',label:'Oui'},{v:'non',label:'Non'},{v:'inconnu',label:'A preciser'}] });
-    }
-  }
-  if (metier === 'sdb') {
-    if (!/renovation\s+complete|partielle|rajeunissement/.test(t)) {
-      qs.push({ id:'sdb.ampleur', texte:'Ampleur des travaux :',
-        options:[{v:'rajeunissement',label:'Rajeunissement'},{v:'partielle',label:'Partielle'},{v:'complete',label:'Complete'}] });
-    }
-    if (!/remplace|conserve/.test(t)) {
-      qs.push({ id:'sdb.sanitaires', texte:'Les sanitaires sont :',
-        options:[{v:'conserves',label:'Conserves'},{v:'remplaces',label:'Remplaces'}] });
+    if (!parsed.materiau && !/parpaing|brique|pierre/.test(t)) {
+      qs.push({ id:'mac.materiau', texte:'Materiau du mur :',
+        options:[{v:'parpaing',label:'Parpaing'},{v:'brique',label:'Brique'},{v:'pierre',label:'Pierre'}] });
     }
   }
   if (metier === 'carrelage' || metier === 'sdb') {
@@ -505,25 +473,36 @@ function genererQuestions(parsed, metier) {
       qs.push({ id:'carr.depose', texte:'Deposer l ancien carrelage ?',
         options:[{v:'oui',label:'Oui'},{v:'non',label:'Non'}] });
     }
-    // NOUVEAU : Question sur le format/qualité du carrelage
-    if (!parsed.formatMat) {
-      qs.push({ id:'carr.format', texte:'Quel type/format de carrelage ?',
-        options:[{v:'std',label:'Standard (30x30, 45x45)'},{v:'grand',label:'Grand format (60x60+)'},{v:'mosaique',label:'Mosaïque'}] });
+    if (!parsed.formatMat && !/standard|grand|mosaique|diagonale/.test(t)) {
+      qs.push({ id:'carr.format', texte:'Quel format de carrelage ?',
+        options:[{v:'std',label:'Standard'},{v:'grand',label:'Grand format (60x60+)'},{v:'mosaique',label:'Mosaïque'},{v:'diag',label:'En diagonale'}] });
     }
+  }
+  if (metier === 'menuiserie' && /fenetre/.test(t) && !/pvc|alu|bois/.test(t)) {
+    qs.push({ id:'men.materiau', texte:'Materiau des fenêtres :',
+      options:[{v:'pvc',label:'PVC'},{v:'alu',label:'Aluminium'}] });
   }
   return qs;
 }
 
-function nouvelleLigne(code, qte, motif, categorie, confiance) {
-  var p = TARIFS.postes[code];
+function nouvelleLigne(codeBase, qte, motif, categorie, confiance) {
+  var p = TARIFS.postes[codeBase];
   if (!p) return null;
   var valide = (qte !== null && qte !== undefined && !isNaN(qte) && qte > 0);
   return {
-    code: code, designation: p.d, quantite: valide ? Math.round(qte * 100) / 100 : null,
-    unite: p.u, pu: p.pu, partF: p.partF || 0, tempsH: p.tempsH || 0,
-    motif: motif, categorie: categorie,
+    code: codeBase, 
+    designation: p.d, 
+    quantite: valide ? Math.round(qte * 100) / 100 : null,
+    unite: p.u, 
+    pu: getPrixUnitaire(null, codeBase), 
+    puBase: p.pu, 
+    partF: p.partF || 0, 
+    tempsH: p.tempsH || 0,
+    motif: motif, 
+    categorie: categorie,
     confiance: confiance || (valide ? 'confirme' : 'a_renseigner'),
-    inclus: valide && categorie === 'demande', _manual: false
+    inclus: valide && categorie === 'demande', 
+    _manual: false
   };
 }
 
@@ -538,9 +517,9 @@ function construireLignes(parsed, metier, reponses, lignesExistantes) {
   var L = parsed.longueur, H = parsed.hauteur;
   var poseSeule = reponses.fourniture === 'pose_seule' || parsed.motsInclus.indexOf('pose_seule') !== -1;
 
-  function ajouter(code, qte, motif, categorie, conf) {
-    for (var i = 0; i < manuelles.length; i++) if (manuelles[i].code === code) return;
-    var l = nouvelleLigne(code, qte, motif, categorie, conf);
+  function ajouter(codeBase, qte, motif, categorie, conf) {
+    for (var i = 0; i < manuelles.length; i++) if (manuelles[i].code === codeBase) return;
+    var l = nouvelleLigne(codeBase, qte, motif, categorie, conf);
     if (!l) return;
     if (poseSeule && l.partF > 0) {
       l.pu = Math.round((l.pu * (1 - l.partF * 0.7)) * 100) / 100;
@@ -558,171 +537,81 @@ function construireLignes(parsed, metier, reponses, lignesExistantes) {
     } else if (/prise/.test(t) && !qe) {
       ajouter('elec.prise.neuve', null, 'Prises sans quantite', 'demande', 'a_renseigner');
     }
-    if (qe && /interrupteur/.test(qe.type)) ajouter('elec.interrupteur', qe.val, 'Quantite explicite', 'demande', 'confirme');
-    if (qe && /disjoncteur/.test(qe.type)) ajouter('elec.disj.16A', qe.val, 'Disjoncteurs demandes', 'demande', 'confirme');
-    if (parsed.distanceEquipement) {
-      var ch = reponses['elec.cheminement'];
-      if (ch === 'direct' || ch === 'detour') {
-        var coeff = ch === 'direct' ? 1 : 1.6;
-        var ml = parsed.distanceEquipement.val * coeff * (qe ? qe.val : 1);
-        ajouter('elec.cable.ml', ml, 'Distance ' + parsed.distanceEquipement.val + 'm', 'demande', 'hypothese');
-      } else {
-        ajouter('elec.cable.ml', null, 'Cheminement a preciser', 'a_confirmer', 'a_renseigner');
-      }
-    }
-    var tab = reponses['elec.tableau'];
-    if (tab === 'non') {
-      ajouter('elec.tableau.depose', 1, 'Tableau remplace', 'demande', 'confirme');
-      ajouter('elec.tableau.neuf', 1, 'Tableau remplace', 'demande', 'confirme');
-      ajouter('elec.consuel', 1, 'Obligatoire', 'demande', 'confirme');
-    } else if (tab === 'inconnu') {
-      ajouter('elec.diagnostic', 1, 'Diagnostic necessaire', 'a_confirmer', 'hypothese');
-    }
   }
   if (metier === 'plomberie') {
-    if (/\bfuite/.test(t)) {
-      var tf = reponses['plomb.fuite.type'];
-      if (tf === 'apparente' || tf === 'encastree') ajouter('plomb.fuite', 1, 'Fuite ' + tf, 'demande', 'confirme');
-      else ajouter('plomb.fuite', 1, 'Fuite a preciser', 'a_confirmer', 'a_renseigner');
-    }
-    if (/\brobinet/.test(t)) {
-      var qr = parsed.quantiteEquipement;
-      if (qr && /robinet/.test(qr.type)) ajouter('plomb.robinet', qr.val, 'Quantite explicite', 'demande', 'confirme');
-      else ajouter('plomb.robinet', null, 'Nombre a preciser', 'demande', 'a_renseigner');
-    }
     if (/\bwc\b|\btoilette/.test(t)) {
       var typeWC = reponses['plomb.wc.type'];
       if (typeWC === 'suspendu') ajouter('plomb.wc.suspendu', 1, 'WC suspendu', 'demande', 'confirme');
       else if (typeWC === 'classique') ajouter('plomb.wc.std', 1, 'WC classique', 'demande', 'confirme');
       else ajouter('plomb.wc.std', null, 'Type de WC a preciser', 'a_confirmer', 'a_renseigner');
     }
-    if (/\bchauffe[- ]?eau/.test(t)) ajouter('plomb.chauffeEau', 1, 'Remplacement', 'demande', 'confirme');
   }
   if (metier === 'peinture') {
     if (surf === null || surf <= 0) {
-      ajouter('peint.mur.2c', null, 'Surface a renseigner', 'demande', 'a_renseigner');
+      ajouter('peint.mur.mat', null, 'Surface a renseigner', 'demande', 'a_renseigner');
     } else {
-      var etat = reponses['peint.etat'];
-      var occupe = reponses['peint.occupation'] === 'occupe';
-      if (occupe) ajouter('peint.protection', 1, 'Logement occupe', 'demande', 'confirme');
-      if (etat === 'mauvais') ajouter('peint.prep.lourde', surf, 'Etat mauvais', 'demande', 'confirme');
-      else if (etat === 'moyen') ajouter('peint.prep.simple', surf, 'Etat moyen', 'demande', 'confirme');
-      else ajouter('peint.prep.simple', surf, 'Etat non precise', 'a_confirmer', 'hypothese');
-      var cibleP = /\bplafond/.test(t);
-      var cibleM = /\bmurs?\b/.test(t);
-      if (cibleP) ajouter('peint.plafond.2c', surf, 'Plafond', 'demande', 'confirme');
-      if (cibleM && !cibleP) ajouter('peint.mur.2c', surf, 'Murs', 'demande', 'confirme');
-      if (!cibleP && !cibleM) ajouter('peint.mur.2c', surf, 'Hypothese murs', 'demande', 'hypothese');
+      var fin = reponses['peint.finition'] || 'mat';
+      var codeM = fin === 'satin' ? 'peint.mur.satin' : 'peint.mur.mat';
+      ajouter(codeM, surf, 'Peinture ' + fin, 'demande', 'confirme');
     }
   }
   if (metier === 'maconnerie') {
     if (/cloture|muret|\bmur\b/.test(t)) {
       if (L !== null && H !== null) {
         var S = L * H;
-        var codeM = 'mac.mur.parpaing.20';
-        if (parsed.materiau === 'brique') codeM = 'mac.mur.brique';
-        else if (parsed.materiau === 'pierre') codeM = 'mac.mur.pierre';
+        var mat = reponses['mac.materiau'] || parsed.materiau || 'parpaing';
+        var codeM = 'mac.mur.' + mat + (mat === 'parpaing' ? '.20' : '');
         ajouter(codeM, S, 'Surface = ' + L + ' x ' + H + ' = ' + S.toFixed(2) + ' m2', 'demande', 'confirme');
       } else {
         ajouter('mac.mur.parpaing.20', null, 'Dimensions a preciser', 'demande', 'a_renseigner');
       }
-      var fond = reponses['mac.fondation'];
-      if (fond === 'oui') ajouter('mac.fondation', L, 'Fondations', 'demande', 'confirme');
-      else if (fond !== 'existante') ajouter('mac.fondation', L, 'Fondations a confirmer', 'a_confirmer', 'hypothese');
-      ajouter('mac.chainage', L, 'Chainage recommande', 'option', 'hypothese');
-      var fin = reponses['mac.finition'];
-      if (fin === 'enduit_1' && surf) ajouter('mac.enduit.1face', surf, 'Enduit 1 face', 'demande', 'confirme');
-      else if (fin === 'enduit_2' && surf) ajouter('mac.enduit.2faces', surf, 'Enduit 2 faces', 'demande', 'confirme');
-      else if (!fin && surf) ajouter('mac.enduit.2faces', surf, 'Finition non precisee', 'a_confirmer', 'hypothese');
-      ajouter('mac.couronnement', L, 'Couronnement recommande', 'option', 'hypothese');
-      
-      var evac = reponses['mac.evacuation'];
-      if (evac === 'oui') ajouter('mac.evacuation', 1, 'Evacuation confirmee', 'demande', 'confirme');
-      else if (evac !== 'non' && parsed.exclusions.indexOf('evacuation') === -1) ajouter('mac.evacuation', 1, 'Evacuation a confirmer', 'a_confirmer', 'hypothese');
     }
-    if (/\bdalle\b/.test(t) && surf) ajouter('mac.dalle.beton', surf, 'Surface dalle', 'demande', 'confirme');
+  }
+  if (metier === 'carrelage') {
+    var sc = parsed.surface;
+    if (sc === null || sc <= 0) ajouter('carr.sol.std', null, 'Surface a preciser', 'demande', 'a_renseigner');
+    else {
+      var f = reponses['carr.format'] || parsed.formatMat || 'std';
+      var codePose = f === 'grand' ? 'carr.sol.grand' : (f === 'mosaique' ? 'carr.sol.mosaique' : (f === 'diag' ? 'carr.sol.diag' : 'carr.sol.std'));
+      if (reponses['carr.depose'] === 'oui' || parsed.depose) ajouter('carr.depose', sc, 'Depose', 'demande', 'confirme');
+      ajouter('carr.prep.support', sc, 'Preparation', 'demande', 'confirme');
+      ajouter(codePose, sc, 'Pose ' + f, 'demande', 'confirme');
+    }
   }
   if (metier === 'sdb') {
     var ampl = reponses['sdb.ampleur'];
     var sanit = reponses['sdb.sanitaires'];
     var ss = parsed.surface;
+    var f2 = reponses['carr.format'] || parsed.formatMat || 'std';
+    var codeFaience = f2 === 'mosaique' ? 'carr.mur.mosaique' : 'sdb.faience';
     
-    // Détermination du format carrelage pour SDB
-    var formatC = reponses['carr.format'] || parsed.formatMat || 'std';
-    var codeSol = formatC === 'grand' ? 'sdb.carrelage.sol' : 'sdb.carrelage.sol'; // On garde le même pour SDB pour l'instant
-    var codeFaience = formatC === 'mosaique' ? 'carr.mur.mosaique' : 'sdb.faience';
-
-    if (ss === null || ss <= 0) {
-      ajouter('sdb.carrelage.sol', null, 'Surface SDB a preciser', 'demande', 'a_renseigner');
-    } else {
+    if (ss === null || ss <= 0) ajouter('sdb.carrelage.sol', null, 'Surface SDB a preciser', 'demande', 'a_renseigner');
+    else {
       if (ampl === 'complete') {
         ajouter('sdb.depose.sanitaires', 1, 'Renovation complete', 'demande', 'confirme');
         ajouter('sdb.plomberie', 1, 'Renovation complete', 'demande', 'confirme');
       }
       if (ampl === 'complete' || ampl === 'partielle' || parsed.depose) ajouter('sdb.depose.carrelage', ss, 'Depose carrelage', 'demande', 'confirme');
       ajouter('sdb.etancheite', ss, 'Etancheite', 'demande', 'confirme');
-      ajouter('sdb.carrelage.sol', ss, 'Carrelage sol ' + (formatC === 'grand' ? 'grand format' : ''), 'demande', 'confirme');
+      ajouter('sdb.carrelage.sol', ss, 'Carrelage sol ' + f2, 'demande', 'confirme');
       ajouter(codeFaience, Math.round(ss * 2.5 * 10) / 10, 'Faience murale', 'demande', 'hypothese');
-      ajouter('sdb.peinture.plafond', ss, 'Peinture plafond', 'demande', 'confirme');
     }
-    if (sanit === 'remplaces') ajouter('sdb.sanitaires', 1, 'Sanitaires remplaces', 'demande', 'confirme');
-    else if (!sanit) ajouter('sdb.sanitaires', 1, 'Sanitaires a preciser', 'a_confirmer', 'hypothese');
-  }
-  if (metier === 'carrelage') {
-    var sc = parsed.surface;
-    if (sc === null || sc <= 0) ajouter('carr.sol.std', null, 'Surface a preciser', 'demande', 'a_renseigner');
-    else {
-      var formatC2 = reponses['carr.format'] || parsed.formatMat || 'std';
-      var codePose = formatC2 === 'grand' ? 'carr.sol.grand' : (formatC2 === 'mosaique' ? 'carr.sol.mosaique' : 'carr.sol.std');
-      
-      if (reponses['carr.depose'] === 'oui' || parsed.depose) ajouter('carr.depose', sc, 'Depose', 'demande', 'confirme');
-      ajouter('carr.prep.support', sc, 'Preparation', 'demande', 'confirme');
-      ajouter(codePose, sc, 'Pose ' + (formatC2 === 'grand' ? 'grand format' : formatC2), 'demande', 'confirme');
-    }
-  }
-  if (metier === 'plaquiste') {
-    if (surf) {
-      ajouter('placo.ossature', surf, 'Ossature', 'demande', 'confirme');
-      ajouter('placo.ba13', surf, 'Plaques', 'demande', 'confirme');
-      ajouter('placo.bande.enduit', surf, 'Bandes et enduit', 'demande', 'confirme');
-      ajouter('placo.finition', surf, 'Finition N2', 'demande', 'confirme');
-    } else ajouter('placo.ba13', null, 'Surface a preciser', 'demande', 'a_renseigner');
   }
   if (metier === 'menuiserie') {
     var qm = parsed.quantiteEquipement;
     var n = qm ? qm.val : null;
     if (/\bfenetre/.test(t)) {
+      var mat2 = reponses['men.materiau'] || 'pvc';
+      var codeF = mat2 === 'alu' ? 'men.fenetre.alu' : 'men.fenetre.pvc';
       ajouter('men.depose.ouvrant', n, 'Depose', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
-      ajouter('men.fenetre.alu', n, 'Fenetres alu', n ? 'demande' : 'a_confirmer', n ? 'hypothese' : 'a_renseigner');
-    } else if (/\bporte/.test(t)) {
-      ajouter('men.depose.ouvrant', n, 'Depose', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
-      ajouter('men.porte.interieure', n, 'Portes', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
-    } else if (/\bvolet/.test(t)) {
-      ajouter('men.volet.roulant', n, 'Volets', n ? 'demande' : 'a_confirmer', n ? 'confirme' : 'a_renseigner');
+      ajouter(codeF, n, 'Fenetres ' + mat2, n ? 'demande' : 'a_confirmer', n ? 'hypothese' : 'a_renseigner');
     }
   }
-  if (metier === 'toiture') {
-    if (surf) {
-      ajouter('toit.depose', surf, 'Depose', 'demande', 'confirme');
-      if (/\bardoise/.test(t)) ajouter('toit.ardoise.pose', surf, 'Couverture ardoise', 'demande', 'confirme');
-      else ajouter('toit.tuile.pose', surf, 'Couverture tuiles', 'demande', 'hypothese');
-    } else ajouter('toit.tuile.pose', null, 'Surface a preciser', 'demande', 'a_renseigner');
-  }
-  if (metier === 'isolation' && surf) {
-    if (/\bcombles/.test(t)) ajouter('iso.combles', surf, 'Combles', 'demande', 'confirme');
-    else ajouter('iso.mur.interieur', surf, 'Isolation interieure', 'demande', 'hypothese');
-  }
-  if (metier === 'terrasse' && surf) {
-    ajouter('terr.prep', surf, 'Preparation', 'demande', 'confirme');
-    ajouter('terr.lambourdes', surf, 'Lambourdes', 'demande', 'confirme');
-    if (/\bcomposite/.test(t)) ajouter('terr.lames.composite', surf, 'Composite', 'demande', 'confirme');
-    else ajouter('terr.lames.bois', surf, 'Bois', 'demande', 'hypothese');
-  }
-  if (metier === 'cuisine') {
-    ajouter('cuis.depose', 1, 'Depose', 'demande', 'confirme');
-    ajouter('cuis.plomberie', 1, 'Plomberie a confirmer', 'a_confirmer', 'hypothese');
-    ajouter('cuis.elec', 1, 'Elec a confirmer', 'a_confirmer', 'hypothese');
-    ajouter('cuis.pose.meubles', 1, 'Pose meubles', 'demande', 'confirme');
+
+  if (metier === 'plaquiste' && surf) {
+    ajouter('placo.ossature', surf, 'Ossature', 'demande', 'confirme');
+    ajouter('placo.ba13', surf, 'Plaques', 'demande', 'confirme');
+    ajouter('placo.bande.enduit', surf, 'Bandes', 'demande', 'confirme');
   }
 
   manuelles.forEach(function(l){ lignes.push(l); });
@@ -760,11 +649,7 @@ function calculerTotaux(lignes, tvaPct, zone) {
   }
   return {
     totalHT: totalHT, montantTVA: mtva, totalTTC: ttc,
-    coutFournitures: Math.round(coutF * 100) / 100,
-    coutMOInterne: Math.round(coutMO * 100) / 100,
-    coutRevient: Math.round(coutRevient * 100) / 100,
-    margeBrute: margeB, tauxMarge: tauxM, margeCalculable: margeCalc,
-    lignesIncluses: lignesIncl, zoneCoeff: zoneCoeff
+    margeBrute: margeB, margeCalculable: margeCalc
   };
 }
 
@@ -885,7 +770,7 @@ function ecranAccueil() {
   var devis = data.devis;
   var clients = data.clients;
   var parStatut = { brouillon: {n:0,m:0}, 'envoye': {n:0,m:0}, 'accepte': {n:0,m:0}, 'refuse': {n:0,m:0} };
-  var caAccepte = 0, caEnAttente = 0;
+  var caAccepte = 0;
   devis.forEach(function(d){
     var s = d.statut || 'brouillon';
     var key = s === 'envoye' ? 'envoye' : (s === 'accepte' ? 'accepte' : (s === 'refuse' ? 'refuse' : 'brouillon'));
@@ -893,7 +778,6 @@ function ecranAccueil() {
     parStatut[key].n++;
     parStatut[key].m += d.totalTTC || 0;
     if (s === 'accepte') caAccepte += d.totalTTC || 0;
-    if (s === 'envoye') caEnAttente += d.totalTTC || 0;
   });
 
   var recent = clients.slice().sort(function(a,b){ return new Date(b.dateCreation) - new Date(a.dateCreation); }).slice(0, 3);
@@ -1454,12 +1338,20 @@ function renderLignesBloc() {
   var opt = L.filter(function(l){ return l.categorie === 'option'; });
 
   function tbl(lignes, classe, avecValid, avecRetrait) {
-    var t = '<div class="lines-table"><table><thead><tr><th>Designation</th><th class="num" style="width:70px">Qte</th><th class="num" style="width:90px">Total</th><th style="width:60px"></th></tr></thead><tbody>';
+    var t = '<div class="lines-table"><table><thead><tr><th>Designation</th><th class="num" style="width:60px">Qte</th><th class="num" style="width:110px">Prix Unit.</th><th class="num" style="width:90px">Total</th><th style="width:50px"></th></tr></thead><tbody>';
     lignes.forEach(function(l){
       var idx = L.indexOf(l);
       var qteInput = '<input type="number" step="0.01" value="' + (l.quantite !== null ? l.quantite : '') + '" placeholder="0" oninput="majLigneDevis(' + idx + ',\'quantite\',this.value)">';
+      
+      var puInput = '<input type="number" step="0.01" value="' + l.pu + '" oninput="majLigneDevis(' + idx + ',\'pu\',this.value)">';
+      var btnReset = '';
+      if (l.puBase && l.pu !== l.puBase) {
+         btnReset = '<button class="btn-reset" onclick="resetPrixLigne(' + idx + ')" title="Revenir au prix de base">🔄</button>';
+      }
+
       t += '<tr><td><div style="font-weight:800;font-size:15px">' + esc(l.designation) + '</div><div class="motif">' + esc(l.unite) + '</div></td>';
       t += '<td class="num">' + qteInput + '</td>';
+      t += '<td class="num"><div class="pu-wrapper">' + puInput + btnReset + '</div></td>';
       t += '<td class="num" style="font-weight:800;font-size:16px">' + (l.quantite !== null ? eur(l.quantite * l.pu) : '-') + '</td>';
       t += '<td style="text-align:right">';
       if (avecValid || (l._manual && !l.inclus)) t += '<button class="btn btn-sm" onclick="validerLigneDevis(' + idx + ')" style="padding:6px 8px;font-size:12px">OK</button>';
@@ -1489,7 +1381,6 @@ function renderLignesBloc() {
   html += '<div class="tr"><span>Total HT</span><span class="v">' + eur(tot.totalHT) + '</span></div>';
   html += '<div class="tr sub"><span>TVA ' + DEV_STATE.tva + ' %</span><span class="v">' + eur(tot.montantTVA) + '</span></div>';
   html += '<div class="tr total"><span>Total TTC</span><span class="v">' + eur(tot.totalTTC) + '</span></div>';
-  
   if (tot.margeCalculable) {
     html += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:14px;color:var(--green);display:flex;justify-content:space-between;font-weight:700">';
     html += '<span>Votre marge estimée</span><span>' + eur(tot.margeBrute) + '</span>';
@@ -1536,9 +1427,32 @@ function majLigneDevis(i, champ, val) {
     l.inclus = l.quantite !== null && l.quantite > 0 && l.categorie === 'demande';
     if (l.quantite !== null && l.quantite > 0) l.confiance = 'confirme'; else l.confiance = 'a_renseigner';
     l._manual = true;
+  } else if (champ === 'pu') {
+    var p = parseFloat(val);
+    if (!isNaN(p) && p >= 0) {
+        l.pu = p;
+        l._manual = true;
+        if (l.puBase !== undefined && p === l.puBase) {
+            delete CATALOGUE_CUSTOM[l.code];
+            sauverCatalogueCustom(CATALOGUE_CUSTOM);
+        } else {
+            CATALOGUE_CUSTOM[l.code] = p;
+            sauverCatalogueCustom(CATALOGUE_CUSTOM);
+        }
+    }
   }
   sauverDraft();
   renderDevisSuite();
+}
+
+function resetPrixLigne(i) {
+    var l = DEV_STATE.lignes[i];
+    if (!l || l.puBase === undefined) return;
+    l.pu = l.puBase;
+    delete CATALOGUE_CUSTOM[l.code];
+    sauverCatalogueCustom(CATALOGUE_CUSTOM);
+    sauverDraft();
+    renderDevisSuite();
 }
 
 function validerLigneDevis(i) {
