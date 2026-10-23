@@ -6,13 +6,12 @@
 <meta name="theme-color" content="#0a0a0a">
 <title>ArtisanApp</title>
 
-<!-- Librairies pour PDF et Email -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════
-   ARTISANAPP V9 : CARBONE ULTIMATE
+   ARTISANAPP V10 : CARBONE (Desktop + Mobile + Team)
    ═══════════════════════════════════════════════════════════════════ */
 :root{
   --bg: #0a0a0a;
@@ -21,7 +20,7 @@
   --border: #2a2a2a;
   --text: #f5f5f5;
   --muted: #888888;
-  --primary: #eab308; /* Jaune Chantier */
+  --primary: #eab308;
   --primary-hover: #ca8a04;
   --primary-bg: rgba(234, 179, 8, 0.1);
   --green: #10b981;
@@ -31,18 +30,18 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:var(--font-main);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;padding-bottom:100px}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;padding-bottom:100px;display:flex;flex-direction:column;min-height:100vh}
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{cursor:pointer;border:none;background:none}
 a{text-decoration:none;cursor:pointer;color:inherit}
 
-/* HEADER */
+/* HEADER MOBILE */
 .hdr{background:var(--bg);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border)}
 .hdr-mark{width:40px;height:40px;background:var(--primary);color:#000;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
 .hdr-text h1{font-size:20px;font-weight:900;letter-spacing:-.5px;margin-left:12px}
 .hdr-text p{font-size:12px;color:var(--primary);font-weight:700;margin-left:12px;text-transform:uppercase;letter-spacing:1px}
 
-/* BOTTOM NAV */
+/* BOTTOM NAV (MOBILE) */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 24px 0;z-index:100}
 .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;font-weight:800;color:var(--muted);padding:8px 16px;text-transform:uppercase;letter-spacing:.5px}
 .bottom-nav a.active{color:var(--primary)}
@@ -52,9 +51,14 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#000;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:400;box-shadow:0 8px 32px rgba(234, 179, 8, 0.3);z-index:99;transition:transform .2s}
 .fab:active{transform:scale(.9)}
 
-.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 40px}
+/* LAYOUT DESKTOP */
+.layout-wrapper{display:flex;flex:1;max-width:1400px;margin:0 auto;width:100%;}
+.sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column;}
+.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:16px 24px;color:var(--muted);font-weight:600;cursor:pointer;transition:all .2s}
+.sidebar .nav-item:hover, .sidebar .nav-item.active{background:var(--surface-hover);color:var(--primary);border-right:4px solid var(--primary)}
+.wrap{flex:1;padding:24px 20px 40px;overflow-y:auto}
 
-/* CARDS */
+/* CARDS & UI */
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:20px;border:1px solid var(--border)}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
 .card-title{font-size:18px;font-weight:900;letter-spacing:-.5px}
@@ -62,7 +66,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 
 /* DASHBOARD KPI */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative}
 .kpi.full{grid-column:span 2;border-left:4px solid var(--primary);background:linear-gradient(90deg, var(--surface) 0%, rgba(234, 179, 8, 0.05) 100%)}
 .kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:8px;letter-spacing:1px}
 .kpi .val{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--primary)}
@@ -83,7 +87,8 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .row-2{display:grid;grid-template-columns:1fr;gap:16px}
 
 /* LISTES */
-.list-item{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.list-item:hover{background:var(--surface-hover)}
 .list-item:last-child{border-bottom:none}
 .list-item .title{font-weight:800;font-size:16px}
 .list-item .sub{font-size:12px;color:var(--muted);margin-top:2px}
@@ -118,9 +123,16 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 #pdf-template .totals{text-align:right;font-size:16px;line-height:1.8}
 #pdf-template .legal{margin-top:60px;font-size:11px;color:#555;line-height:1.5}
 
+/* RESPONSIVE DESKTOP (PC) */
 @media (min-width:768px){
-  .row-2{grid-template-columns:1fr 1fr}
+  body{padding-bottom:0;}
   .bottom-nav,.fab{display:none}
+  .hdr{display:none}
+  .sidebar{display:flex;}
+  .wrap{padding:40px;}
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .kpi.full{grid-column:span 1}
+  .row-2{grid-template-columns:1fr 1fr}
   .modal-overlay{align-items:center}
   .modal{border-radius:16px;max-width:500px;transform:translateY(20px);border-top:none;border-left:4px solid var(--primary)}
 }
@@ -128,6 +140,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 </head>
 <body>
 
+<!-- HEADER MOBILE -->
 <header class="hdr">
   <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
     <div class="hdr-mark">A</div>
@@ -137,6 +150,21 @@ a{text-decoration:none;cursor:pointer;color:inherit}
     </div>
   </div>
 </header>
+
+<div class="layout-wrapper">
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="sidebar" id="desktop-sidebar">
+    <div style="padding:0 24px 24px 24px; font-weight:900; font-size:20px; color:var(--text); border-bottom:1px solid var(--border); margin-bottom:16px;">ArtisanApp</div>
+    <div class="nav-item" onclick="go('accueil')" id="side-accueil">Tableau de bord</div>
+    <div class="nav-item" onclick="go('devis')" id="side-devis">Mes Devis</div>
+    <div class="nav-item" onclick="go('clients')" id="side-clients">Mes Clients</div>
+    <div class="nav-item" onclick="go('equipe')" id="side-equipe">Mon Équipe</div>
+    <div class="nav-item" onclick="go('parametres')" id="side-param">Paramètres</div>
+  </aside>
+
+  <!-- CONTENU PRINCIPAL -->
+  <main class="wrap" id="root"></main>
+</div>
 
 <a class="fab" id="fab-main" onclick="actionFab()">+</a>
 
@@ -161,12 +189,11 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 
 <div id="toast"></div>
 <div class="modal-overlay" id="modal-overlay"></div>
-<div class="wrap" id="root"></div>
 <div id="pdf-template"></div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   MOTEUR V9
+   MOTEUR V10 (Desktop & Team)
    ═══════════════════════════════════════════════════════════════════ */
 
 const DEFAULT_SETTINGS = {
@@ -178,6 +205,10 @@ const DEFAULT_SETTINGS = {
 function getS() { try { return {...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('app_settings') || '{}')}; } catch(e) { return DEFAULT_SETTINGS; } }
 function saveS(s) { localStorage.setItem('app_settings', JSON.stringify(s)); }
 let SETTINGS = getS();
+
+// Multi-utilisateurs (simulation locale)
+function getUsers() { try { return JSON.parse(localStorage.getItem('app_users')) || [{id:1, nom:'Patron', role:'admin'}]; } catch(e) { return [{id:1, nom:'Patron', role:'admin'}]; } }
+function saveUsers(u) { localStorage.setItem('app_users', JSON.stringify(u)); }
 
 function getData() { try { return JSON.parse(localStorage.getItem('app_data')) || { clients: [], devis: [], cpt: { c: 0, d: 0 } }; } catch(e) { return { clients: [], devis: [], cpt: { c: 0, d: 0 } }; } }
 function saveData(d) { localStorage.setItem('app_data', JSON.stringify(d)); }
@@ -229,14 +260,23 @@ function render() {
     const root = document.getElementById('root');
     let html = '';
 
-    // Mise à jour de la navbar
+    // Nav active
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
-    if (cur.page === 'accueil') document.getElementById('nav-accueil').classList.add('active');
-    if (cur.page === 'clients' || cur.page === 'nouveau-client' || cur.page === 'fiche-client') document.getElementById('nav-clients').classList.add('active');
-    if (cur.page === 'devis' || cur.page === 'nouveau-devis' || cur.page === 'detail-devis') document.getElementById('nav-devis').classList.add('active');
-    if (cur.page === 'parametres') document.getElementById('nav-param').classList.add('active');
+    document.querySelectorAll('.sidebar .nav-item').forEach(a => a.classList.remove('active'));
+    
+    let activeNav = '';
+    if (cur.page === 'accueil') activeNav = 'accueil';
+    else if (cur.page.includes('client')) activeNav = 'clients';
+    else if (cur.page.includes('devis')) activeNav = 'devis';
+    else if (cur.page === 'parametres') activeNav = 'param';
+    else if (cur.page === 'equipe') activeNav = 'equipe';
 
-    // Gestion du bouton FAB
+    const mNav = document.getElementById('nav-' + activeNav);
+    if(mNav) mNav.classList.add('active');
+    const dNav = document.getElementById('side-' + activeNav);
+    if(dNav) dNav.classList.add('active');
+
+    // FAB
     const fab = document.getElementById('fab-main');
     if (cur.page === 'accueil') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-devis'); }
     else if (cur.page === 'clients') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-client'); }
@@ -247,6 +287,7 @@ function render() {
         switch (cur.page) {
             case 'accueil': html = viewAccueil(); break;
             case 'parametres': html = viewParametres(); break;
+            case 'equipe': html = viewEquipe(); break;
             case 'clients': html = viewClients(); break;
             case 'nouveau-client': html = viewNouveauClient(); break;
             case 'fiche-client': html = viewFicheClient(); break;
@@ -308,6 +349,36 @@ function viewAccueil() {
     return html;
 }
 
+function viewEquipe() {
+    const users = getUsers();
+    return `
+        <div class="card">
+            <div class="card-head"><div class="card-title">Mon Équipe</div></div>
+            ${users.map(u => `
+                <div class="list-item" style="cursor:default;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px;height:40px;background:var(--surface-hover);color:var(--text);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;">${init(u.nom)}</div>
+                        <div>
+                            <div class="title">${u.nom}</div>
+                            <div class="sub">${u.role}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+            <button class="btn btn-ghost" style="margin-top:20px;" onclick="addUser()">+ Ajouter un profil</button>
+        </div>
+    `;
+}
+
+function addUser() {
+    const nom = prompt("Nom du collaborateur ?");
+    if (!nom) return;
+    let u = getUsers();
+    u.push({id: Date.now(), nom: nom, role: 'ouvrier'});
+    saveUsers(u);
+    render();
+}
+
 function viewParametres() {
     const s = SETTINGS;
     return `
@@ -332,22 +403,16 @@ function viewParametres() {
                 <div class="field"><label>BIC</label><input class="inp" id="s-bic" value="${esc(s.bic)}"></div>
             </div>
         </div>
-
         <div class="card">
-            <div class="card-head"><div class="card-title">Rentabilité</div></div>
+            <div class="card-head"><div class="card-title">Rentabilité & EmailJS</div></div>
             <div class="row-2">
                 <div class="field"><label>Marge (%)</label><input class="inp" type="number" id="s-marge" value="${s.marge}"></div>
-                <div class="field"><label>Aléas chantier (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
+                <div class="field"><label>Aléas (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
             </div>
+            <div class="field"><label>EmailJS Service ID</label><input class="inp" id="s-ejs-service" value="${esc(s.emailjs_service)}"></div>
+            <div class="field"><label>EmailJS Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
+            <div class="field"><label>EmailJS Public Key</label><input class="inp" id="s-ejs-public" value="${esc(s.emailjs_public)}"></div>
         </div>
-
-        <div class="card">
-            <div class="card-head"><div class="card-title">EmailJS (Envoi direct)</div></div>
-            <div class="field"><label>Service ID</label><input class="inp" id="s-ejs-service" value="${esc(s.emailjs_service)}"></div>
-            <div class="field"><label>Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
-            <div class="field"><label>Public Key</label><input class="inp" id="s-ejs-public" value="${esc(s.emailjs_public)}"></div>
-        </div>
-
         <button class="btn" onclick="saveParam()">Enregistrer les paramètres</button>
     `;
 }
@@ -375,7 +440,6 @@ function saveParam() {
     home();
 }
 
-// CLIENTS
 function viewClients() {
     const d = getData();
     return `
@@ -453,7 +517,6 @@ function viewFicheClient() {
     `;
 }
 
-// DEVIS
 function viewDevis() {
     const d = getData();
     return `
@@ -552,7 +615,7 @@ function renderLines() {
 
     const aleas = totalHT * (SETTINGS.aleas / 100);
     const totalHTFinal = totalHT + aleas;
-    const tva = totalHTFinal * 0.10; // 10% par défaut
+    const tva = totalHTFinal * 0.10;
     const totalTTC = totalHTFinal + tva;
 
     html += `
@@ -655,7 +718,6 @@ function delDevis(id) {
     home();
 }
 
-// PDF & MAIL
 function genPDF(id) {
     const d = getData();
     const dev = d.devis.find(x => x.id === id);
@@ -755,7 +817,7 @@ function execMail(id) {
     }
 }
 
-// Démarrage
+// Init
 home();
 </script>
 </body>
