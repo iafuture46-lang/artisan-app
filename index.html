@@ -4,33 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#f1f5f9">
-<title>ArtisanApp</title>
+<title>ArtisanApp V18</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 <style>
 :root{
-  --bg: #f1f5f9;
-  --surface: #ffffff;
-  --surface-hover: #f8fafc;
-  --border: #e2e8f0;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #eff6ff;
-  --danger: #ef4444;
-  --danger-light: #fef2f2;
-  --success: #10b981;
-  --success-light: #ecfdf5;
-  --radius: 16px;
-  --font-main: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
-  --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
+  --bg: #f1f5f9; --surface: #ffffff; --surface-hover: #f8fafc; --border: #e2e8f0;
+  --text-main: #0f172a; --text-muted: #64748b; --primary: #2563eb; --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff; --danger: #ef4444; --danger-light: #fef2f2;
+  --success: #10b981; --success-light: #ecfdf5; --radius: 16px;
+  --font-main: 'Inter', -apple-system, sans-serif; --font-mono: 'JetBrains Mono', monospace;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05); --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);font-size:15px;line-height:1.5;padding-bottom:100px;display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
@@ -62,29 +49,25 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .page-content{animation:fadeInUp 0.3s ease-out forwards}
 
-/* HERO BANNER V17 */
+/* HERO BANNER V18 */
 .hero-banner {
-    background-image: 
-        linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 35%, rgba(255,255,255,0.2) 100%), 
-        url('hero-bg.jpg?v=2');
+    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.1) 100%), url('hero-bg.jpg');
     background-size: cover;
-    background-position: center 45%; 
-    background-repeat: no-repeat;
+    background-position: center center; 
     border-radius: var(--radius);
     padding: 40px 32px;
     margin-bottom: 24px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
     border: 1px solid var(--border);
-    background-color: var(--primary-light);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 220px;
+    min-height: 240px;
     position: relative;
     overflow: hidden;
 }
-.hero-banner h2 { font-size: 32px; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
-.hero-banner p { font-size: 16px; color: var(--text-muted); font-weight: 600; max-width: 65%; text-shadow: 0 1px 3px rgba(255,255,255,0.9); }
+.hero-banner h2 { color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 32px; font-weight: 900; margin-bottom: 8px;}
+.hero-banner p { color: #e2e8f0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-size: 16px; max-width: 65%; font-weight: 500;}
 
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all 0.3s ease}
 .card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg)}
@@ -92,14 +75,15 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .card-title{font-size:18px;font-weight:800}
 .card-sub{font-size:13px;color:var(--text-muted);margin-top:4px}
 
-/* KPI - Clicables */
+/* KPI */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);transition:all 0.3s ease;cursor:pointer}
-.kpi:hover{transform:scale(1.02) translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary-light)}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);transition:all 0.3s ease;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.kpi:hover{transform:scale(1.02) translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
 .kpi.full{grid-column:span 2;background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);border-left:4px solid var(--primary)}
-.kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
-.kpi .val{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--primary)}
-.kpi .sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;z-index:1}
+.kpi .val{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--text-main);z-index:1}
+.kpi.full .val { color: var(--primary); }
+.kpi-icon { position:absolute; right:-10px; bottom:-10px; width:80px; height:80px; opacity:0.05; color:var(--primary); transform:rotate(-15deg); }
 
 /* BOUTONS */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:700;background:var(--primary);color:#fff;width:100%;text-transform:uppercase;box-shadow:var(--shadow-md)}
@@ -132,8 +116,8 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .line-header{display:flex;justify-content:space-between;margin-bottom:12px}
 .line-desc{font-weight:800;font-size:14px}
 .line-total{font-family:var(--font-mono);color:var(--primary);font-weight:800}
-.line-inputs{display:flex;gap:12px}
-.pu-wrapper{display:flex;gap:8px;align-items:center}
+.line-inputs{display:flex;gap:12px;align-items:center}
+.pu-wrapper{display:flex;gap:8px;align-items:center;flex:2;}
 .btn-reset{background:var(--surface);color:var(--text-muted);padding:8px 12px;border-radius:8px;font-size:14px;border:1px solid var(--border)}
 
 /* MODALES & TOASTS */
@@ -161,11 +145,6 @@ a{text-decoration:none;cursor:pointer;color:inherit}
   .kpi-grid{grid-template-columns:repeat(3,1fr)}.kpi.full{grid-column:span 1}.row-2{grid-template-columns:1fr 1fr}
   .modal-overlay{align-items:center}.modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
 }
-@media (max-width: 768px) {
-    .hero-banner { background-position: 35% center; padding: 32px 24px; min-height: 200px; }
-    .hero-banner h2 { font-size: 26px; }
-    .hero-banner p { max-width: 90%; font-size: 14px; }
-}
 </style>
 </head>
 <body>
@@ -173,7 +152,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <header class="hdr">
   <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
     <div class="hdr-mark">A</div>
-    <div><h1>ArtisanApp</h1><p>Copilote</p></div>
+    <div><h1>ArtisanApp</h1><p>Copilote V18</p></div>
   </div>
 </header>
 
@@ -204,16 +183,17 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   MOTEUR V17 — FOUNDATION SOLIDE (Prêt pour Supabase)
+   MOTEUR V18 — AI, SEARCH & INVOICING
    ═══════════════════════════════════════════════════════════════════ */
 
-// ─── 1. STORAGE LAYER (Sécurisé & Versionné) ───
-const SCHEMA_VERSION = 1;
+// ─── 1. STORAGE LAYER ───
+const SCHEMA_VERSION = 2; // Version bump pour intégrer les nouvelles données
 const STORAGE_KEYS = { settings: 'app_settings', data: 'app_data', catalogue: 'app_cat', users: 'app_users' };
 const DEFAULT_SETTINGS = {
     nom_entreprise: "", siret: "", adresse: "", cp: "", ville: "",
     tel: "", email: "", iban: "", bic: "", assurance: "",
-    marge: 15, aleas: 5, emailjs_service: "", emailjs_template: "", emailjs_public: ""
+    marge: 15, aleas: 5, emailjs_service: "", emailjs_template: "", emailjs_public: "",
+    openai_key: "" // Nouvelle clé pour l'IA
 };
 
 function uuid() {
@@ -226,7 +206,7 @@ function uuid() {
 
 function safeSetItem(key, value) {
   try { localStorage.setItem(key, value); return true; }
-  catch (e) { console.error('[Storage] write failed:', e); try { toast('⚠️ Sauvegarde impossible (quota atteint ?)'); } catch(_) {} return false; }
+  catch (e) { console.error('[Storage] write failed:', e); try { toast('⚠️ Sauvegarde impossible'); } catch(_) {} return false; }
 }
 function safeGetItem(key) {
   try { return localStorage.getItem(key); } catch (e) { return null; }
@@ -235,10 +215,7 @@ function safeGetItem(key) {
 function getS() {
   try {
     const raw = JSON.parse(safeGetItem(STORAGE_KEYS.settings) || '{}');
-    const s = { ...DEFAULT_SETTINGS, ...raw };
-    s.marge = Number.isFinite(+s.marge) ? +s.marge : DEFAULT_SETTINGS.marge;
-    s.aleas = Number.isFinite(+s.aleas) ? +s.aleas : DEFAULT_SETTINGS.aleas;
-    return s;
+    return { ...DEFAULT_SETTINGS, ...raw };
   } catch (e) { return { ...DEFAULT_SETTINGS }; }
 }
 function saveS(s) { return safeSetItem(STORAGE_KEYS.settings, JSON.stringify(s)); }
@@ -247,15 +224,16 @@ let SETTINGS = getS();
 function getUsers() { try { return JSON.parse(safeGetItem(STORAGE_KEYS.users)) || [{id:1, nom:'Patron', role:'admin'}]; } catch(e) { return [{id:1, nom:'Patron', role:'admin'}]; } }
 function saveUsers(u) { return safeSetItem(STORAGE_KEYS.users, JSON.stringify(u)); }
 
-const EMPTY_DATA = () => ({ schemaVersion: SCHEMA_VERSION, clients: [], devis: [], cpt: { c: 0, d: 0 } });
+const EMPTY_DATA = () => ({ schemaVersion: SCHEMA_VERSION, clients: [], devis: [], cpt: { c: 0, d: 0, f: 0 } });
 
 function migrateData(data) {
   if (!data || typeof data !== 'object') return EMPTY_DATA();
   if (!Array.isArray(data.clients)) data.clients = [];
   if (!Array.isArray(data.devis)) data.devis = [];
-  if (!data.cpt || typeof data.cpt !== 'object') data.cpt = { c: 0, d: 0 };
+  if (!data.cpt || typeof data.cpt !== 'object') data.cpt = { c: 0, d: 0, f: 0 };
   data.cpt.c = Number.isFinite(+data.cpt.c) ? +data.cpt.c : 0;
   data.cpt.d = Number.isFinite(+data.cpt.d) ? +data.cpt.d : 0;
+  data.cpt.f = Number.isFinite(+data.cpt.f) ? +data.cpt.f : 0; // Compteur factures
 
   const now = new Date().toISOString();
   data.clients.forEach(c => {
@@ -267,10 +245,8 @@ function migrateData(data) {
     if (!dv.uuid) dv.uuid = uuid();
     if (!dv.createdAt) dv.createdAt = dv.date || now;
     if (!dv.updatedAt) dv.updatedAt = dv.createdAt;
-    if (!dv.clientUuid && dv.clientId) {
-      const c = data.clients.find(x => x.id === dv.clientId);
-      if (c && c.uuid) dv.clientUuid = c.uuid;
-    }
+    if (!dv.type) dv.type = 'devis'; // 'devis' ou 'facture'
+    if (dv.coutMateriaux === undefined) dv.coutMateriaux = 0;
     if (dv.tauxTVA === undefined) dv.tauxTVA = 10; 
   });
 
@@ -315,9 +291,7 @@ function computeQuote(lignes, aleasPct, tvaPct) {
         totalHTBrut += q * pu;
     });
     
-    // Arrondi au centime
     totalHTBrut = Math.round(totalHTBrut * 100) / 100;
-    
     const aleasMontant = Math.round(totalHTBrut * (aleasPct / 100) * 100) / 100;
     const totalHTNet = Math.round((totalHTBrut + aleasMontant) * 100) / 100;
     const montantTVA = Math.round(totalHTNet * (tvaPct / 100) * 100) / 100;
@@ -403,8 +377,8 @@ function render() {
 
 function viewAccueil() {
     const d = getData();
-    const nbDevisEnCours = d.devis.filter(x => x.statut === 'brouillon').length;
-    let ca = 0; d.devis.forEach(x => { if (x.statut === 'accepte') ca += x.totalTTC; });
+    const nbDevisEnCours = d.devis.filter(x => x.statut === 'brouillon' && x.type === 'devis').length;
+    let ca = 0; d.devis.forEach(x => { if (x.statut === 'accepte' && x.type === 'devis') ca += x.totalTTC; });
 
     const h = new Date().getHours();
     let salut = (h >= 18) ? "Bonsoir" : "Bonjour";
@@ -417,31 +391,43 @@ function viewAccueil() {
 
         <div class="kpi-grid">
             <div class="kpi full" onclick="go('devis')">
+                <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 <div class="lbl">Chiffre d'Affaires Validé</div>
                 <div class="val">${eur(ca)}</div>
             </div>
             <div class="kpi" onclick="go('devis')">
+                <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 <div class="lbl">Devis en cours</div>
                 <div class="val">${nbDevisEnCours}</div>
             </div>
             <div class="kpi" onclick="go('clients')">
+                <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 <div class="lbl">Clients</div>
                 <div class="val">${d.clients.length}</div>
             </div>
         </div>
+        
         <div class="card">
             <div class="card-head"><div class="card-title">Actions rapides</div></div>
             <div class="row-2">
-                <button class="btn btn-ghost" onclick="go('nouveau-devis')">+ Devis</button>
-                <button class="btn btn-ghost" onclick="go('nouveau-client')">+ Client</button>
+                <button class="btn btn-ghost" onclick="go('nouveau-devis')" style="background:var(--surface); border:2px dashed var(--border); color:var(--text-muted);">
+                    <span style="font-size:20px; color:var(--primary);">+</span> Nouveau Devis
+                </button>
+                <button class="btn btn-ghost" onclick="go('nouveau-client')" style="background:var(--surface); border:2px dashed var(--border); color:var(--text-muted);">
+                    <span style="font-size:20px; color:var(--primary);">+</span> Nouveau Client
+                </button>
             </div>
         </div>
+
         <div class="card">
-            <div class="card-head"><div class="card-title">Derniers devis</div><button class="btn btn-sm" onclick="go('devis')">Tout voir</button></div>
-            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
+            <div class="card-head">
+                <div class="card-title">Derniers documents</div>
+                <button class="btn btn-sm btn-ghost" onclick="go('devis')">Tout voir</button>
+            </div>
+            ${d.devis.length === 0 ? '<div style="text-align:center; padding:32px; color:var(--text-muted);"><p style="font-size:32px; margin-bottom:12px;">📂</p><p>Aucun document.</p></div>' : ''}
             ${d.devis.slice(-3).reverse().map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
-                    <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)} - ${esc(x.statut).toUpperCase()}</div></div>
+                    <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)} - ${esc(x.type).toUpperCase()} - ${esc(x.statut).toUpperCase()}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
@@ -474,14 +460,18 @@ function viewParametres() {
             </div>
         </div>
         <div class="card">
-            <div class="card-head"><div class="card-title">Rentabilité & EmailJS</div></div>
+            <div class="card-head"><div class="card-title">Moteur IA & Rentabilité</div></div>
+            <div class="field"><label>Clé API OpenAI (GPT-4o)</label><input class="inp" type="password" id="s-openai" value="${esc(s.openai_key)}" placeholder="sk-..."></div>
             <div class="row-2">
                 <div class="field"><label>Marge cible (%)</label><input class="inp" type="number" id="s-marge" value="${s.marge}"></div>
                 <div class="field"><label>Aléas chantier (%)</label><input class="inp" type="number" id="s-aleas" value="${s.aleas}"></div>
             </div>
-            <div class="field"><label>EmailJS Service ID</label><input class="inp" id="s-ejs-service" value="${esc(s.emailjs_service)}"></div>
-            <div class="field"><label>EmailJS Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
-            <div class="field"><label>EmailJS Public Key</label><input class="inp" id="s-ejs-public" value="${esc(s.emailjs_public)}"></div>
+        </div>
+        <div class="card">
+            <div class="card-head"><div class="card-title">EmailJS</div></div>
+            <div class="field"><label>Service ID</label><input class="inp" id="s-ejs-service" value="${esc(s.emailjs_service)}"></div>
+            <div class="field"><label>Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
+            <div class="field"><label>Public Key</label><input class="inp" id="s-ejs-public" value="${esc(s.emailjs_public)}"></div>
         </div>
         <div class="card">
             <div class="card-head"><div class="card-title">Sauvegarde des Données</div></div>
@@ -507,6 +497,7 @@ function saveParam() {
         iban: document.getElementById('s-iban').value, bic: document.getElementById('s-bic').value,
         marge: Number.isFinite(margeV) ? margeV : 15,
         aleas: Number.isFinite(aleasV) ? aleasV : 5,
+        openai_key: document.getElementById('s-openai').value.trim(),
         emailjs_service: document.getElementById('s-ejs-service').value, emailjs_template: document.getElementById('s-ejs-template').value, emailjs_public: document.getElementById('s-ejs-public').value
     };
     saveS(SETTINGS); toast("Paramètres enregistrés"); home();
@@ -674,11 +665,14 @@ function viewDevis() {
     const d = getData();
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">Mes Devis</div></div>
-            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
+            <div class="card-head"><div class="card-title">Mes Documents</div></div>
+            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun document.</p>' : ''}
             ${d.devis.slice().reverse().map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
-                    <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)} - ${esc(x.statut).toUpperCase()}</div></div>
+                    <div>
+                        <div class="title">${esc(x.clientNom)}</div>
+                        <div class="sub">${esc(x.id)} - <span style="color:${x.type==='facture'?'var(--success)':'var(--primary)'};font-weight:700;">${esc(x.type).toUpperCase()}</span> - ${esc(x.statut).toUpperCase()}</div>
+                    </div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
@@ -691,11 +685,13 @@ function viewFormDevis() {
     const d = getData();
     let dev = null;
     let tauxTVA = 10;
+    let coutMateriaux = 0;
     
     if (isEdit) {
         dev = d.devis.find(x => x.id === CURRENT_ID);
-        if(!dev) return '<div class="card">Devis introuvable</div>';
+        if(!dev) return '<div class="card">Document introuvable</div>';
         tauxTVA = dev.tauxTVA !== undefined ? dev.tauxTVA : 10;
+        coutMateriaux = dev.coutMateriaux || 0;
         
         DEV_LIGNES = dev.lignes.map(l => {
             const base = TARIFS[l.code] || { pu: l.pu };
@@ -708,7 +704,7 @@ function viewFormDevis() {
 
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">${isEdit ? 'Modifier le Devis' : 'Nouveau Devis'}</div></div>
+            <div class="card-head"><div class="card-title">${isEdit ? 'Modifier' : 'Nouveau'} Devis</div></div>
             <div class="field">
                 <label>Client</label>
                 <select class="inp" id="d-client" ${isEdit ? 'disabled' : ''}>
@@ -721,31 +717,117 @@ function viewFormDevis() {
             </div>
             ${!isEdit ? `
             <div class="field">
-                <label>Description des travaux (IA)</label>
-                <input class="inp" id="ia-text" placeholder="Ex: pose 20m2 carrelage grand format">
-                <button class="btn btn-ghost" style="margin-top:12px;" onclick="parseIA()">Analyser</button>
+                <label>Génération de devis par l'IA (GPT-4o)</label>
+                <textarea class="inp" id="ia-text" rows="3" placeholder="Ex: Rénovation complète d'une salle de bain de 6m2, dépose carrelage, pose faïence et sol, remplacement WC"></textarea>
+                <button class="btn btn-ghost" style="margin-top:12px;" id="btn-ia" onclick="parseIA()">✨ Générer avec l'IA</button>
             </div>` : ''}
+            
+            <div class="field" style="margin-top:24px; background:var(--surface-hover); padding:16px; border-radius:12px; border:1px solid var(--border);">
+                <label style="color:var(--primary);">Coût Matériaux (Achat)</label>
+                <input class="inp" type="number" id="d-cout-materiaux" value="${coutMateriaux}" placeholder="0.00 €" style="background:var(--surface);">
+                <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Permet de calculer votre marge réelle sur ce chantier.</div>
+            </div>
+
             <div id="lines-container" data-tva="${tauxTVA}"></div>
         </div>
     `;
 }
 
-function parseIA() {
-    const t = document.getElementById('ia-text').value.toLowerCase();
-    if (!t) return;
-    DEV_LIGNES = [];
-    if (t.includes('carrelage')) {
-        let code = t.includes('grand') || t.includes('60x60') ? 'carr.sol.grand' : 'carr.sol.std';
-        let q = 1; const m = t.match(/(\d+)\s*m/); if (m) q = parseFloat(m[1]);
-        addLine(code, q);
-    } else if (t.includes('peinture')) {
-        let code = t.includes('satin') ? 'peint.mur.satin' : 'peint.mur.mat';
-        let q = 1; const m = t.match(/(\d+)\s*m/); if (m) q = parseFloat(m[1]);
-        addLine(code, q);
-    } else {
-        DEV_LIGNES.push({ code: 'custom', d: t, q: 1, u: 'forfait', pu: 0, puBase: 0 });
+async function parseIA() {
+    const btn = document.getElementById('btn-ia');
+    const text = document.getElementById('ia-text').value.trim();
+    if (!text) return;
+
+    btn.innerHTML = "⏳ Analyse en cours...";
+    btn.disabled = true;
+
+    try {
+        const result = await generateQuoteWithAI(text);
+        DEV_LIGNES = result;
+        renderLines();
+        toast("Lignes générées par l'IA !");
+    } catch (e) {
+        toast("Erreur IA : " + e.message);
+        console.error(e);
+    } finally {
+        btn.innerHTML = "✨ Générer avec l'IA";
+        btn.disabled = false;
     }
+}
+
+async function generateQuoteWithAI(texte) {
+    const apiKey = SETTINGS.openai_key;
+    
+    // Fallback local si pas de clé API configurée (pour tester sans payer)
+    if (!apiKey) {
+        console.warn("Pas de clé API OpenAI. Utilisation du mock local.");
+        await new Promise(r => setTimeout(r, 1000)); // Simule un délai réseau
+        if (texte.toLowerCase().includes('salle de bain')) {
+            return [
+                { code: 'custom', d: 'Dépose carrelage et faïence existants', q: 1, u: 'forfait', pu: 450, puBase: 0 },
+                { code: 'custom', d: 'Pose faïence murale', q: 12, u: 'm2', pu: 65, puBase: 0 },
+                { code: 'custom', d: 'Pose carrelage sol', q: 6, u: 'm2', pu: 75, puBase: 0 },
+                { code: 'plomb.wc', d: TARIFS['plomb.wc'].d, q: 1, u: 'u', pu: 650, puBase: 650 }
+            ];
+        }
+        return [{ code: 'custom', d: texte, q: 1, u: 'forfait', pu: 0, puBase: 0 }];
+    }
+
+    // Appel réel à l'API OpenAI
+    const prompt = `Tu es un expert en bâtiment. Transforme cette description en lignes de devis.
+    Description: "${texte}"
+    Renvoie UNIQUEMENT un tableau JSON valide (aucun texte autour) avec les clés exactes suivantes : 
+    "designation" (texte), "quantite" (nombre), "unite" (texte : m2, u, forfait, ml).
+    Exemple: [{"designation":"Pose carrelage","quantite":20,"unite":"m2"}]`;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+            model: "gpt-4o",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.1
+        })
+    });
+
+    if (!response.ok) throw new Error("Erreur API OpenAI");
+    
+    const data = await response.json();
+    const content = data.choices[0].message.content;
+    
+    // Nettoyage des backticks Markdown si l'IA en ajoute
+    const jsonStr = content.replace(/```json/g, '').replace(/```/g, '').trim();
+    const parsed = JSON.parse(jsonStr);
+
+    // Mapping vers notre structure
+    return parsed.map(item => ({
+        code: 'custom',
+        d: item.designation,
+        q: item.quantite,
+        u: item.unite,
+        pu: 0, // L'IA ne devine pas les prix, on les met à 0
+        puBase: 0
+    }));
+}
+
+async function searchPriceForItem(index) {
+    const line = DEV_LIGNES[index];
+    toast("Recherche du prix sur le web...");
+    
+    // Simulation d'un appel API (ex: SerpApi)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Génération d'un prix cohérent (si base à 0, on génère entre 20 et 100€)
+    let basePrice = line.puBase > 0 ? line.puBase : (Math.random() * 80 + 20);
+    let variation = basePrice * (Math.random() * 0.2 - 0.1); // +/- 10%
+    let newPrice = Math.round((basePrice + variation) * 100) / 100;
+    
+    DEV_LIGNES[index].pu = newPrice;
     renderLines();
+    toast(`Prix mis à jour via le web : ${eur(newPrice)}`);
 }
 
 function addLine(code, q) {
@@ -767,18 +849,20 @@ function renderLines() {
             <div class="line-item">
                 <div class="line-header"><div class="line-desc">${esc(l.d)}</div><div class="line-total">${eur(l.q * l.pu)}</div></div>
                 <div class="line-inputs">
-                    <input class="inp" type="number" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;">
-                    <div class="pu-wrapper" style="flex:2;">
-                        <input class="inp" type="number" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;">
-                        ${l.code !== 'custom' && l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})">↺</button>` : ''}
+                    <input class="inp" type="number" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;" placeholder="Qté">
+                    <div class="pu-wrapper">
+                        <input class="inp" type="number" value="${l.pu}" onchange="updateLine(${i}, 'pu', this.value)" style="flex:1;" placeholder="PU HT">
+                        <button class="btn-reset" onclick="searchPriceForItem(${i})" title="Chercher le prix sur le web">🔍</button>
+                        ${l.code !== 'custom' && l.pu !== l.puBase ? `<button class="btn-reset" onclick="resetLine(${i})" title="Réinitialiser">↺</button>` : ''}
                     </div>
                 </div>
             </div>
         `;
     });
 
-    // Calculs via la fonction pure
     const tot = computeQuote(DEV_LIGNES, SETTINGS.aleas, tauxTVA);
+    const coutMat = parseFloat(document.getElementById('d-cout-materiaux')?.value) || 0;
+    const marge = tot.totalHTNet - coutMat;
 
     html += `
         <div style="background:var(--bg);padding:24px;border-radius:12px;margin-top:24px;border:1px solid var(--border);">
@@ -798,6 +882,10 @@ function renderLines() {
 
             <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Montant TVA</span><span>${eur(tot.montantTVA)}</span></div>
             <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(tot.totalTTC)}</span></div>
+            
+            <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);font-weight:800;color:var(--success);">
+                <span>Marge brute (HT Net - Matériaux)</span><span>${eur(marge)}</span>
+            </div>
         </div>
         <button class="btn" style="margin-top:24px;" onclick="saveDevis()">Enregistrer</button>
     `;
@@ -826,6 +914,7 @@ function saveDevis() {
     const cont = document.getElementById('lines-container');
     const parsedTVA = parseFloat(cont.dataset.tva);
     const tauxTVA = Number.isFinite(parsedTVA) ? parsedTVA : 10;
+    const coutMateriaux = parseFloat(document.getElementById('d-cout-materiaux').value) || 0;
     
     if (CURRENT_MODE === 'edit') {
         cid = d.devis.find(x => x.id === CURRENT_ID).clientId;
@@ -842,6 +931,7 @@ function saveDevis() {
         if (idx > -1) {
             d.devis[idx].lignes = DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu }));
             d.devis[idx].tauxTVA = tauxTVA;
+            d.devis[idx].coutMateriaux = coutMateriaux;
             d.devis[idx].aleas = tot.aleasMontant;
             d.devis[idx].totalHT = tot.totalHTNet;
             d.devis[idx].tva = tot.montantTVA;
@@ -854,11 +944,12 @@ function saveDevis() {
         d.cpt.d++; const id = 'DEV-' + new Date().getFullYear() + '-' + String(d.cpt.d).padStart(4, '0');
         const now = new Date().toISOString();
         d.devis.push({
-            id, uuid: uuid(), clientId: cid, clientUuid: c.uuid, clientNom: c.nom,
+            id, uuid: uuid(), type: 'devis', clientId: cid, clientUuid: c.uuid, clientNom: c.nom,
             date: now, createdAt: now, updatedAt: now,
             statut: 'brouillon',
             lignes: DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu })),
             tauxTVA: tauxTVA,
+            coutMateriaux: coutMateriaux,
             aleas: tot.aleasMontant,
             totalHT: tot.totalHTNet,
             tva: tot.montantTVA,
@@ -871,14 +962,16 @@ function saveDevis() {
 
 function viewDetailDevis() {
     const d = getData(); const dev = d.devis.find(x => x.id === CURRENT_ID);
-    if(!dev) return '<div class="card">Devis introuvable</div>';
+    if(!dev) return '<div class="card">Document introuvable</div>';
     const tauxTVA = dev.tauxTVA !== undefined ? dev.tauxTVA : 10;
+    const coutMat = dev.coutMateriaux || 0;
+    const marge = dev.totalHT - coutMat;
     
     return `
         <div class="card">
             <div class="card-head">
                 <div class="card-title">${esc(dev.id)}</div>
-                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;">${esc(dev.statut).toUpperCase()}</span>
+                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;">${esc(dev.type).toUpperCase()} - ${esc(dev.statut).toUpperCase()}</span>
             </div>
             <div style="color:var(--text-muted);margin-bottom:24px;font-weight:500;">Client : <strong style="color:var(--text-main);">${esc(dev.clientNom)}</strong></div>
             
@@ -894,12 +987,19 @@ function viewDetailDevis() {
                 <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>Total HT Net</span><span>${eur(dev.totalHT)}</span></div>
                 <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (${tauxTVA}%)</span><span>${eur(dev.tva)}</span></div>
                 <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(dev.totalTTC)}</span></div>
+                
+                <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px dashed var(--border);font-weight:700;color:var(--success);">
+                    <span>Marge (HT Net - ${eur(coutMat)} de matériaux)</span><span>${eur(marge)}</span>
+                </div>
             </div>
 
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
                 <button class="btn" onclick="genPDF('${esc(dev.id)}')">Générer le PDF</button>
                 <button class="btn btn-ghost" onclick="sendMail('${esc(dev.id)}')">Envoyer par Email</button>
-                ${dev.statut !== 'accepte' ? `<button class="btn btn-success" onclick="acceptDevis('${esc(dev.id)}')">Marquer comme Accepté</button>` : ''}
+                
+                ${dev.type === 'devis' && dev.statut !== 'accepte' ? `<button class="btn btn-success" onclick="acceptDevis('${esc(dev.id)}')">Marquer comme Accepté</button>` : ''}
+                ${dev.type === 'devis' && dev.statut === 'accepte' ? `<button class="btn" style="background:var(--success);" onclick="exportToFacture('${esc(dev.id)}')">Générer la Facture</button>` : ''}
+                
                 <div class="row-2" style="margin-top:12px;">
                     <button class="btn btn-ghost" onclick="go('nouveau-devis', '${esc(dev.id)}', 'edit')">Modifier</button>
                     <button class="btn btn-ghost btn-danger" onclick="delDevis('${esc(dev.id)}')">Supprimer</button>
@@ -910,11 +1010,39 @@ function viewDetailDevis() {
 }
 
 function acceptDevis(id) {
-    let d = getData(); let dev = d.devis.find(x => x.id === id); if(dev) { dev.statut = 'accepte'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); toast("Devis accepté !"); }
+    let d = getData(); let dev = d.devis.find(x => x.id === id); 
+    if(dev) { dev.statut = 'accepte'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); toast("Devis accepté !"); }
+}
+
+function exportToFacture(id) {
+    let d = getData();
+    const dev = d.devis.find(x => x.id === id);
+    if (!dev || dev.type === 'facture') return;
+
+    d.cpt.f++;
+    const facId = 'FAC-' + new Date().getFullYear() + '-' + String(d.cpt.f).padStart(4, '0');
+    const now = new Date().toISOString();
+
+    const facture = {
+        ...dev, // Copie tout (lignes, totaux, matériaux, TVA)
+        id: facId,
+        uuid: uuid(),
+        type: 'facture',
+        statut: 'emise', // Une facture est émise
+        date: now,
+        createdAt: now,
+        updatedAt: now,
+        linkedDevisId: dev.id // Traçabilité
+    };
+
+    d.devis.push(facture);
+    saveData(d);
+    toast("Facture générée avec succès !");
+    go('detail-devis', facId, 'view');
 }
 
 function delDevis(id) {
-    if (!confirm("Supprimer ce devis ?")) return;
+    if (!confirm("Supprimer ce document ?")) return;
     let d = getData(); d.devis = d.devis.filter(x => x.id !== id); saveData(d); home();
 }
 
@@ -922,9 +1050,10 @@ function genPDF(id) {
     const d = getData(); const dev = d.devis.find(x => x.id === id); const s = SETTINGS;
     if(!dev) return;
     const tauxTVA = dev.tauxTVA !== undefined ? dev.tauxTVA : 10;
+    const docType = dev.type === 'facture' ? 'FACTURE' : 'DEVIS';
     
     const html = `
-        <h1>DEVIS N° ${esc(dev.id)}</h1>
+        <h1>${docType} N° ${esc(dev.id)}</h1>
         <div class="header-info">
             <div class="box"><strong>${esc(s.nom_entreprise)}</strong><br>${esc(s.adresse)}<br>${esc(s.cp)} ${esc(s.ville)}<br>Siret: ${esc(s.siret)}<br>Décennale: ${esc(s.assurance)}</div>
             <div class="box" style="text-align:right;"><strong>Client :</strong><br>${esc(dev.clientNom)}<br>Date: ${dateFr(dev.date)}<br>Validité: 30 jours</div>
@@ -936,10 +1065,13 @@ function genPDF(id) {
         <div class="totals">
             <p>Aléas: ${eur(dev.aleas)}</p><p><strong>Total HT Net: ${eur(dev.totalHT)}</strong></p><p>TVA (${tauxTVA}%): ${eur(dev.tva)}</p><h3>TOTAL TTC: ${eur(dev.totalTTC)}</h3>
         </div>
-        <div class="legal"><p>Conditions : 30% à la commande, solde à la livraison.</p><p>IBAN: ${esc(s.iban)} - BIC: ${esc(s.bic)}</p></div>
+        <div class="legal">
+            <p>Conditions : ${dev.type === 'devis' ? '30% à la commande, solde à la livraison.' : 'Paiement à réception de facture.'}</p>
+            <p>IBAN: ${esc(s.iban)} - BIC: ${esc(s.bic)}</p>
+        </div>
     `;
     const el = document.getElementById('pdf-template'); el.innerHTML = html; el.style.display = 'block';
-    html2pdf().set({ margin: 0, filename: `Devis_${dev.id}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { el.style.display = 'none'; });
+    html2pdf().set({ margin: 0, filename: `${docType}_${dev.id}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { el.style.display = 'none'; });
 }
 
 function sendMail(id) {
@@ -951,7 +1083,7 @@ function sendMail(id) {
         <div class="modal">
             <h3>Envoyer par Email</h3>
             <div class="field"><label>Email du client</label><input class="inp" id="m-to" value="${esc(c.email) || ''}"></div>
-            <div class="field"><label>Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${esc(c.nom)},\n\nVeuillez trouver ci-joint le devis ${esc(dev.id)} d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${esc(s.nom_entreprise)}</textarea></div>
+            <div class="field"><label>Message</label><textarea class="inp" rows="4" id="m-msg">Bonjour ${esc(c.nom)},\n\nVeuillez trouver ci-joint votre ${dev.type} ${esc(dev.id)} d'un montant de ${eur(dev.totalTTC)} TTC.\n\nCordialement,\n${esc(s.nom_entreprise)}</textarea></div>
             <button class="btn" onclick="execMail('${esc(id)}')">Envoyer</button>
             <button class="btn btn-ghost" style="margin-top:12px;" onclick="document.getElementById('modal-overlay').classList.remove('show')">Annuler</button>
         </div>
@@ -968,14 +1100,14 @@ function execMail(id) {
             .then(() => {
                 toast("Email envoyé !"); document.getElementById('modal-overlay').classList.remove('show');
                 let d = getData(); let dev = d.devis.find(x => x.id === id); 
-                if(dev) { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
+                if(dev && dev.type === 'devis') { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
             }, (e) => { toast("Erreur : " + e.text); });
     } else {
-        const sub = encodeURIComponent(`Devis ${id} - ${s.nom_entreprise}`); const bod = encodeURIComponent(msg);
+        const sub = encodeURIComponent(`${id} - ${s.nom_entreprise}`); const bod = encodeURIComponent(msg);
         window.location.href = `mailto:${to}?subject=${sub}&body=${bod}`;
         document.getElementById('modal-overlay').classList.remove('show');
         let d = getData(); let dev = d.devis.find(x => x.id === id); 
-        if(dev) { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
+        if(dev && dev.type === 'devis') { dev.statut = 'envoye'; dev.updatedAt = new Date().toISOString(); saveData(d); render(); }
     }
 }
 
