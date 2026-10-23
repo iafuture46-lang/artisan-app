@@ -10,137 +10,114 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
 <style>
-/* ═══════════════════════════════════════════════════════════════════
-   ARTISANAPP V11 : CLEAN PREMIUM (Clair, Bleu, Animations)
-   ═══════════════════════════════════════════════════════════════════ */
 :root{
-  --bg: #f1f5f9;          /* Gris très clair */
-  --surface: #ffffff;     /* Blanc pur */
+  --bg: #f1f5f9;
+  --surface: #ffffff;
   --surface-hover: #f8fafc;
   --border: #e2e8f0;
-  --text-main: #0f172a;   /* Bleu nuit presque noir */
+  --text-main: #0f172a;
   --text-muted: #64748b;
-  
-  --primary: #2563eb;     /* Bleu Royal */
+  --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
-  
-  --success: #10b981;
   --danger: #ef4444;
-  
+  --danger-light: #fef2f2;
   --radius: 16px;
   --font-main: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  
-  /* Ombres douces */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
   --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
 }
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);font-size:15px;line-height:1.5;padding-bottom:100px;display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{cursor:pointer;border:none;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
 a{text-decoration:none;cursor:pointer;color:inherit}
 
-/* HEADER MOBILE */
+/* HEADER & NAV */
 .hdr{background:var(--surface);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.hdr-mark{width:40px;height:40px;background:var(--primary);color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;box-shadow:var(--shadow-sm)}
-.hdr-text h1{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-left:12px;color:var(--text-main)}
-.hdr-text p{font-size:12px;color:var(--primary);font-weight:700;margin-left:12px;text-transform:uppercase;letter-spacing:1px}
-
-/* BOTTOM NAV (MOBILE) */
+.hdr-mark{width:40px;height:40px;background:var(--primary);color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+.hdr-text h1{font-size:20px;font-weight:800;margin-left:12px}
+.hdr-text p{font-size:12px;color:var(--primary);font-weight:700;margin-left:12px;text-transform:uppercase}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 24px 0;z-index:100;box-shadow:0 -4px 10px rgba(0,0,0,0.02)}
-.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--text-muted);padding:8px 16px;text-transform:uppercase;letter-spacing:.5px}
+.bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--text-muted);padding:8px 16px;text-transform:uppercase}
 .bottom-nav a.active{color:var(--primary)}
 .bottom-nav svg{width:24px;height:24px;stroke-width:2.5;transition:transform 0.2s}
 .bottom-nav a.active svg{transform:translateY(-2px)}
-
-/* FAB */
-.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:300;box-shadow:0 8px 24px rgba(37, 99, 235, 0.4);z-index:99}
-.fab:hover{transform:scale(1.05) translateY(-2px);box-shadow:0 12px 28px rgba(37, 99, 235, 0.5)}
+.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(37, 99, 235, 0.4);z-index:99}
+.fab:hover{transform:scale(1.05) translateY(-2px)}
 .fab:active{transform:scale(.95)}
 
-/* LAYOUT DESKTOP */
-.layout-wrapper{display:flex;flex:1;max-width:1400px;margin:0 auto;width:100%;}
-.sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column;box-shadow:var(--shadow-sm);z-index:10}
-.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:14px 24px;margin:4px 16px;border-radius:12px;color:var(--text-muted);font-weight:600;cursor:pointer;transition:all 0.2s}
+/* LAYOUT & CARDS */
+.layout-wrapper{display:flex;flex:1;max-width:1400px;margin:0 auto;width:100%}
+.sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column}
+.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:14px 24px;margin:4px 16px;border-radius:12px;color:var(--text-muted);font-weight:600;cursor:pointer}
 .sidebar .nav-item:hover{background:var(--surface-hover);color:var(--primary)}
 .sidebar .nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:800}
 .wrap{flex:1;padding:32px 24px 40px;overflow-y:auto}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page-content{animation:fadeInUp 0.3s ease-out forwards}
 
-/* ANIMATION D'APPARITION DES PAGES */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-.page-content { animation: fadeInUp 0.3s ease-out forwards; }
-
-/* CARDS */
 .card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all 0.3s ease}
-/* EFFET LOUPE SUR LES CARTES */
-.card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg);border-color:#cbd5e1}
+.card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg)}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
-.card-title{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--text-main)}
-.card-sub{font-size:13px;color:var(--text-muted);font-weight:500;margin-top:4px}
+.card-title{font-size:18px;font-weight:800}
+.card-sub{font-size:13px;color:var(--text-muted);margin-top:4px}
 
-/* DASHBOARD KPI */
+/* KPI */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;position:relative;box-shadow:var(--shadow-sm);transition:all 0.3s ease}
-.kpi:hover{transform:scale(1.02) translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary-light)}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);transition:all 0.3s ease}
+.kpi:hover{transform:scale(1.02) translateY(-3px);box-shadow:var(--shadow-lg)}
 .kpi.full{grid-column:span 2;background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);border-left:4px solid var(--primary)}
-.kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;letter-spacing:1px}
-.kpi .val{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--primary);letter-spacing:-1px}
-.kpi .sub{font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:500}
+.kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.kpi .val{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--primary)}
+.kpi .sub{font-size:12px;color:var(--text-muted);margin-top:4px}
 
 /* BOUTONS */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:700;background:var(--primary);color:#fff;width:100%;text-transform:uppercase;letter-spacing:1px;box-shadow:var(--shadow-md)}
-.btn:hover{background:var(--primary-hover);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:700;background:var(--primary);color:#fff;width:100%;text-transform:uppercase;box-shadow:var(--shadow-md)}
+.btn:hover{background:var(--primary-hover);transform:translateY(-2px)}
 .btn:active{transform:scale(0.97)}
-.btn-ghost{background:var(--surface);color:var(--text-main);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.btn-ghost{background:var(--surface);color:var(--text-main);border:1px solid var(--border);box-shadow:none}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
 .btn-sm{padding:10px 16px;font-size:12px;width:auto;border-radius:8px}
-.btn-danger{background:#fef2f2;color:var(--danger);border:1px solid #fca5a5}
-.btn-danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn-danger{background:var(--danger-light);color:var(--danger);border:1px solid #fca5a5}
+.btn-danger:hover{background:var(--danger);color:#fff}
 
 /* FORMULAIRES */
 .field{margin-bottom:20px}
-.field label{display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
-.inp{width:100%;padding:16px;font-size:16px;background:var(--bg);border:2px solid transparent;border-radius:12px;outline:none;font-weight:600;color:var(--text-main);transition:all 0.2s}
-.inp:hover{background:#e2e8f0}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text-muted);text-transform:uppercase}
+.inp{width:100%;padding:16px;font-size:16px;background:var(--bg);border:2px solid transparent;border-radius:12px;outline:none;font-weight:600;transition:all 0.2s}
 .inp:focus{background:var(--surface);border-color:var(--primary);box-shadow:var(--shadow-glow)}
 .row-2{display:grid;grid-template-columns:1fr;gap:16px}
 
-/* LISTES CLIENTS & DEVIS */
+/* LISTES */
 .list-item{display:flex;justify-content:space-between;align-items:center;padding:16px;margin-bottom:8px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:all 0.2s}
 .list-item:hover{background:var(--surface-hover);border-color:var(--border);transform:translateX(4px)}
-.list-item .title{font-weight:800;font-size:16px;color:var(--text-main)}
-.list-item .sub{font-size:12px;color:var(--text-muted);margin-top:2px;font-weight:500}
+.list-item .title{font-weight:800;font-size:16px}
+.list-item .sub{font-size:12px;color:var(--text-muted);margin-top:2px}
 .list-item .amount{font-family:var(--font-mono);font-weight:800;color:var(--primary);font-size:16px}
 
 /* LIGNES DEVIS */
-.line-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:all 0.2s}
-.line-item:hover{border-color:#cbd5e1;box-shadow:var(--shadow-sm)}
+.line-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
 .line-header{display:flex;justify-content:space-between;margin-bottom:12px}
 .line-desc{font-weight:800;font-size:14px}
 .line-total{font-family:var(--font-mono);color:var(--primary);font-weight:800}
 .line-inputs{display:flex;gap:12px}
 .pu-wrapper{display:flex;gap:8px;align-items:center}
 .btn-reset{background:var(--surface);color:var(--text-muted);padding:8px 12px;border-radius:8px;font-size:14px;border:1px solid var(--border)}
-.btn-reset:hover{background:var(--border);color:var(--text-main)}
 
 /* MODALES & TOASTS */
 #toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:1000;background:var(--text-main);color:#fff;padding:14px 24px;border-radius:30px;font-size:14px;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:transform .3s;pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0)}
 .modal-overlay{position:fixed;inset:0;background:rgba(15, 23, 42, 0.4);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s;pointer-events:none}
 .modal-overlay.show{opacity:1;pointer-events:auto}
-.modal{background:var(--surface);border-radius:24px 24px 0 0;padding:32px 24px;width:100%;border-top:4px solid var(--primary);transform:translateY(100%);transition:transform .3s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 -10px 40px rgba(0,0,0,0.1)}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;padding:32px 24px;width:100%;border-top:4px solid var(--primary);transform:translateY(100%);transition:transform .3s;box-shadow:0 -10px 40px rgba(0,0,0,0.1)}
 .modal-overlay.show .modal{transform:translateY(0)}
-.modal h3{font-size:22px;font-weight:800;margin-bottom:20px;color:var(--text-main)}
+.modal h3{font-size:22px;font-weight:800;margin-bottom:20px}
 
-/* PDF TEMPLATE (inchangé, pour l'impression) */
+/* PDF */
 #pdf-template{display:none;width:210mm;padding:20mm;background:#fff;color:#000;font-family:Arial,sans-serif}
 #pdf-template h1{font-size:28px;margin-bottom:24px;border-bottom:2px solid #000;padding-bottom:12px}
 #pdf-template .header-info{display:flex;justify-content:space-between;margin-bottom:40px}
@@ -151,19 +128,10 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 #pdf-template .totals{text-align:right;font-size:16px;line-height:1.8}
 #pdf-template .legal{margin-top:60px;font-size:11px;color:#555;line-height:1.5}
 
-/* RESPONSIVE DESKTOP (PC) */
 @media (min-width:768px){
-  body{padding-bottom:0;}
-  .bottom-nav,.fab{display:none}
-  .hdr{display:none}
-  .sidebar{display:flex;}
-  .wrap{padding:40px;}
-  .kpi-grid{grid-template-columns:repeat(3,1fr)}
-  .kpi.full{grid-column:span 1}
-  .row-2{grid-template-columns:1fr 1fr}
-  .modal-overlay{align-items:center}
-  .modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
-  .modal-overlay.show .modal{transform:translateY(0) scale(1)}
+  body{padding-bottom:0}.bottom-nav,.fab{display:none}.hdr{display:none}.sidebar{display:flex}.wrap{padding:40px}
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}.kpi.full{grid-column:span 1}.row-2{grid-template-columns:1fr 1fr}
+  .modal-overlay{align-items:center}.modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
 }
 </style>
 </head>
@@ -172,45 +140,29 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <header class="hdr">
   <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
     <div class="hdr-mark">A</div>
-    <div>
-      <h1>ArtisanApp</h1>
-      <p>Copilote</p>
-    </div>
+    <div><h1>ArtisanApp</h1><p>Copilote</p></div>
   </div>
 </header>
 
 <div class="layout-wrapper">
   <aside class="sidebar" id="desktop-sidebar">
-    <div style="padding:0 24px 24px 24px; font-weight:900; font-size:22px; color:var(--text-main); border-bottom:1px solid var(--border); margin-bottom:16px;">ArtisanApp</div>
+    <div style="padding:0 24px 24px 24px; font-weight:900; font-size:22px; border-bottom:1px solid var(--border); margin-bottom:16px;">ArtisanApp</div>
     <div class="nav-item" onclick="go('accueil')" id="side-accueil">Tableau de bord</div>
     <div class="nav-item" onclick="go('devis')" id="side-devis">Mes Devis</div>
     <div class="nav-item" onclick="go('clients')" id="side-clients">Mes Clients</div>
     <div class="nav-item" onclick="go('equipe')" id="side-equipe">Mon Équipe</div>
     <div class="nav-item" onclick="go('parametres')" id="side-param">Paramètres</div>
   </aside>
-
   <main class="wrap" id="root"></main>
 </div>
 
 <a class="fab" id="fab-main" onclick="actionFab()">+</a>
 
 <nav class="bottom-nav">
-  <a onclick="go('accueil')" id="nav-accueil">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-    Accueil
-  </a>
-  <a onclick="go('clients')" id="nav-clients">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-    Clients
-  </a>
-  <a onclick="go('devis')" id="nav-devis">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-    Devis
-  </a>
-  <a onclick="go('parametres')" id="nav-param">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-    Paramètres
-  </a>
+  <a onclick="go('accueil')" id="nav-accueil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Accueil</a>
+  <a onclick="go('clients')" id="nav-clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Clients</a>
+  <a onclick="go('devis')" id="nav-devis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Devis</a>
+  <a onclick="go('parametres')" id="nav-param"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Paramètres</a>
 </nav>
 
 <div id="toast"></div>
@@ -218,10 +170,6 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <div id="pdf-template"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   MOTEUR V11 (Clean Premium)
-   ═══════════════════════════════════════════════════════════════════ */
-
 const DEFAULT_SETTINGS = {
     nom_entreprise: "", siret: "", adresse: "", cp: "", ville: "",
     tel: "", email: "", iban: "", bic: "", assurance: "",
@@ -262,21 +210,13 @@ function init(nom) { if (!nom) return '?'; let p = nom.split(/\s+/); if (p.lengt
 let toastTimer;
 function toast(m) {
     const t = document.getElementById('toast');
-    t.textContent = m;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    t.textContent = m; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-let STACK = [];
-let CURRENT_ID = null;
-let DEV_LIGNES = [];
+let STACK = []; let CURRENT_ID = null; let DEV_LIGNES = [];
 
-function go(page, id) {
-    CURRENT_ID = id || null;
-    STACK.push({ page, id });
-    render();
-}
+function go(page, id) { CURRENT_ID = id || null; STACK.push({ page, id }); render(); }
 function back() { if (STACK.length > 1) { STACK.pop(); const p = STACK[STACK.length-1]; CURRENT_ID = p.id; render(); } else { go('accueil'); } }
 function home() { STACK = [{ page: 'accueil', id: null }]; CURRENT_ID = null; render(); }
 
@@ -295,10 +235,8 @@ function render() {
     else if (cur.page === 'parametres') activeNav = 'param';
     else if (cur.page === 'equipe') activeNav = 'equipe';
 
-    const mNav = document.getElementById('nav-' + activeNav);
-    if(mNav) mNav.classList.add('active');
-    const dNav = document.getElementById('side-' + activeNav);
-    if(dNav) dNav.classList.add('active');
+    const mNav = document.getElementById('nav-' + activeNav); if(mNav) mNav.classList.add('active');
+    const dNav = document.getElementById('side-' + activeNav); if(dNav) dNav.classList.add('active');
 
     const fab = document.getElementById('fab-main');
     if (cur.page === 'accueil') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-devis'); }
@@ -313,14 +251,14 @@ function render() {
             case 'equipe': html = viewEquipe(); break;
             case 'clients': html = viewClients(); break;
             case 'nouveau-client': html = viewNouveauClient(); break;
+            case 'edit-client': html = viewNouveauClient(); break;
             case 'fiche-client': html = viewFicheClient(); break;
             case 'devis': html = viewDevis(); break;
             case 'nouveau-devis': html = viewNouveauDevis(); break;
+            case 'edit-devis': html = viewNouveauDevis(); break;
             case 'detail-devis': html = viewDetailDevis(); break;
         }
     } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${e.message}</p></div>`; }
-    
-    // On enveloppe le HTML dans une div avec l'animation d'entrée
     root.innerHTML = `<div class="page-content">${html}</div>`;
     window.scrollTo(0,0);
 }
@@ -330,25 +268,14 @@ function render() {
 function viewAccueil() {
     const d = getData();
     const nbDevisEnCours = d.devis.filter(x => x.statut === 'brouillon').length;
-    let ca = 0;
-    d.devis.forEach(x => { if (x.statut === 'accepte') ca += x.totalTTC; });
+    let ca = 0; d.devis.forEach(x => { if (x.statut === 'accepte') ca += x.totalTTC; });
 
-    let html = `
+    return `
         <div class="kpi-grid">
-            <div class="kpi full">
-                <div class="lbl">Chiffre d'Affaires Validé</div>
-                <div class="val">${eur(ca)}</div>
-            </div>
-            <div class="kpi">
-                <div class="lbl">Devis en cours</div>
-                <div class="val">${nbDevisEnCours}</div>
-            </div>
-            <div class="kpi">
-                <div class="lbl">Clients</div>
-                <div class="val">${d.clients.length}</div>
-            </div>
+            <div class="kpi full"><div class="lbl">Chiffre d'Affaires Validé</div><div class="val">${eur(ca)}</div></div>
+            <div class="kpi"><div class="lbl">Devis en cours</div><div class="val">${nbDevisEnCours}</div></div>
+            <div class="kpi"><div class="lbl">Clients</div><div class="val">${d.clients.length}</div></div>
         </div>
-
         <div class="card">
             <div class="card-head"><div class="card-title">Actions rapides</div></div>
             <div class="row-2">
@@ -356,52 +283,17 @@ function viewAccueil() {
                 <button class="btn btn-ghost" onclick="go('nouveau-client')">+ Client</button>
             </div>
         </div>
-
         <div class="card">
             <div class="card-head"><div class="card-title">Derniers devis</div><button class="btn btn-sm" onclick="go('devis')">Tout voir</button></div>
-            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis. Prêt à chiffrer votre premier chantier ?</p>' : ''}
+            ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${d.devis.slice(-3).reverse().map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${x.id}')">
-                    <div>
-                        <div class="title">${x.clientNom}</div>
-                        <div class="sub">${x.id} - ${x.statut.toUpperCase()}</div>
-                    </div>
+                    <div><div class="title">${x.clientNom}</div><div class="sub">${x.id} - ${x.statut.toUpperCase()}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
         </div>
     `;
-    return html;
-}
-
-function viewEquipe() {
-    const users = getUsers();
-    return `
-        <div class="card">
-            <div class="card-head"><div class="card-title">Mon Équipe</div></div>
-            ${users.map(u => `
-                <div class="list-item" style="cursor:default;">
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(u.nom)}</div>
-                        <div>
-                            <div class="title">${u.nom}</div>
-                            <div class="sub">${u.role}</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
-            <button class="btn btn-ghost" style="margin-top:24px;" onclick="addUser()">+ Ajouter un profil</button>
-        </div>
-    `;
-}
-
-function addUser() {
-    const nom = prompt("Nom du collaborateur ?");
-    if (!nom) return;
-    let u = getUsers();
-    u.push({id: Date.now(), nom: nom, role: 'ouvrier'});
-    saveUsers(u);
-    render();
 }
 
 function viewParametres() {
@@ -438,31 +330,86 @@ function viewParametres() {
             <div class="field"><label>EmailJS Template ID</label><input class="inp" id="s-ejs-template" value="${esc(s.emailjs_template)}"></div>
             <div class="field"><label>EmailJS Public Key</label><input class="inp" id="s-ejs-public" value="${esc(s.emailjs_public)}"></div>
         </div>
+        
+        <div class="card">
+            <div class="card-head"><div class="card-title">Sauvegarde des Données</div><div class="card-sub">Exportez pour changer d'appareil</div></div>
+            <div class="row-2">
+                <button class="btn btn-ghost" onclick="exportData()">⬇️ Exporter (JSON)</button>
+                <button class="btn btn-ghost" onclick="importData()">⬆️ Importer</button>
+            </div>
+            <input type="file" id="file-import" style="display:none" accept=".json" onchange="processImport(event)">
+        </div>
+
         <button class="btn" onclick="saveParam()">Enregistrer les paramètres</button>
     `;
 }
 
 function saveParam() {
     SETTINGS = {
-        nom_entreprise: document.getElementById('s-nom').value,
-        siret: document.getElementById('s-siret').value,
-        assurance: document.getElementById('s-assurance').value,
-        adresse: document.getElementById('s-adresse').value,
-        cp: document.getElementById('s-cp').value,
-        ville: document.getElementById('s-ville').value,
-        email: document.getElementById('s-email').value,
-        tel: document.getElementById('s-tel').value,
-        iban: document.getElementById('s-iban').value,
-        bic: document.getElementById('s-bic').value,
-        marge: parseFloat(document.getElementById('s-marge').value) || 15,
-        aleas: parseFloat(document.getElementById('s-aleas').value) || 5,
-        emailjs_service: document.getElementById('s-ejs-service').value,
-        emailjs_template: document.getElementById('s-ejs-template').value,
-        emailjs_public: document.getElementById('s-ejs-public').value
+        nom_entreprise: document.getElementById('s-nom').value, siret: document.getElementById('s-siret').value,
+        assurance: document.getElementById('s-assurance').value, adresse: document.getElementById('s-adresse').value,
+        cp: document.getElementById('s-cp').value, ville: document.getElementById('s-ville').value,
+        email: document.getElementById('s-email').value, tel: document.getElementById('s-tel').value,
+        iban: document.getElementById('s-iban').value, bic: document.getElementById('s-bic').value,
+        marge: parseFloat(document.getElementById('s-marge').value) || 15, aleas: parseFloat(document.getElementById('s-aleas').value) || 5,
+        emailjs_service: document.getElementById('s-ejs-service').value, emailjs_template: document.getElementById('s-ejs-template').value, emailjs_public: document.getElementById('s-ejs-public').value
     };
-    saveS(SETTINGS);
-    toast("Paramètres enregistrés");
-    home();
+    saveS(SETTINGS); toast("Paramètres enregistrés"); home();
+}
+
+function exportData() {
+    const data = getData(); const settings = getS();
+    const backup = { data, settings, exportDate: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `artisanapp_backup_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    toast("Sauvegarde téléchargée !");
+}
+function importData() { document.getElementById('file-import').click(); }
+function processImport(event) {
+    const file = event.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const backup = JSON.parse(e.target.result);
+            if (backup.data && backup.settings) {
+                if(confirm("Cela remplacera vos données actuelles. Continuer ?")) {
+                    saveData(backup.data); saveS(backup.settings); SETTINGS = backup.settings;
+                    toast("Import réussi !"); home();
+                }
+            } else { toast("Fichier invalide"); }
+        } catch(err) { toast("Erreur de lecture"); }
+    };
+    reader.readAsText(file); event.target.value = '';
+}
+
+function viewEquipe() {
+    const users = getUsers();
+    return `
+        <div class="card">
+            <div class="card-head"><div class="card-title">Mon Équipe</div></div>
+            ${users.map(u => `
+                <div class="list-item" style="cursor:default;">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(u.nom)}</div>
+                        <div><div class="title">${u.nom}</div><div class="sub">${u.role}</div></div>
+                    </div>
+                    ${u.role !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="delUser(${u.id})">Suppr</button>` : ''}
+                </div>
+            `).join('')}
+            <button class="btn btn-ghost" style="margin-top:24px;" onclick="addUser()">+ Ajouter un profil</button>
+        </div>
+    `;
+}
+
+function addUser() {
+    const nom = prompt("Nom du collaborateur ?"); if (!nom) return;
+    let u = getUsers(); u.push({id: Date.now(), nom: nom, role: 'ouvrier'}); saveUsers(u); render();
+}
+function delUser(id) {
+    if (!confirm("Supprimer ce profil ?")) return;
+    let u = getUsers(); u = u.filter(x => x.id !== id); saveUsers(u); render();
 }
 
 function viewClients() {
@@ -475,10 +422,7 @@ function viewClients() {
                 <div class="list-item" onclick="go('fiche-client', '${c.id}')">
                     <div style="display:flex;align-items:center;gap:16px;">
                         <div style="width:44px;height:44px;background:var(--primary-light);color:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">${init(c.nom)}</div>
-                        <div>
-                            <div class="title">${c.nom}</div>
-                            <div class="sub">${c.ville}</div>
-                        </div>
+                        <div><div class="title">${c.nom}</div><div class="sub">${c.ville}</div></div>
                     </div>
                 </div>
             `).join('')}
@@ -487,42 +431,61 @@ function viewClients() {
 }
 
 function viewNouveauClient() {
+    const isEdit = STACK[STACK.length - 1].page === 'edit-client';
+    let c = { nom: '', ville: '', cp: '', email: '', tel: '' };
+    if (isEdit) {
+        const d = getData(); c = d.clients.find(x => x.id === CURRENT_ID);
+    }
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">Nouveau Client</div></div>
-            <div class="field"><label>Nom</label><input class="inp" id="c-nom"></div>
+            <div class="card-head"><div class="card-title">${isEdit ? 'Modifier le client' : 'Nouveau Client'}</div></div>
+            <div class="field"><label>Nom</label><input class="inp" id="c-nom" value="${esc(c.nom)}"></div>
             <div class="row-2">
-                <div class="field"><label>Ville</label><input class="inp" id="c-ville"></div>
-                <div class="field"><label>Code Postal</label><input class="inp" id="c-cp"></div>
+                <div class="field"><label>Ville</label><input class="inp" id="c-ville" value="${esc(c.ville)}"></div>
+                <div class="field"><label>Code Postal</label><input class="inp" id="c-cp" value="${esc(c.cp)}"></div>
             </div>
-            <div class="field"><label>Email</label><input class="inp" id="c-email" type="email"></div>
-            <div class="field"><label>Téléphone</label><input class="inp" id="c-tel" type="tel"></div>
-            <button class="btn" onclick="saveClient()">Créer le client</button>
+            <div class="field"><label>Email</label><input class="inp" id="c-email" type="email" value="${esc(c.email)}"></div>
+            <div class="field"><label>Téléphone</label><input class="inp" id="c-tel" type="tel" value="${esc(c.tel)}"></div>
+            <button class="btn" onclick="saveClient('${isEdit ? 'edit' : 'new'}')">${isEdit ? 'Mettre à jour' : 'Créer le client'}</button>
             <button class="btn btn-ghost" style="margin-top:12px;" onclick="back()">Annuler</button>
         </div>
     `;
 }
 
-function saveClient() {
+function saveClient(mode) {
     const nom = document.getElementById('c-nom').value.trim();
     const ville = document.getElementById('c-ville').value.trim();
     if (!nom || !ville) { toast("Nom et ville obligatoires"); return; }
+    
     const d = getData();
-    d.cpt.c++;
-    const id = 'C-' + new Date().getFullYear() + '-' + String(d.cpt.c).padStart(4, '0');
-    d.clients.push({ id, nom, ville, cp: document.getElementById('c-cp').value, email: document.getElementById('c-email').value, tel: document.getElementById('c-tel').value, date: new Date().toISOString() });
-    saveData(d);
-    toast("Client créé");
-    back();
+    const data = {
+        nom, ville, cp: document.getElementById('c-cp').value,
+        email: document.getElementById('c-email').value, tel: document.getElementById('c-tel').value
+    };
+
+    if (mode === 'edit') {
+        const idx = d.clients.findIndex(x => x.id === CURRENT_ID);
+        if (idx > -1) d.clients[idx] = { ...d.clients[idx], ...data };
+    } else {
+        d.cpt.c++;
+        const id = 'C-' + new Date().getFullYear() + '-' + String(d.cpt.c).padStart(4, '0');
+        d.clients.push({ id, date: new Date().toISOString(), ...data });
+    }
+    saveData(d); toast(mode === 'edit' ? "Client modifié" : "Client créé"); back();
 }
 
 function viewFicheClient() {
-    const d = getData();
-    const c = d.clients.find(x => x.id === CURRENT_ID);
+    const d = getData(); const c = d.clients.find(x => x.id === CURRENT_ID);
     const devis = d.devis.filter(x => x.clientId === CURRENT_ID);
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">${c.nom}</div></div>
+            <div class="card-head">
+                <div class="card-title">${c.nom}</div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-sm btn-ghost" onclick="go('edit-client', '${c.id}')">Modifier</button>
+                    <button class="btn btn-sm btn-danger" onclick="delClient('${c.id}')">Supprimer</button>
+                </div>
+            </div>
             <div class="sub" style="margin-bottom:24px;">${c.email || 'Pas d\'email'} - ${c.tel || 'Pas de tél'}</div>
             <button class="btn" onclick="go('nouveau-devis', '${c.id}')">+ Créer un devis</button>
         </div>
@@ -531,15 +494,20 @@ function viewFicheClient() {
             ${devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${devis.map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${x.id}')">
-                    <div>
-                        <div class="title">${x.id}</div>
-                        <div class="sub">${dateFr(x.date)}</div>
-                    </div>
+                    <div><div class="title">${x.id}</div><div class="sub">${dateFr(x.date)}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
         </div>
     `;
+}
+
+function delClient(id) {
+    if (!confirm("Supprimer ce client ET tous ses devis ? Cette action est irréversible.")) return;
+    let d = getData();
+    d.clients = d.clients.filter(x => x.id !== id);
+    d.devis = d.devis.filter(x => x.clientId !== id);
+    saveData(d); toast("Client supprimé"); home();
 }
 
 function viewDevis() {
@@ -550,10 +518,7 @@ function viewDevis() {
             ${d.devis.length === 0 ? '<p style="color:var(--text-muted); padding:16px;">Aucun devis.</p>' : ''}
             ${d.devis.slice().reverse().map(x => `
                 <div class="list-item" onclick="go('detail-devis', '${x.id}')">
-                    <div>
-                        <div class="title">${x.clientNom}</div>
-                        <div class="sub">${x.id} - ${x.statut.toUpperCase()}</div>
-                    </div>
+                    <div><div class="title">${x.clientNom}</div><div class="sub">${x.id} - ${x.statut.toUpperCase()}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
             `).join('')}
@@ -562,22 +527,33 @@ function viewDevis() {
 }
 
 function viewNouveauDevis() {
+    const isEdit = STACK[STACK.length - 1].page === 'edit-devis';
     const d = getData();
+    
+    if (isEdit) {
+        const dev = d.devis.find(x => x.id === CURRENT_ID);
+        DEV_LIGNES = dev.lignes.map(l => {
+            const t = TARIFS[l.code] || TARIFS['carr.sol.std']; // fallback
+            return { code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu, puBase: t.pu };
+        });
+    }
+
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">Nouveau Devis</div></div>
+            <div class="card-head"><div class="card-title">${isEdit ? 'Modifier le Devis' : 'Nouveau Devis'}</div></div>
             <div class="field">
                 <label>Client</label>
-                <select class="inp" id="d-client">
+                <select class="inp" id="d-client" ${isEdit ? 'disabled' : ''}>
                     <option value="">-- Choisir --</option>
-                    ${d.clients.map(c => `<option value="${c.id}" ${c.id === CURRENT_ID ? 'selected' : ''}>${c.nom}</option>`).join('')}
+                    ${d.clients.map(c => `<option value="${c.id}" ${c.id === CURRENT_ID || (isEdit && c.id === d.devis.find(x=>x.id===CURRENT_ID).clientId) ? 'selected' : ''}>${c.nom}</option>`).join('')}
                 </select>
             </div>
+            ${!isEdit ? `
             <div class="field">
                 <label>Description des travaux (IA)</label>
                 <input class="inp" id="ia-text" placeholder="Ex: pose 20m2 carrelage grand format">
                 <button class="btn btn-ghost" style="margin-top:12px;" onclick="parseIA()">Analyser</button>
-            </div>
+            </div>` : ''}
             <div id="lines-container"></div>
         </div>
     `;
@@ -587,18 +563,13 @@ function parseIA() {
     const t = document.getElementById('ia-text').value.toLowerCase();
     if (!t) return;
     DEV_LIGNES = [];
-    
     if (t.includes('carrelage')) {
         let code = t.includes('grand') || t.includes('60x60') ? 'carr.sol.grand' : 'carr.sol.std';
-        let q = 1;
-        const m = t.match(/(\d+)\s*m/);
-        if (m) q = parseFloat(m[1]);
+        let q = 1; const m = t.match(/(\d+)\s*m/); if (m) q = parseFloat(m[1]);
         addLine(code, q);
     } else if (t.includes('peinture')) {
         let code = t.includes('satin') ? 'peint.mur.satin' : 'peint.mur.mat';
-        let q = 1;
-        const m = t.match(/(\d+)\s*m/);
-        if (m) q = parseFloat(m[1]);
+        let q = 1; const m = t.match(/(\d+)\s*m/); if (m) q = parseFloat(m[1]);
         addLine(code, q);
     } else {
         DEV_LIGNES.push({ code: 'custom', d: t, q: 1, u: 'forfait', pu: 0, puBase: 0 });
@@ -607,26 +578,22 @@ function parseIA() {
 }
 
 function addLine(code, q) {
-    const base = TARIFS[code];
-    const cat = getCatalogue();
+    const base = TARIFS[code]; const cat = getCatalogue();
     const pu = cat[code] !== undefined ? cat[code] : base.pu;
     DEV_LIGNES.push({ code, d: base.d, q, u: base.u, pu, puBase: base.pu });
+    renderLines();
 }
 
 function renderLines() {
     const cont = document.getElementById('lines-container');
     if (!cont) return;
-    let totalHT = 0;
-    let html = '';
+    let totalHT = 0; let html = '';
     
     DEV_LIGNES.forEach((l, i) => {
         totalHT += l.q * l.pu;
         html += `
             <div class="line-item">
-                <div class="line-header">
-                    <div class="line-desc">${l.d}</div>
-                    <div class="line-total">${eur(l.q * l.pu)}</div>
-                </div>
+                <div class="line-header"><div class="line-desc">${l.d}</div><div class="line-total">${eur(l.q * l.pu)}</div></div>
                 <div class="line-inputs">
                     <input class="inp" type="number" value="${l.q}" onchange="updateLine(${i}, 'q', this.value)" style="flex:1;">
                     <div class="pu-wrapper" style="flex:2;">
@@ -650,7 +617,7 @@ function renderLines() {
             <div style="display:flex;justify-content:space-between;margin-bottom:12px;color:var(--text-muted);font-weight:600;"><span>TVA (10%)</span><span>${eur(tva)}</span></div>
             <div style="display:flex;justify-content:space-between;border-top:2px solid var(--border);padding-top:16px;margin-top:12px;font-weight:800;font-size:24px;color:var(--primary);"><span>TOTAL TTC</span><span>${eur(totalTTC)}</span></div>
         </div>
-        <button class="btn" style="margin-top:24px;" onclick="saveDevis()">Enregistrer le devis</button>
+        <button class="btn" style="margin-top:24px;" onclick="saveDevis('${STACK[STACK.length - 1].page === 'edit-devis' ? 'edit' : 'new'}')">Enregistrer</button>
     `;
     cont.innerHTML = html;
 }
@@ -659,9 +626,7 @@ function updateLine(i, f, v) {
     if (f === 'q') DEV_LIGNES[i].q = parseFloat(v) || 0;
     if (f === 'pu') {
         DEV_LIGNES[i].pu = parseFloat(v) || 0;
-        if (DEV_LIGNES[i].code !== 'custom') {
-            let c = getCatalogue(); c[DEV_LIGNES[i].code] = DEV_LIGNES[i].pu; saveCatalogue(c);
-        }
+        if (DEV_LIGNES[i].code !== 'custom') { let c = getCatalogue(); c[DEV_LIGNES[i].code] = DEV_LIGNES[i].pu; saveCatalogue(c); }
     }
     renderLines();
 }
@@ -672,49 +637,52 @@ function resetLine(i) {
     renderLines();
 }
 
-function saveDevis() {
-    const cid = document.getElementById('d-client').value;
+function saveDevis(mode) {
+    let cid;
+    if (mode === 'edit') {
+        const d = getData(); cid = d.devis.find(x => x.id === CURRENT_ID).clientId;
+    } else {
+        cid = document.getElementById('d-client').value;
+    }
     if (!cid) { toast("Sélectionnez un client"); return; }
     
-    let totalHT = 0;
-    DEV_LIGNES.forEach(l => totalHT += l.q * l.pu);
-    const aleas = totalHT * (SETTINGS.aleas / 100);
-    const totalHTF = totalHT + aleas;
-    const tva = totalHTF * 0.10;
-    const ttc = totalHTF + tva;
+    let totalHT = 0; DEV_LIGNES.forEach(l => totalHT += l.q * l.pu);
+    const aleas = totalHT * (SETTINGS.aleas / 100); const totalHTF = totalHT + aleas;
+    const tva = totalHTF * 0.10; const ttc = totalHTF + tva;
 
-    const d = getData();
-    const c = d.clients.find(x => x.id === cid);
-    d.cpt.d++;
-    const id = 'DEV-' + new Date().getFullYear() + '-' + String(d.cpt.d).padStart(4, '0');
+    const d = getData(); const c = d.clients.find(x => x.id === cid);
     
-    d.devis.push({
-        id, clientId: cid, clientNom: c.nom, date: new Date().toISOString(), statut: 'brouillon',
-        lignes: DEV_LIGNES.map(l => ({ d: l.d, q: l.q, u: l.u, pu: l.pu })),
-        aleas, totalHT: totalHTF, tva, totalTTC: ttc
-    });
-    saveData(d);
-    toast("Devis enregistré");
-    go('detail-devis', id);
+    if (mode === 'edit') {
+        const idx = d.devis.findIndex(x => x.id === CURRENT_ID);
+        if (idx > -1) {
+            d.devis[idx].lignes = DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu }));
+            d.devis[idx].aleas = aleas; d.devis[idx].totalHT = totalHTF; d.devis[idx].tva = tva; d.devis[idx].totalTTC = ttc;
+        }
+        saveData(d); toast("Devis mis à jour"); go('detail-devis', CURRENT_ID);
+    } else {
+        d.cpt.d++; const id = 'DEV-' + new Date().getFullYear() + '-' + String(d.cpt.d).padStart(4, '0');
+        d.devis.push({
+            id, clientId: cid, clientNom: c.nom, date: new Date().toISOString(), statut: 'brouillon',
+            lignes: DEV_LIGNES.map(l => ({ code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu })),
+            aleas, totalHT: totalHTF, tva, totalTTC: ttc
+        });
+        saveData(d); toast("Devis enregistré"); go('detail-devis', id);
+    }
 }
 
 function viewDetailDevis() {
-    const d = getData();
-    const dev = d.devis.find(x => x.id === CURRENT_ID);
+    const d = getData(); const dev = d.devis.find(x => x.id === CURRENT_ID);
     return `
         <div class="card">
             <div class="card-head">
                 <div class="card-title">${dev.id}</div>
-                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;letter-spacing:.5px;">${dev.statut.toUpperCase()}</span>
+                <span style="background:var(--primary-light);color:var(--primary);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;">${dev.statut.toUpperCase()}</span>
             </div>
             <div style="color:var(--text-muted);margin-bottom:24px;font-weight:500;">Client : <strong style="color:var(--text-main);">${dev.clientNom}</strong></div>
             
             ${dev.lignes.map(l => `
                 <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
-                    <div>
-                        <div style="font-weight:800;">${l.d}</div>
-                        <div style="font-size:13px;color:var(--text-muted);">${l.q} ${l.u} x ${eur(l.pu)}</div>
-                    </div>
+                    <div><div style="font-weight:800;">${l.d}</div><div style="font-size:13px;color:var(--text-muted);">${l.q} ${l.u} x ${eur(l.pu)}</div></div>
                     <div style="font-family:var(--font-mono);font-weight:800;">${eur(l.q * l.pu)}</div>
                 </div>
             `).join('')}
@@ -729,80 +697,49 @@ function viewDetailDevis() {
             <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
                 <button class="btn" onclick="genPDF('${dev.id}')">Générer le PDF</button>
                 <button class="btn btn-ghost" onclick="sendMail('${dev.id}')">Envoyer par Email</button>
-                <button class="btn btn-ghost btn-danger" onclick="delDevis('${dev.id}')">Supprimer</button>
+                ${dev.statut !== 'accepte' ? `<button class="btn btn-ghost" style="color:var(--success); border-color:var(--success);" onclick="acceptDevis('${dev.id}')">Marquer comme Accepté</button>` : ''}
+                <div class="row-2" style="margin-top:12px;">
+                    <button class="btn btn-ghost" onclick="go('edit-devis', '${dev.id}')">Modifier</button>
+                    <button class="btn btn-ghost btn-danger" onclick="delDevis('${dev.id}')">Supprimer</button>
+                </div>
             </div>
         </div>
     `;
+}
+
+function acceptDevis(id) {
+    let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'accepte'; saveData(d); render(); toast("Devis accepté !");
 }
 
 function delDevis(id) {
-    if (!confirm("Supprimer ?")) return;
-    let d = getData();
-    d.devis = d.devis.filter(x => x.id !== id);
-    saveData(d);
-    home();
+    if (!confirm("Supprimer ce devis ?")) return;
+    let d = getData(); d.devis = d.devis.filter(x => x.id !== id); saveData(d); home();
 }
 
 function genPDF(id) {
-    const d = getData();
-    const dev = d.devis.find(x => x.id === id);
-    const s = SETTINGS;
-    
+    const d = getData(); const dev = d.devis.find(x => x.id === id); const s = SETTINGS;
     const html = `
         <h1>DEVIS N° ${dev.id}</h1>
         <div class="header-info">
-            <div class="box">
-                <strong>${s.nom_entreprise}</strong><br>
-                ${s.adresse}<br>
-                ${s.cp} ${s.ville}<br>
-                Siret: ${s.siret}<br>
-                Décennale: ${s.assurance}
-            </div>
-            <div class="box" style="text-align:right;">
-                <strong>Client :</strong><br>
-                ${dev.clientNom}<br>
-                Date: ${dateFr(dev.date)}<br>
-                Validité: 30 jours
-            </div>
+            <div class="box"><strong>${s.nom_entreprise}</strong><br>${s.adresse}<br>${s.cp} ${s.ville}<br>Siret: ${s.siret}<br>Décennale: ${s.assurance}</div>
+            <div class="box" style="text-align:right;"><strong>Client :</strong><br>${dev.clientNom}<br>Date: ${dateFr(dev.date)}<br>Validité: 30 jours</div>
         </div>
         <table>
             <thead><tr><th>Désignation</th><th>Qté</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
-            <tbody>
-                ${dev.lignes.map(l => `<tr><td>${l.d}</td><td>${l.q} ${l.u}</td><td>${eur(l.pu)}</td><td>${eur(l.q * l.pu)}</td></tr>`).join('')}
-            </tbody>
+            <tbody>${dev.lignes.map(l => `<tr><td>${l.d}</td><td>${l.q} ${l.u}</td><td>${eur(l.pu)}</td><td>${eur(l.q * l.pu)}</td></tr>`).join('')}</tbody>
         </table>
         <div class="totals">
-            <p>Aléas: ${eur(dev.aleas)}</p>
-            <p><strong>Total HT: ${eur(dev.totalHT)}</strong></p>
-            <p>TVA: ${eur(dev.tva)}</p>
-            <h3>TOTAL TTC: ${eur(dev.totalTTC)}</h3>
+            <p>Aléas: ${eur(dev.aleas)}</p><p><strong>Total HT: ${eur(dev.totalHT)}</strong></p><p>TVA: ${eur(dev.tva)}</p><h3>TOTAL TTC: ${eur(dev.totalTTC)}</h3>
         </div>
-        <div class="legal">
-            <p>Conditions : 30% à la commande, solde à la livraison.</p>
-            <p>IBAN: ${s.iban} - BIC: ${s.bic}</p>
-        </div>
+        <div class="legal"><p>Conditions : 30% à la commande, solde à la livraison.</p><p>IBAN: ${s.iban} - BIC: ${s.bic}</p></div>
     `;
-    
-    const el = document.getElementById('pdf-template');
-    el.innerHTML = html;
-    el.style.display = 'block';
-
-    html2pdf().set({
-        margin: 0,
-        filename: `Devis_${dev.id}.pdf`,
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(el).save().then(() => { el.style.display = 'none'; });
+    const el = document.getElementById('pdf-template'); el.innerHTML = html; el.style.display = 'block';
+    html2pdf().set({ margin: 0, filename: `Devis_${dev.id}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(el).save().then(() => { el.style.display = 'none'; });
 }
 
 function sendMail(id) {
-    const d = getData();
-    const dev = d.devis.find(x => x.id === id);
-    const c = d.clients.find(x => x.id === dev.clientId);
-    const s = SETTINGS;
-
+    const d = getData(); const dev = d.devis.find(x => x.id === id); const c = d.clients.find(x => x.id === dev.clientId); const s = SETTINGS;
     if (s.emailjs_public && s.emailjs_service) emailjs.init(s.emailjs_public);
-
     const ov = document.getElementById('modal-overlay');
     ov.innerHTML = `
         <div class="modal">
@@ -817,32 +754,23 @@ function sendMail(id) {
 }
 
 function execMail(id) {
-    const to = document.getElementById('m-to').value;
-    const msg = document.getElementById('m-msg').value;
-    const s = SETTINGS;
-
+    const to = document.getElementById('m-to').value; const msg = document.getElementById('m-msg').value; const s = SETTINGS;
     if (!to) { toast("Email obligatoire"); return; }
-
     if (s.emailjs_service && s.emailjs_template && s.emailjs_public) {
         toast("Envoi...");
         emailjs.send(s.emailjs_service, s.emailjs_template, { to_email: to, message: msg, from_name: s.nom_entreprise })
             .then(() => {
-                toast("Email envoyé !");
-                document.getElementById('modal-overlay').classList.remove('show');
-                let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d);
-                render();
+                toast("Email envoyé !"); document.getElementById('modal-overlay').classList.remove('show');
+                let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d); render();
             }, (e) => { toast("Erreur : " + e.text); });
     } else {
-        const sub = encodeURIComponent(`Devis ${id} - ${s.nom_entreprise}`);
-        const bod = encodeURIComponent(msg);
+        const sub = encodeURIComponent(`Devis ${id} - ${s.nom_entreprise}`); const bod = encodeURIComponent(msg);
         window.location.href = `mailto:${to}?subject=${sub}&body=${bod}`;
         document.getElementById('modal-overlay').classList.remove('show');
-        let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d);
-        render();
+        let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d); render();
     }
 }
 
-// Init
 home();
 </script>
 </body>
