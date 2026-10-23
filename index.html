@@ -55,7 +55,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 /* LAYOUT & CARDS */
 .layout-wrapper{display:flex;flex:1;max-width:1400px;margin:0 auto;width:100%}
 .sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column}
-.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:14px 24px;margin:4px 16px;border-radius:12px;color:var(--text-muted);font-weight:600;cursor:pointer}
+.sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:14px 24px;margin:4px 16px;border-radius:12px;color:var(--text-muted);font-weight:600;cursor:pointer;transition:all 0.2s}
 .sidebar .nav-item:hover{background:var(--surface-hover);color:var(--primary)}
 .sidebar .nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:800}
 .wrap{flex:1;padding:32px 24px 40px;overflow-y:auto}
@@ -160,7 +160,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
   <main class="wrap" id="root"></main>
 </div>
 
-<a class="fab" id="fab-main" onclick="actionFab()">+</a>
+<a class="fab" id="fab-main" onclick="go('nouveau-devis')">+</a>
 
 <nav class="bottom-nav">
   <a onclick="go('accueil')" id="nav-accueil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Accueil</a>
@@ -175,7 +175,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
-   MOTEUR V13 (Corrigé et stabilisé)
+   MOTEUR V14 (Stable)
    ═══════════════════════════════════════════════════════════════════ */
 
 const DEFAULT_SETTINGS = {
@@ -222,7 +222,7 @@ function toast(m) {
     clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Gestion de l'état de navigation
+// Navigation state
 let STACK = []; let CURRENT_ID = null; let CURRENT_MODE = 'new'; let DEV_LIGNES = [];
 
 function go(page, id, mode) {
@@ -236,9 +236,12 @@ function home() { STACK = [{ page: 'accueil', id: null, mode: 'new' }]; CURRENT_
 
 function render() {
     const cur = STACK[STACK.length - 1];
+    if(!cur) return; 
+    
     const root = document.getElementById('root');
     let html = '';
 
+    // Mise à jour menu
     document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
     document.querySelectorAll('.sidebar .nav-item').forEach(a => a.classList.remove('active'));
     
@@ -252,10 +255,11 @@ function render() {
     const mNav = document.getElementById('nav-' + activeNav); if(mNav) mNav.classList.add('active');
     const dNav = document.getElementById('side-' + activeNav); if(dNav) dNav.classList.add('active');
 
+    // Gestion FAB
     const fab = document.getElementById('fab-main');
-    if (cur.page === 'accueil') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-devis'); }
-    else if (cur.page === 'clients') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-client'); }
-    else if (cur.page === 'devis') { fab.style.display = 'flex'; fab.onclick = () => go('nouveau-devis'); }
+    if (cur.page === 'accueil') { fab.style.display = 'flex'; fab.setAttribute('onclick', "go('nouveau-devis')"); }
+    else if (cur.page === 'clients') { fab.style.display = 'flex'; fab.setAttribute('onclick', "go('nouveau-client')"); }
+    else if (cur.page === 'devis') { fab.style.display = 'flex'; fab.setAttribute('onclick', "go('nouveau-devis')"); }
     else { fab.style.display = 'none'; }
 
     try {
@@ -272,6 +276,12 @@ function render() {
         }
     } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${e.message}</p></div>`; }
     root.innerHTML = `<div class="page-content">${html}</div>`;
+    
+    // Fix pour l'affichage des lignes de devis en mode édition
+    if (cur.page === 'nouveau-devis') {
+        setTimeout(() => { if(document.getElementById('lines-container')) renderLines(); }, 10);
+    }
+    
     window.scrollTo(0,0);
 }
 
@@ -476,16 +486,12 @@ function saveClient() {
     if (CURRENT_MODE === 'edit') {
         const idx = d.clients.findIndex(x => x.id === CURRENT_ID);
         if (idx > -1) d.clients[idx] = { ...d.clients[idx], ...data };
-        toast("Client modifié"); 
-        saveData(d);
-        go('fiche-client', CURRENT_ID);
+        saveData(d); toast("Client modifié"); go('fiche-client', CURRENT_ID);
     } else {
         d.cpt.c++;
         const id = 'C-' + new Date().getFullYear() + '-' + String(d.cpt.c).padStart(4, '0');
         d.clients.push({ id, date: new Date().toISOString(), ...data });
-        toast("Client créé"); 
-        saveData(d);
-        home();
+        saveData(d); toast("Client créé"); home();
     }
 }
 
@@ -548,9 +554,8 @@ function viewFormDevis() {
     
     if (isEdit) {
         dev = d.devis.find(x => x.id === CURRENT_ID);
-        // On recharge les lignes pour l'édition
         DEV_LIGNES = dev.lignes.map(l => {
-            const base = TARIFS[l.code] || { pu: l.pu }; // fallback si code inconnu
+            const base = TARIFS[l.code] || { pu: l.pu };
             return { code: l.code, d: l.d, q: l.q, u: l.u, pu: l.pu, puBase: base.pu };
         });
     } else {
@@ -580,9 +585,6 @@ function viewFormDevis() {
         </div>
     `;
 }
-
-// On appelle renderLines() après avoir injecté le HTML pour que le conteneur existe
-function afterRenderFormDevis() { renderLines(); }
 
 function parseIA() {
     const t = document.getElementById('ia-text').value.toLowerCase();
@@ -796,16 +798,6 @@ function execMail(id) {
         window.location.href = `mailto:${to}?subject=${sub}&body=${bod}`;
         document.getElementById('modal-overlay').classList.remove('show');
         let d = getData(); let dev = d.devis.find(x => x.id === id); dev.statut = 'envoye'; saveData(d); render();
-    }
-}
-
-// Correction d'un bug de rendu pour les lignes du devis en édition
-const originalRender = render;
-render = function() {
-    originalRender();
-    if (STACK[STACK.length - 1].page === 'nouveau-devis' && STACK[STACK.length - 1].mode === 'edit') {
-        // On s'assure que les lignes sont affichées après l'édition
-        setTimeout(() => renderLines(), 10);
     }
 }
 
