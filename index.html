@@ -53,10 +53,17 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .wrap{flex:1;min-width:0;padding:32px 24px 40px;overflow-y:auto}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .page-content{animation:fadeInUp 0.3s ease-out forwards}
+.connection-status{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;margin-bottom:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text-muted);font-size:14px;font-weight:600}
+.connection-status.offline{border-color:#fca5a5;background:var(--danger-light);color:#991b1b}
+.connection-status-message{display:flex;align-items:center;gap:10px;min-width:0}
+.connection-status button{flex:0 0 auto}
+.connection-spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:connectionSpin .8s linear infinite}
+@keyframes connectionSpin{to{transform:rotate(360deg)}}
 
 /* HERO BANNER V18 */
 .hero-banner {
-    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.1) 100%), url('hero-bg.jpg');
+    background-color: #0f172a;
+    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.72) 55%, rgba(15, 23, 42, 0.5) 100%), url('hero-bg.jpg');
     background-size: cover; background-position: center center; border-radius: var(--radius);
     padding: 40px 32px; margin-bottom: 24px; box-shadow: var(--shadow-lg); border: 1px solid var(--border);
     display: flex; flex-direction: column; justify-content: center; min-height: 240px; position: relative; overflow: hidden;
@@ -190,9 +197,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 // ═══════════════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://jikifsuegccvkhygrysc.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_dAYJ5HuvCQM4yFBaJOucZw_DS_S5ld4';
-const supabaseClient = window.supabase && typeof window.supabase.createClient === 'function'
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-    : null;
+let supabaseClient = null;
 
 const SCHEMA_VERSION = 2;
 const DEFAULT_SETTINGS = {
@@ -204,13 +209,31 @@ const DEFAULT_SETTINGS = {
 
 let SETTINGS = { ...DEFAULT_SETTINGS };
 let CACHE_DATA = { schemaVersion: SCHEMA_VERSION, clients: [], devis: [], cpt: { c: 0, d: 0, f: 0 } };
-let isAppReady = false;
+let connectionState = 'loading';
+let connectionError = '';
+let isInitializing = false;
+let hasLocalDataChanges = false;
+let hasLocalSettingsChanges = false;
+let QUOTE_PROPOSAL = [];
+let VISUAL_SOURCE_URL = '';
 
 // ═══════════════════════════════════════════════════════════════════
-// INITIALISATION (On attend Supabase avant de lancer l'app)
+// INITIALISATION (Le rendu ne dépend pas du réseau)
 // ═══════════════════════════════════════════════════════════════════
 async function initApp() {
+    if (isInitializing) return;
+    isInitializing = true;
+    connectionState = 'loading';
+    connectionError = '';
+    updateConnectionStatus();
+
     try {
+        if (!supabaseClient) {
+            if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                throw new Error("La bibliothèque Supabase n'est pas disponible");
+            }
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
         if (!supabaseClient) throw new Error("Le client Supabase est indisponible");
         let timeoutId;
         const results = await Promise.race([
@@ -227,52 +250,112 @@ async function initApp() {
         const queryError = [settingsResult, clientsResult, documentsResult].find(result => result.error);
         if (queryError) throw queryError.error;
 
-        if (settingsResult.data) SETTINGS = { ...DEFAULT_SETTINGS, ...settingsResult.data };
+        if (settingsResult.data && !hasLocalSettingsChanges) SETTINGS = { ...DEFAULT_SETTINGS, ...settingsResult.data };
         const cData = clientsResult.data;
         const clients = (cData || []).map(c => ({
-            ...c, id: c.numero || c.id, uuid: c.id // Mapping pour l'UI
+            ...c, id: c.id, uuid: c.id
         }));
 
         const dData = documentsResult.data;
         const devis = (dData || []).map(d => ({
-            id: d.numero, uuid: d.id, clientId: d.client_nom, clientNom: d.client_nom,
+            id: d.numero, uuid: d.id, clientId: d.client_id, clientNom: d.client_nom,
             type: d.type, statut: d.statut, lignes: d.lignes,
             tauxTVA: d.taux_tva, coutMateriaux: d.cout_materiaux,
-            aleas: d.aleas, totalHT: d.total_ht, tva: d.tva, totalTTC: d.total_ttc,
+            aleas: d.aleas, totalHT: d.total_ht, totalTTC: d.total_ttc,
             date: d.created_at
         }));
 
-        CACHE_DATA = {
-            schemaVersion: SCHEMA_VERSION,
-            clients: clients,
-            devis: devis,
-            cpt: { c: clients.length, d: devis.filter(x=>x.type==='devis').length, f: devis.filter(x=>x.type==='facture').length }
-        };
-        
-        isAppReady = true;
-        home(); // Lance l'application une fois les données prêtes
+        if (!hasLocalDataChanges) {
+            CACHE_DATA = {
+                schemaVersion: SCHEMA_VERSION,
+                clients: clients,
+                devis: devis,
+                cpt: { c: clients.length, d: devis.filter(x=>x.type==='devis').length, f: devis.filter(x=>x.type==='facture').length }
+            };
+        }
+        connectionState = 'online';
     } catch (e) {
         console.error("Erreur d'init Supabase", e);
-        toast("⚠️ Mode hors-ligne (Erreur Cloud)");
-        isAppReady = true;
-        home();
+        connectionState = 'offline';
+        connectionError = e instanceof Error ? e.message : "Erreur de connexion au Cloud";
+    } finally {
+        isInitializing = false;
+        updateConnectionStatus();
+        const currentPage = STACK.length ? STACK[STACK.length - 1].page : '';
+        if (connectionState === 'online' && !['nouveau-client', 'nouveau-devis'].includes(currentPage)) render();
+        if (connectionState === 'offline') toast("Mode hors-ligne : " + connectionError);
     }
 }
 
 function getData() { return CACHE_DATA; }
-function saveData(d) {
+async function saveData(d) {
     CACHE_DATA = d;
-    if (!supabaseClient) return;
-    // Sync clients
-    if (d.clients) supabaseClient.from('clients').upsert(d.clients.map(c => ({
-        id: c.uuid, numero: c.id, nom: c.nom, ville: c.ville, cp: c.cp, email: c.email, tel: c.tel
-    })));
-    // Sync docs
-    if (d.devis) supabaseClient.from('documents').upsert(d.devis.map(x => ({
-        id: x.uuid, numero: x.id, type: x.type, client_nom: x.clientNom, statut: x.statut,
-        lignes: x.lignes, taux_tva: x.tauxTVA, cout_materiaux: x.coutMateriaux,
-        aleas: x.aleas, total_ht: x.totalHT, tva: x.tva, total_ttc: x.totalTTC
-    })));
+    hasLocalDataChanges = true;
+    if (!supabaseClient) {
+        connectionState = 'offline';
+        connectionError = "Client Supabase indisponible";
+        updateConnectionStatus();
+        toast("Modification conservée en mémoire; synchronisation Cloud indisponible");
+        return false;
+    }
+    try {
+        const writes = [];
+        if (d.clients) {
+            const clientRows = d.clients.map(client => {
+                const clientId = client.uuid || client.id || uuid();
+                client.uuid = clientId;
+                client.id = clientId;
+                return {
+                id: clientId,
+                nom: client.nom,
+                ville: client.ville || null,
+                cp: client.cp || null,
+                email: client.email || null,
+                tel: client.tel || null
+                };
+            });
+            writes.push(supabaseClient.from('clients').upsert(clientRows, { onConflict: 'id' }));
+        }
+        if (d.devis) {
+            const documentRows = d.devis.map(document => {
+                const documentId = document.uuid || uuid();
+                document.uuid = documentId;
+                const matchingClient = d.clients && d.clients.find(client =>
+                    client.uuid === document.clientId || client.id === document.clientId ||
+                    (document.clientNom && client.nom === document.clientNom)
+                );
+                return {
+                id: documentId,
+                type: document.type,
+                numero: document.numero || document.id,
+                client_id: matchingClient ? matchingClient.uuid : document.clientId || null,
+                client_nom: document.clientNom || '',
+                statut: document.statut,
+                lignes: document.lignes || [],
+                taux_tva: document.tauxTVA ?? 0,
+                cout_materiaux: document.coutMateriaux ?? 0,
+                aleas: document.aleas ?? 0,
+                total_ht: document.totalHT ?? 0,
+                total_ttc: document.totalTTC ?? 0
+                };
+            });
+            writes.push(supabaseClient.from('documents').upsert(documentRows, { onConflict: 'id' }));
+        }
+        const results = await Promise.all(writes);
+        const writeError = results.find(result => result.error);
+        if (writeError) throw writeError.error;
+        connectionState = 'online';
+        connectionError = '';
+        updateConnectionStatus();
+        return true;
+    } catch (error) {
+        console.error("Erreur de synchronisation Supabase", error);
+        connectionState = 'offline';
+        connectionError = error instanceof Error ? error.message : "Échec de la synchronisation Cloud";
+        updateConnectionStatus();
+        toast("Synchronisation Cloud échouée; modifications conservées dans cette session");
+        return false;
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -311,8 +394,25 @@ function go(page, id, mode) { CURRENT_ID = id || null; CURRENT_MODE = mode || 'n
 function back() { if (STACK.length > 1) { STACK.pop(); const p = STACK[STACK.length-1]; CURRENT_ID = p.id; CURRENT_MODE = p.mode; render(); } else { go('accueil'); } }
 function home() { STACK = [{ page: 'accueil', id: null, mode: 'new' }]; CURRENT_ID = null; CURRENT_MODE = 'new'; render(); }
 
+function connectionStatusMarkup() {
+    if (connectionState === 'online') return '';
+    if (connectionState === 'loading') {
+        return `<div class="connection-status" role="status" aria-live="polite" aria-busy="true">
+            <div class="connection-status-message"><span class="connection-spinner" aria-hidden="true"></span><span>Connexion au Cloud... L'application reste disponible.</span></div>
+        </div>`;
+    }
+    return `<div class="connection-status offline" role="alert">
+        <div class="connection-status-message"><span>Mode hors ligne : ${esc(connectionError || "Le Cloud est indisponible.")} Vos modifications restent disponibles dans cette session.</span></div>
+        <button class="btn btn-sm btn-ghost" type="button" onclick="initApp()">Réessayer</button>
+    </div>`;
+}
+
+function updateConnectionStatus() {
+    const status = document.getElementById('connection-status');
+    if (status) status.innerHTML = connectionStatusMarkup();
+}
+
 function render() {
-    if (!isAppReady) return;
     const cur = STACK[STACK.length - 1];
     if(!cur) return; 
     
@@ -336,7 +436,8 @@ function render() {
         else if (cur.page === 'detail-devis') html = viewDetailDevis();
     } catch(e) { html = `<div class="card"><h3>Erreur</h3><p>${esc(e.message)}</p></div>`; }
     
-    root.innerHTML = `<div class="page-content">${html}</div>`;
+    root.innerHTML = `<div id="connection-status"></div><div class="page-content">${html}</div>`;
+    updateConnectionStatus();
     if (cur.page === 'nouveau-devis') setTimeout(() => { if(document.getElementById('lines-container')) renderLines(); }, 10);
     window.scrollTo(0,0);
 }
@@ -378,26 +479,35 @@ function viewParametres() {
             <button class="btn" onclick="saveParam()">Enregistrer</button>
         </div>
         <div class="card">
-            <div class="card-head"><div class="card-title">Clés API (IA)</div></div>
-            <div class="field"><label>OpenAI Key</label><input class="inp" type="password" id="s-openai" value="${esc(s.openai_key)}"></div>
-            <div class="field"><label>DeepSeek Key</label><input class="inp" type="password" id="s-deepseek" value="${esc(s.deepseek_key)}"></div>
-            <div class="field"><label>Agnes AI Key</label><input class="inp" type="password" id="s-agnes" value="${esc(s.agnes_key)}"></div>
-            <button class="btn" onclick="saveParam()">Enregistrer les clés</button>
+            <div class="card-head"><div class="card-title">Services IA</div></div>
+            <p class="card-sub">Les clés DeepSeek et de retouche photo doivent être configurées dans l'environnement serveur. Elles ne sont pas enregistrées dans Supabase ni exposées dans le navigateur.</p>
         </div>
     `;
 }
 
 async function saveParam() {
     SETTINGS.nom_entreprise = document.getElementById('s-nom').value;
-    SETTINGS.openai_key = document.getElementById('s-openai').value;
-    SETTINGS.deepseek_key = document.getElementById('s-deepseek').value;
-    SETTINGS.agnes_key = document.getElementById('s-agnes').value;
+    hasLocalSettingsChanges = true;
     if (!supabaseClient) {
         toast("Mode hors-ligne : paramètres conservés en mémoire");
         return;
     }
     try {
-        const { error } = await supabaseClient.from('settings').upsert({ id: 1, ...SETTINGS });
+        const { error } = await supabaseClient.from('settings').upsert({
+            id: 1,
+            nom_entreprise: SETTINGS.nom_entreprise,
+            siret: SETTINGS.siret,
+            adresse: SETTINGS.adresse,
+            cp: SETTINGS.cp,
+            ville: SETTINGS.ville,
+            email: SETTINGS.email,
+            tel: SETTINGS.tel,
+            iban: SETTINGS.iban,
+            bic: SETTINGS.bic,
+            assurance: SETTINGS.assurance,
+            marge: SETTINGS.marge,
+            aleas: SETTINGS.aleas
+        }, { onConflict: 'id' });
         if (error) throw error;
         toast("Paramètres enregistrés dans le Cloud");
     } catch (error) {
@@ -425,14 +535,17 @@ function viewFormDevis() {
             <div class="field">
                 <label>Génération par IA (Texte)</label>
                 <textarea class="inp" id="ia-text" rows="2" placeholder="Ex: Rénovation SDB 6m2..."></textarea>
-                <button class="btn btn-ghost" id="btn-ai-quote" style="margin-top:12px;" onclick="generateQuoteWithAI()">✨ Générer avec DeepSeek/OpenAI</button>
+                <button class="btn btn-ghost" id="btn-ai-quote" style="margin-top:12px;" onclick="generateQuoteWithAI()">✨ Générer avec DeepSeek</button>
+                <div id="quote-proposal" style="margin-top:16px;"></div>
             </div>
 
             <div class="field" style="background:var(--primary-light); padding:16px; border-radius:12px; border:1px solid var(--primary);">
-                <label style="color:var(--primary);">📸 Rénovation Visuelle (Agnes AI)</label>
-                <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Prenez une photo de la pièce pour générer un visuel de rénovation.</p>
-                <input type="file" id="ia-image" accept="image/*" class="inp" style="background:#fff;">
-                <button class="btn" id="btn-ai-visual" style="margin-top:12px; background:var(--primary);" onclick="generateVisualWithAI()">Générer le visuel</button>
+                <label style="color:var(--primary);">📸 Rénovation Visuelle (Agnès AI)</label>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Importez une photo ou prenez-en une, puis décrivez la retouche souhaitée.</p>
+                <input type="file" id="ia-image" accept="image/png,image/jpeg" capture="environment" class="inp" style="background:#fff;" onchange="previewVisualPhoto()">
+                <div id="visual-source" style="margin-top:12px;"></div>
+                <textarea class="inp" id="ia-visual-instructions" rows="2" maxlength="2000" placeholder="Ex: Remplacer le carrelage mural par une finition claire..."></textarea>
+                <button class="btn" id="btn-ai-visual" style="margin-top:12px; background:var(--primary);" onclick="generateVisualWithAI()">Modifier avec Agnès</button>
                 <div id="visual-result" style="margin-top:16px;"></div>
             </div>
 
@@ -451,17 +564,75 @@ async function generateQuoteWithAI() {
     button.disabled = true;
     button.textContent = "Génération en cours...";
     try {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        DEV_LIGNES = [{ code: 'custom', d: text, q: 1, u: 'forfait', pu: 500, puBase: 500 }];
-        renderLines();
-        toast("Devis généré !");
+        const response = await fetch('/api/agnes/quote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ description: text })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Le service Agnès est indisponible");
+        if (!Array.isArray(result.lines) || result.lines.some(line =>
+            !line || typeof line.d !== 'string' || !Number.isFinite(Number(line.q)) ||
+            !['m2', 'ml', 'u', 'forfait'].includes(line.u)
+        )) throw new Error("La réponse DeepSeek ne contient pas de lignes valides");
+        QUOTE_PROPOSAL = result.lines.map(line => ({
+            code: 'custom', d: line.d, q: Number(line.q), u: line.u, pu: 0, puBase: 0
+        }));
+        renderQuoteProposal();
+        toast("Proposition DeepSeek prête à vérifier");
     } catch (error) {
         console.error("Erreur de génération du devis", error);
-        toast("Erreur pendant la génération du devis");
+        toast(error instanceof Error ? error.message : "Erreur pendant la génération du devis");
     } finally {
         button.disabled = false;
         button.textContent = originalLabel;
     }
+}
+
+function renderQuoteProposal() {
+    const proposal = document.getElementById('quote-proposal');
+    if (!proposal) return;
+    if (!QUOTE_PROPOSAL.length) {
+        proposal.replaceChildren();
+        return;
+    }
+    proposal.innerHTML = `
+        <div class="line-item">
+            <strong>Proposition à vérifier (aucun prix n'a été ajouté)</strong>
+            ${QUOTE_PROPOSAL.map(line => `<div>${esc(line.d)} — ${esc(line.q)} ${esc(line.u)}</div>`).join('')}
+            <button class="btn btn-sm" style="margin-top:12px;" onclick="acceptQuoteProposal()">Ajouter au devis</button>
+        </div>`;
+}
+
+function acceptQuoteProposal() {
+    if (!QUOTE_PROPOSAL.length) return;
+    DEV_LIGNES = [...DEV_LIGNES, ...QUOTE_PROPOSAL];
+    QUOTE_PROPOSAL = [];
+    renderLines();
+    renderQuoteProposal();
+    toast("Lignes ajoutées; vérifiez les quantités et saisissez les prix");
+}
+
+function previewVisualPhoto() {
+    const fileInput = document.getElementById('ia-image');
+    const preview = document.getElementById('visual-source');
+    const result = document.getElementById('visual-result');
+    if (!fileInput || !preview || !result) return;
+    if (VISUAL_SOURCE_URL) URL.revokeObjectURL(VISUAL_SOURCE_URL);
+    VISUAL_SOURCE_URL = '';
+    result.replaceChildren();
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) {
+        preview.replaceChildren();
+        return;
+    }
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+        fileInput.value = '';
+        preview.textContent = "Formats acceptés : PNG et JPEG.";
+        return;
+    }
+    VISUAL_SOURCE_URL = URL.createObjectURL(file);
+    preview.innerHTML = `<img src="${VISUAL_SOURCE_URL}" alt="Aperçu de la photo à modifier" style="width:100%;max-height:320px;object-fit:contain;border-radius:12px;">`;
 }
 
 async function generateVisualWithAI() {
@@ -469,28 +640,41 @@ async function generateVisualWithAI() {
     const button = document.getElementById('btn-ai-visual');
     if (!fileInput || !fileInput.files.length) { toast("Choisissez une photo"); return; }
     if (!button || button.disabled) return;
-    
+    const instructions = document.getElementById('ia-visual-instructions');
+    const instructionText = instructions ? instructions.value.trim() : '';
+    if (!instructionText) { toast("Décrivez la retouche souhaitée"); return; }
+
     const resDiv = document.getElementById('visual-result');
+    const photo = fileInput.files[0];
+    const sourceUrl = VISUAL_SOURCE_URL || URL.createObjectURL(photo);
     const originalLabel = button.textContent;
     button.disabled = true;
     button.textContent = "Génération en cours...";
-    resDiv.innerHTML = `<div style="text-align:center; padding:20px;">⏳ Analyse de l'image et génération par Agnes AI...</div>`;
+    resDiv.textContent = "Envoi sécurisé de la photo au service de retouche...";
 
-    // Simulation de l'appel à l'Edge Function Supabase (qui cachera la clé Agnes)
     try {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        // On affiche une image de démo pour prouver que le pipeline UI fonctionne
+        const formData = new FormData();
+        formData.append('photo', photo);
+        formData.append('instructions', instructionText);
+        const response = await fetch('/api/photos/edit', { method: 'POST', body: formData });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Le service de retouche est indisponible");
+        if (result.mimeType !== 'image/png' || typeof result.base64 !== 'string' || !result.base64) {
+            throw new Error("Le service de retouche a renvoyé un résultat invalide");
+        }
+        const editedImage = `data:${result.mimeType};base64,${result.base64}`;
         resDiv.innerHTML = `
-            <div style="border-radius:12px; overflow:hidden; border:2px solid var(--success);">
-                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=400&q=80" style="width:100%; display:block;">
-                <div style="background:var(--success); color:#fff; padding:8px; text-align:center; font-weight:bold;">Visuel généré par Agnes AI</div>
+            <div class="row-2">
+                <div><strong>Avant</strong><img src="${sourceUrl}" alt="Photo originale" style="width:100%;margin-top:8px;border-radius:12px;"></div>
+                <div><strong>Après — retouche Agnès</strong><img src="${editedImage}" alt="Photo modifiée par le service d'édition" style="width:100%;margin-top:8px;border-radius:12px;"></div>
             </div>
+            <a class="btn btn-ghost" style="margin-top:12px;" href="${editedImage}" download="artisanapp-retouche.png">Télécharger l'image</a>
         `;
-        toast("Visuel généré !");
+        toast("Retouche photo terminée");
     } catch (error) {
         console.error("Erreur de génération du visuel", error);
-        resDiv.textContent = "La génération du visuel a échoué. Réessayez.";
-        toast("Erreur pendant la génération du visuel");
+        resDiv.textContent = error instanceof Error ? error.message : "La retouche photo a échoué. Réessayez.";
+        toast("La retouche a échoué; la photo originale est conservée");
     } finally {
         button.disabled = false;
         button.textContent = originalLabel;
@@ -506,6 +690,7 @@ function renderLines() {
 }
 
 // LANCEMENT
+home();
 initApp();
 </script>
 </body>
