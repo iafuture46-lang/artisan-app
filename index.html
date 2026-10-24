@@ -55,6 +55,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .page-content{animation:fadeInUp 0.3s ease-out forwards}
 .connection-status{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;margin-bottom:20px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text-muted);font-size:14px;font-weight:600}
 .connection-status.offline{border-color:#fca5a5;background:var(--danger-light);color:#991b1b}
+.connection-status.warning{border-color:#fbbf24;background:#fffbeb;color:#92400e}
 .connection-status-message{display:flex;align-items:center;gap:10px;min-width:0}
 .connection-status button{flex:0 0 auto}
 .connection-spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:connectionSpin .8s linear infinite}
@@ -63,7 +64,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 /* HERO BANNER V18 */
 .hero-banner {
     background-color: #0f172a;
-    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.72) 55%, rgba(15, 23, 42, 0.5) 100%), url('hero-bg.jpg');
+    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.42) 55%, rgba(15, 23, 42, 0.28) 100%), url('hero-bg.jpg');
     background-size: cover; background-position: center center; border-radius: var(--radius);
     padding: 40px 32px; margin-bottom: 24px; box-shadow: var(--shadow-lg); border: 1px solid var(--border);
     display: flex; flex-direction: column; justify-content: center; min-height: 240px; position: relative; overflow: hidden;
@@ -195,7 +196,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 // ═══════════════════════════════════════════════════════════════════
 // CONNEXION SUPABASE & CONFIG
 // ═══════════════════════════════════════════════════════════════════
-const SUPABASE_URL = 'https://rhxtymmhrrwmyeitur.supabase.co';
+const SUPABASE_URL = 'https://rhxxtymmhrrwrnyeitur.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_WVdgR-H391fV8UiTpu_ppw_fhamr5Ew';
 let supabaseClient = null;
 
@@ -258,7 +259,7 @@ async function initApp() {
 
         const dData = documentsResult.data;
         const devis = (dData || []).map(d => ({
-            id: d.numero, uuid: d.id, clientId: d.client_id, clientNom: d.client_nom,
+            id: d.numero, numero: d.numero, uuid: d.id, clientId: d.client_id, clientNom: d.client_nom,
             type: d.type, statut: d.statut, lignes: d.lignes,
             tauxTVA: d.taux_tva, coutMateriaux: d.cout_materiaux,
             aleas: d.aleas, totalHT: d.total_ht, totalTTC: d.total_ttc,
@@ -272,12 +273,32 @@ async function initApp() {
                 devis: devis,
                 cpt: { c: clients.length, d: devis.filter(x=>x.type==='devis').length, f: devis.filter(x=>x.type==='facture').length }
             };
+        } else {
+            const mergeById = (remoteRows, localRows) => {
+                const rows = new Map(remoteRows.map(row => [row.uuid || row.id, row]));
+                localRows.forEach(row => rows.set(row.uuid || row.id, row));
+                return [...rows.values()];
+            };
+            const mergedClients = mergeById(clients, CACHE_DATA.clients || []);
+            const mergedDocuments = mergeById(devis, CACHE_DATA.devis || []);
+            CACHE_DATA = {
+                schemaVersion: SCHEMA_VERSION,
+                clients: mergedClients,
+                devis: mergedDocuments,
+                cpt: {
+                    c: mergedClients.length,
+                    d: mergedDocuments.filter(x => x.type === 'devis').length,
+                    f: mergedDocuments.filter(x => x.type === 'facture').length
+                }
+            };
         }
         connectionState = 'online';
+        if (hasLocalDataChanges) await saveData(CACHE_DATA);
+        if (hasLocalSettingsChanges) await saveParam(false);
     } catch (e) {
         console.error("Erreur d'init Supabase", e);
-        connectionState = 'offline';
-        connectionError = e instanceof Error ? e.message : "Erreur de connexion au Cloud";
+        connectionState = cloudStateForError(e);
+        connectionError = explainCloudError(e);
     } finally {
         isInitializing = false;
         updateConnectionStatus();
@@ -299,24 +320,29 @@ async function saveData(d) {
         return false;
     }
     try {
-        const writes = [];
-        if (d.clients) {
+        if (d.clients && d.clients.length) {
             const clientRows = d.clients.map(client => {
                 const clientId = client.uuid || client.id || uuid();
                 client.uuid = clientId;
                 client.id = clientId;
-                return {
-                id: clientId,
-                nom: client.nom,
-                ville: client.ville || null,
-                cp: client.cp || null,
-                email: client.email || null,
-                tel: client.tel || null
+                const row = {
+                    id: clientId,
+                    nom: client.nom,
+                    ville: client.ville || null,
+                    cp: client.cp || null,
+                    email: client.email || null,
+                    tel: client.tel || null
                 };
+                const createdAt = client.createdAt || client.created_at || client.date;
+                const updatedAt = client.updatedAt || client.updated_at || createdAt;
+                if (createdAt) row.created_at = createdAt;
+                if (updatedAt) row.updated_at = updatedAt;
+                return row;
             });
-            writes.push(supabaseClient.from('clients').upsert(clientRows, { onConflict: 'id' }));
+            const { error } = await supabaseClient.from('clients').upsert(clientRows, { onConflict: 'id' });
+            if (error) throw error;
         }
-        if (d.devis) {
+        if (d.devis && d.devis.length) {
             const documentRows = d.devis.map(document => {
                 const documentId = document.uuid || uuid();
                 document.uuid = documentId;
@@ -324,34 +350,38 @@ async function saveData(d) {
                     client.uuid === document.clientId || client.id === document.clientId ||
                     (document.clientNom && client.nom === document.clientNom)
                 );
-                return {
-                id: documentId,
-                type: document.type,
-                numero: document.numero || document.id,
-                client_id: matchingClient ? matchingClient.uuid : document.clientId || null,
-                client_nom: document.clientNom || '',
-                statut: document.statut,
-                lignes: document.lignes || [],
-                taux_tva: document.tauxTVA ?? 0,
-                cout_materiaux: document.coutMateriaux ?? 0,
-                aleas: document.aleas ?? 0,
-                total_ht: document.totalHT ?? 0,
-                total_ttc: document.totalTTC ?? 0
+                const row = {
+                    id: documentId,
+                    type: document.type,
+                    numero: document.numero || document.id,
+                    client_id: matchingClient ? matchingClient.uuid : document.clientId || null,
+                    client_nom: document.clientNom || '',
+                    statut: document.statut,
+                    lignes: document.lignes || [],
+                    taux_tva: document.tauxTVA ?? 0,
+                    cout_materiaux: document.coutMateriaux ?? 0,
+                    aleas: document.aleas ?? 0,
+                    total_ht: document.totalHT ?? 0,
+                    total_ttc: document.totalTTC ?? 0
                 };
+                const createdAt = document.createdAt || document.created_at || document.date;
+                const updatedAt = document.updatedAt || document.updated_at || createdAt;
+                if (createdAt) row.created_at = createdAt;
+                if (updatedAt) row.updated_at = updatedAt;
+                return row;
             });
-            writes.push(supabaseClient.from('documents').upsert(documentRows, { onConflict: 'id' }));
+            const { error } = await supabaseClient.from('documents').upsert(documentRows, { onConflict: 'id' });
+            if (error) throw error;
         }
-        const results = await Promise.all(writes);
-        const writeError = results.find(result => result.error);
-        if (writeError) throw writeError.error;
         connectionState = 'online';
         connectionError = '';
+        hasLocalDataChanges = false;
         updateConnectionStatus();
         return true;
     } catch (error) {
         console.error("Erreur de synchronisation Supabase", error);
-        connectionState = 'offline';
-        connectionError = error instanceof Error ? error.message : "Échec de la synchronisation Cloud";
+        connectionState = cloudStateForError(error);
+        connectionError = explainCloudError(error);
         updateConnectionStatus();
         toast("Synchronisation Cloud échouée; modifications conservées dans cette session");
         return false;
@@ -378,9 +408,46 @@ function computeQuote(lignes, aleasPct, tvaPct) {
     return { totalHTBrut, aleasMontant, totalHTNet, montantTVA, totalTTC };
 }
 
-function esc(s) { return s ? String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') : ''; }
+function esc(s) { return s == null ? '' : String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function eur(n) { return (parseFloat(n) || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'; }
+function dateFr(value) {
+    if (!value) return '-';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('fr-FR');
+}
 function uuid() { return crypto.randomUUID(); }
+
+function explainCloudError(error) {
+    const code = String(error && error.code || '');
+    const message = String(error && error.message || '');
+    const status = Number(error && (error.status || error.statusCode));
+    if (code === '42501' || status === 403 || /row.level security|permission denied|not allowed/i.test(message)) {
+        return "Accès refusé par les politiques RLS Supabase. Vérifiez la session et les autorisations.";
+    }
+    if (code === '42P01' || code === 'PGRST205' || /relation .* does not exist|table .* not found/i.test(message)) {
+        return "Une table Supabase nécessaire est absente ou inaccessible.";
+    }
+    if (code === '42703' || code === 'PGRST204' || /column .* does not exist|could not find .* column/i.test(message)) {
+        return "Le schéma Supabase ne correspond pas aux colonnes attendues.";
+    }
+    if (status === 401 || /invalid api key|jwt|unauthorized/i.test(message)) {
+        return "La clé publique ou la session Supabase est invalide.";
+    }
+    if (error instanceof TypeError || /failed to fetch|network|name_not_resolved|load failed/i.test(message)) {
+        return "Supabase est injoignable. Vérifiez la connexion Internet et l'URL du projet.";
+    }
+    return message || "Erreur Cloud Supabase inconnue.";
+}
+
+function cloudStateForError(error) {
+    const status = Number(error && (error.status || error.statusCode));
+    const message = String(error && error.message || '');
+    if (status >= 100) return 'restricted';
+    if (error instanceof TypeError || /failed to fetch|network|name_not_resolved|load failed|timed out|ne répond pas/i.test(message)) {
+        return 'offline';
+    }
+    return 'error';
+}
 
 let toastTimer;
 function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3000); }
@@ -390,7 +457,13 @@ function toast(m) { const t = document.getElementById('toast'); t.textContent = 
 // ═══════════════════════════════════════════════════════════════════
 let STACK = []; let CURRENT_ID = null; let CURRENT_MODE = 'new'; let DEV_LIGNES = [];
 
-function go(page, id, mode) { CURRENT_ID = id || null; CURRENT_MODE = mode || 'new'; STACK.push({ page, id, mode }); render(); }
+function go(page, id, mode) {
+    CURRENT_ID = id || null;
+    CURRENT_MODE = mode || 'new';
+    if (page === 'nouveau-devis' && CURRENT_MODE !== 'edit') DEV_LIGNES = [];
+    STACK.push({ page, id: CURRENT_ID, mode: CURRENT_MODE });
+    render();
+}
 function back() { if (STACK.length > 1) { STACK.pop(); const p = STACK[STACK.length-1]; CURRENT_ID = p.id; CURRENT_MODE = p.mode; render(); } else { go('accueil'); } }
 function home() { STACK = [{ page: 'accueil', id: null, mode: 'new' }]; CURRENT_ID = null; CURRENT_MODE = 'new'; render(); }
 
@@ -401,8 +474,12 @@ function connectionStatusMarkup() {
             <div class="connection-status-message"><span class="connection-spinner" aria-hidden="true"></span><span>Connexion au Cloud... L'application reste disponible.</span></div>
         </div>`;
     }
-    return `<div class="connection-status offline" role="alert">
-        <div class="connection-status-message"><span>Mode hors ligne : ${esc(connectionError || "Le Cloud est indisponible.")} Vos modifications restent disponibles dans cette session.</span></div>
+    const statusMessage = connectionState === 'restricted'
+        ? "Cloud joignable, mais l'accès aux données a échoué."
+        : connectionState === 'error' ? "Connexion Cloud non validée." : "Mode hors ligne.";
+    const statusClass = connectionState === 'offline' ? 'offline' : 'warning';
+    return `<div class="connection-status ${statusClass}" role="alert">
+        <div class="connection-status-message"><span>${statusMessage} ${esc(connectionError || "Le Cloud est indisponible.")} Vos modifications restent disponibles dans cette session.</span></div>
         <button class="btn btn-sm btn-ghost" type="button" onclick="initApp()">Réessayer</button>
     </div>`;
 }
@@ -429,8 +506,10 @@ function render() {
     try {
         if (cur.page === 'accueil') html = viewAccueil();
         else if (cur.page === 'parametres') html = viewParametres();
+        else if (cur.page === 'equipe') html = viewEquipe();
         else if (cur.page === 'clients') html = viewClients();
         else if (cur.page === 'nouveau-client') html = viewFormClient();
+        else if (cur.page === 'fiche-client') html = viewFicheClient();
         else if (cur.page === 'devis') html = viewDevis();
         else if (cur.page === 'nouveau-devis') html = viewFormDevis();
         else if (cur.page === 'detail-devis') html = viewDetailDevis();
@@ -461,7 +540,7 @@ function viewAccueil() {
         <div class="card">
             <div class="card-head"><div class="card-title">Derniers documents</div><button class="btn btn-sm" onclick="go('devis')">Tout voir</button></div>
             ${d.devis.slice(-3).reverse().map(x => `
-                <div class="list-item" onclick="go('detail-devis', '${esc(x.id)}')">
+                <div class="list-item" onclick="go('detail-devis', '${esc(x.uuid || x.id)}', 'view')">
                     <div><div class="title">${esc(x.clientNom)}</div><div class="sub">${esc(x.id)}</div></div>
                     <div class="amount">${eur(x.totalTTC)}</div>
                 </div>
@@ -475,7 +554,28 @@ function viewParametres() {
     return `
         <div class="card">
             <div class="card-head"><div class="card-title">Mon Entreprise</div></div>
-            <div class="field"><label>Nom</label><input class="inp" id="s-nom" value="${esc(s.nom_entreprise)}"></div>
+            <div class="field"><label for="s-nom">Nom / raison sociale</label><input class="inp" id="s-nom" maxlength="160" value="${esc(s.nom_entreprise)}"></div>
+            <div class="row-2">
+                <div class="field"><label for="s-siret">SIRET</label><input class="inp" id="s-siret" maxlength="32" value="${esc(s.siret)}"></div>
+                <div class="field"><label for="s-assurance">Assurance décennale</label><input class="inp" id="s-assurance" maxlength="160" value="${esc(s.assurance)}"></div>
+            </div>
+            <div class="field"><label for="s-adresse">Adresse</label><input class="inp" id="s-adresse" maxlength="200" value="${esc(s.adresse)}"></div>
+            <div class="row-2">
+                <div class="field"><label for="s-cp">Code postal</label><input class="inp" id="s-cp" maxlength="20" value="${esc(s.cp)}"></div>
+                <div class="field"><label for="s-ville">Ville</label><input class="inp" id="s-ville" maxlength="120" value="${esc(s.ville)}"></div>
+            </div>
+            <div class="row-2">
+                <div class="field"><label for="s-email">Email professionnel</label><input class="inp" id="s-email" type="email" maxlength="254" value="${esc(s.email)}"></div>
+                <div class="field"><label for="s-tel">Téléphone</label><input class="inp" id="s-tel" type="tel" maxlength="40" value="${esc(s.tel)}"></div>
+            </div>
+            <div class="row-2">
+                <div class="field"><label for="s-iban">IBAN</label><input class="inp" id="s-iban" maxlength="64" value="${esc(s.iban)}"></div>
+                <div class="field"><label for="s-bic">BIC</label><input class="inp" id="s-bic" maxlength="32" value="${esc(s.bic)}"></div>
+            </div>
+            <div class="row-2">
+                <div class="field"><label for="s-marge">Marge cible (%)</label><input class="inp" id="s-marge" type="number" min="0" max="100" step="0.1" value="${esc(s.marge)}"></div>
+                <div class="field"><label for="s-aleas">Aléas chantier (%)</label><input class="inp" id="s-aleas" type="number" min="0" max="100" step="0.1" value="${esc(s.aleas)}"></div>
+            </div>
             <button class="btn" onclick="saveParam()">Enregistrer</button>
         </div>
         <div class="card">
@@ -485,12 +585,54 @@ function viewParametres() {
     `;
 }
 
-async function saveParam() {
-    SETTINGS.nom_entreprise = document.getElementById('s-nom').value;
+function viewEquipe() {
+    return `<div class="card">
+        <div class="card-head"><div class="card-title">Mon Équipe</div></div>
+        <p class="card-sub">La gestion des comptes collaborateurs n'est pas configurée dans cette version. Aucun accès utilisateur n'est créé ni modifié ici.</p>
+    </div>`;
+}
+
+async function saveParam(notify = true) {
+    const fields = {
+        nom_entreprise: 's-nom',
+        siret: 's-siret',
+        assurance: 's-assurance',
+        adresse: 's-adresse',
+        cp: 's-cp',
+        ville: 's-ville',
+        email: 's-email',
+        tel: 's-tel',
+        iban: 's-iban',
+        bic: 's-bic'
+    };
+    for (const [setting, id] of Object.entries(fields)) {
+        const input = document.getElementById(id);
+        if (input) {
+            if (setting === 'email' && !input.validity.valid) {
+                toast("Saisissez une adresse email valide.");
+                input.focus();
+                return false;
+            }
+            SETTINGS[setting] = input.value.trim();
+        }
+    }
+    const marginInput = document.getElementById('s-marge');
+    const contingencyInput = document.getElementById('s-aleas');
+    const margin = marginInput ? Number(marginInput.value) : Number(SETTINGS.marge);
+    const contingency = contingencyInput ? Number(contingencyInput.value) : Number(SETTINGS.aleas);
+    if (![margin, contingency].every(value => Number.isFinite(value) && value >= 0 && value <= 100)) {
+        toast("La marge et les aléas doivent être compris entre 0 et 100 %.");
+        return false;
+    }
+    SETTINGS.marge = margin;
+    SETTINGS.aleas = contingency;
     hasLocalSettingsChanges = true;
     if (!supabaseClient) {
+        connectionState = 'offline';
+        connectionError = "Client Supabase indisponible";
+        updateConnectionStatus();
         toast("Mode hors-ligne : paramètres conservés en mémoire");
-        return;
+        return false;
     }
     try {
         const { error } = await supabaseClient.from('settings').upsert({
@@ -509,28 +651,168 @@ async function saveParam() {
             aleas: SETTINGS.aleas
         }, { onConflict: 'id' });
         if (error) throw error;
-        toast("Paramètres enregistrés dans le Cloud");
+        hasLocalSettingsChanges = false;
+        connectionState = 'online';
+        connectionError = '';
+        updateConnectionStatus();
+        if (notify) toast("Paramètres enregistrés dans le Cloud");
+        return true;
     } catch (error) {
         console.error("Erreur d'enregistrement des paramètres", error);
-        toast("Échec de la sauvegarde Cloud; paramètres conservés en mémoire");
+        connectionState = cloudStateForError(error);
+        connectionError = explainCloudError(error);
+        updateConnectionStatus();
+        if (notify) toast("Échec de la sauvegarde Cloud; paramètres conservés en mémoire");
+        return false;
     }
 }
 
 function viewClients() {
     const d = getData();
-    return `<div class="card"><div class="card-head"><div class="card-title">Mes Clients</div></div>
+    return `<div class="card"><div class="card-head"><div class="card-title">Mes Clients</div><button class="btn btn-sm" onclick="go('nouveau-client')">Nouveau client</button></div>
+        ${d.clients.length ? '' : '<p class="card-sub">Aucun client enregistré.</p>'}
         ${d.clients.map(c => `<div class="list-item" onclick="go('fiche-client', '${esc(c.id)}')"><div class="title">${esc(c.nom)}</div></div>`).join('')}
-        <button class="btn" onclick="go('nouveau-client')">+ Nouveau Client</button>
     </div>`;
+}
+
+function viewFormClient() {
+    const isEdit = CURRENT_MODE === 'edit';
+    const existing = isEdit ? getData().clients.find(client => client.id === CURRENT_ID) : null;
+    if (isEdit && !existing) return '<div class="card">Client introuvable.</div>';
+    const client = existing || { nom: '', ville: '', cp: '', email: '', tel: '' };
+    return `
+        <div class="card">
+            <div class="card-head"><div class="card-title">${isEdit ? 'Modifier le client' : 'Nouveau client'}</div></div>
+            <div class="field"><label for="c-nom">Nom</label><input class="inp" id="c-nom" required maxlength="160" value="${esc(client.nom)}"></div>
+            <div class="row-2">
+                <div class="field"><label for="c-ville">Ville</label><input class="inp" id="c-ville" maxlength="120" value="${esc(client.ville)}"></div>
+                <div class="field"><label for="c-cp">Code postal</label><input class="inp" id="c-cp" maxlength="20" value="${esc(client.cp)}"></div>
+            </div>
+            <div class="field"><label for="c-email">Email</label><input class="inp" id="c-email" type="email" maxlength="254" value="${esc(client.email)}"></div>
+            <div class="field"><label for="c-tel">Téléphone</label><input class="inp" id="c-tel" type="tel" maxlength="40" value="${esc(client.tel)}"></div>
+            <button class="btn" type="button" onclick="saveClient()">${isEdit ? 'Enregistrer les modifications' : 'Créer le client'}</button>
+            <button class="btn btn-ghost" type="button" style="margin-top:12px;" onclick="back()">Annuler</button>
+        </div>`;
+}
+
+async function saveClient() {
+    const nameInput = document.getElementById('c-nom');
+    if (!nameInput) return;
+    const nom = nameInput.value.trim();
+    if (!nom) {
+        toast("Le nom du client est obligatoire.");
+        nameInput.focus();
+        return;
+    }
+    const data = {
+        nom,
+        ville: document.getElementById('c-ville').value.trim(),
+        cp: document.getElementById('c-cp').value.trim(),
+        email: document.getElementById('c-email').value.trim(),
+        tel: document.getElementById('c-tel').value.trim()
+    };
+    const d = getData();
+    const now = new Date().toISOString();
+    const isEdit = CURRENT_MODE === 'edit';
+    if (isEdit) {
+        const client = d.clients.find(item => item.id === CURRENT_ID);
+        if (!client) {
+            toast("Client introuvable.");
+            return;
+        }
+        Object.assign(client, data, { updatedAt: now });
+    } else {
+        const clientId = uuid();
+        d.clients.push({
+            id: clientId,
+            uuid: clientId,
+            date: now,
+            createdAt: now,
+            updatedAt: now,
+            ...data
+        });
+        CURRENT_ID = clientId;
+        CURRENT_MODE = 'edit';
+    }
+    const saved = await saveData(d);
+    if (!saved) return;
+    toast(isEdit ? "Client enregistré." : "Client créé.");
+    go('fiche-client', CURRENT_ID, 'view');
+}
+
+function viewFicheClient() {
+    const d = getData();
+    const client = d.clients.find(item => item.id === CURRENT_ID || item.uuid === CURRENT_ID);
+    if (!client) return '<div class="card">Client introuvable.</div>';
+    const documents = d.devis.filter(item => item.clientId === client.id || item.clientId === client.uuid);
+    return `
+        <div class="card">
+            <div class="card-head">
+                <div><div class="card-title">${esc(client.nom)}</div><div class="card-sub">${esc(client.ville)} ${esc(client.cp)}</div></div>
+                <button class="btn btn-sm btn-ghost" onclick="go('nouveau-client', '${esc(client.id)}', 'edit')">Modifier</button>
+            </div>
+            <p>${esc(client.email) || 'Pas d’email'} · ${esc(client.tel) || 'Pas de téléphone'}</p>
+            <button class="btn btn-danger" type="button" style="margin-top:12px;" onclick="deleteClient('${esc(client.id)}')">Supprimer le client</button>
+            <button class="btn" style="margin-top:20px;" onclick="go('nouveau-devis', '${esc(client.id)}')">Créer un devis</button>
+        </div>
+        <div class="card">
+            <div class="card-head"><div class="card-title">Documents du client</div></div>
+            ${documents.length ? documents.map(document => `
+                <div class="list-item" onclick="go('detail-devis', '${esc(document.id)}', 'view')">
+                    <div><div class="title">${esc(document.numero || document.id)}</div><div class="sub">${esc(document.type).toUpperCase()} · ${esc(document.statut)}</div></div>
+                    <div class="amount">${eur(document.totalTTC)}</div>
+                </div>`).join('') : '<p class="card-sub">Aucun document pour ce client.</p>'}
+        </div>`;
+}
+
+function viewDevis() {
+    const documents = getData().devis.slice().sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+    return `
+        <div class="card">
+            <div class="card-head"><div class="card-title">Mes Devis et factures</div><button class="btn btn-sm" onclick="go('nouveau-devis')">Nouveau devis</button></div>
+            ${documents.length ? documents.map(document => `
+                <div class="list-item" role="button" tabindex="0" onclick="go('detail-devis', '${esc(document.id)}', 'view')">
+                    <div><div class="title">${esc(document.clientNom || 'Client non renseigné')}</div>
+                        <div class="sub">${esc(document.numero || document.id)} · ${esc(document.type).toUpperCase()} · ${esc(document.statut).toUpperCase()} · ${dateFr(document.date)}</div>
+                    </div>
+                    <div class="amount">${eur(document.totalTTC)}</div>
+                </div>`).join('') : '<p class="card-sub">Aucun document enregistré.</p>'}
+        </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════════
 // VUE CRÉATION DEVIS & IA
 // ═══════════════════════════════════════════════════════════════════
 function viewFormDevis() {
+    const d = getData();
+    const editing = CURRENT_MODE === 'edit';
+    const existing = editing
+        ? d.devis.find(document => document.uuid === CURRENT_ID || document.id === CURRENT_ID)
+        : null;
+    if (editing && !existing) return '<div class="card">Document introuvable.</div>';
+    if (existing) DEV_LIGNES = (existing.lignes || []).map(line => ({ ...line }));
+    const selectedClientId = existing
+        ? existing.clientId
+        : d.clients.some(client => client.id === CURRENT_ID) ? CURRENT_ID : '';
+    const tva = existing ? existing.tauxTVA : 20;
+    const materials = existing ? existing.coutMateriaux : 0;
+    const existingSubtotal = existing
+        ? (existing.lignes || []).reduce((sum, line) => sum + (Number(line.q) || 0) * (Number(line.pu) || 0), 0)
+        : 0;
+    const aleas = existing && existingSubtotal > 0
+        ? (Number(existing.aleas) || 0) / existingSubtotal * 100
+        : (Number(SETTINGS.aleas) || 0);
     return `
         <div class="card">
-            <div class="card-head"><div class="card-title">Nouveau Devis</div></div>
+            <div class="card-head"><div class="card-title">${editing ? 'Modifier le devis' : 'Nouveau devis'}</div></div>
+            <div class="field">
+                <label for="quote-client">Client</label>
+                <select class="inp" id="quote-client">
+                    <option value="">Choisir un client</option>
+                    ${d.clients.map(client => `<option value="${esc(client.id)}" ${client.id === selectedClientId ? 'selected' : ''}>${esc(client.nom)}</option>`).join('')}
+                </select>
+                ${d.clients.length ? '' : '<p class="card-sub">Créez d’abord un client pour enregistrer un devis.</p>'}
+            </div>
             
             <div class="field">
                 <label>Génération par IA (Texte)</label>
@@ -550,6 +832,14 @@ function viewFormDevis() {
             </div>
 
             <div id="lines-container"></div>
+            <div class="row-2">
+                <div class="field"><label for="quote-tva">TVA (%)</label><input class="inp" id="quote-tva" type="number" min="0" max="100" step="0.1" value="${esc(tva)}" onchange="renderQuoteTotals()"></div>
+                <div class="field"><label for="quote-aleas">Aléas (%)</label><input class="inp" id="quote-aleas" type="number" min="0" max="100" step="0.1" value="${esc(aleas)}" onchange="renderQuoteTotals()"></div>
+            </div>
+            <div class="field"><label for="quote-materials">Coût des matériaux (€)</label><input class="inp" id="quote-materials" type="number" min="0" step="0.01" value="${esc(materials)}"></div>
+            <button class="btn btn-ghost" type="button" onclick="addQuoteLine()">Ajouter une ligne</button>
+            <button class="btn" type="button" style="margin-top:12px;" onclick="saveQuote()">${editing ? 'Enregistrer le devis' : 'Enregistrer le devis'}</button>
+            <button class="btn btn-ghost" type="button" style="margin-top:12px;" onclick="back()">Annuler</button>
         </div>
     `;
 }
@@ -611,6 +901,318 @@ function acceptQuoteProposal() {
     renderLines();
     renderQuoteProposal();
     toast("Lignes ajoutées; vérifiez les quantités et saisissez les prix");
+}
+
+function addQuoteLine() {
+    DEV_LIGNES.push({ code: 'custom', d: '', q: 1, u: 'u', pu: 0, puBase: 0 });
+    renderLines();
+}
+
+function updateQuoteLine(index, field, value) {
+    if (!DEV_LIGNES[index]) return;
+    DEV_LIGNES[index][field] = field === 'd' || field === 'u' ? value : Number(value);
+    const lineTotal = document.getElementById(`line-total-${index}`);
+    if (lineTotal) lineTotal.textContent = `Total ligne : ${eur((Number(DEV_LIGNES[index].q) || 0) * (Number(DEV_LIGNES[index].pu) || 0))}`;
+    renderQuoteTotals();
+}
+
+function removeQuoteLine(index) {
+    DEV_LIGNES.splice(index, 1);
+    renderLines();
+}
+
+async function saveQuote() {
+    const d = getData();
+    const clientId = document.getElementById('quote-client').value;
+    const client = d.clients.find(item => item.id === clientId || item.uuid === clientId);
+    if (!client) {
+        toast("Sélectionnez un client pour le devis.");
+        return;
+    }
+    const lines = DEV_LIGNES.map(line => ({ ...line, d: String(line.d || '').trim() }));
+    if (!lines.length || lines.some(line => !line.d || !Number.isFinite(line.q) || line.q <= 0 || !Number.isFinite(line.pu) || line.pu < 0)) {
+        toast("Ajoutez au moins une ligne avec une description, une quantité et un prix valides.");
+        return;
+    }
+    const tva = Number(document.getElementById('quote-tva').value);
+    const aleas = Number(document.getElementById('quote-aleas').value);
+    const materials = Number(document.getElementById('quote-materials').value);
+    if (![tva, aleas, materials].every(Number.isFinite) || tva < 0 || tva > 100 || aleas < 0 || aleas > 100 || materials < 0) {
+        toast("Vérifiez la TVA, les aléas et le coût des matériaux.");
+        return;
+    }
+    const totals = computeQuote(lines, aleas, tva);
+    const now = new Date().toISOString();
+    let quoteDoc;
+    if (CURRENT_MODE === 'edit') {
+        quoteDoc = d.devis.find(item => item.uuid === CURRENT_ID || item.id === CURRENT_ID);
+        if (!quoteDoc) {
+            toast("Document introuvable.");
+            return;
+        }
+        Object.assign(quoteDoc, {
+            clientId: client.uuid || client.id,
+            clientNom: client.nom,
+            lignes: lines,
+            tauxTVA: tva,
+            coutMateriaux: materials,
+            aleas: totals.aleasMontant,
+            aleasPct: aleas,
+            ...totals,
+            totalHT: totals.totalHTNet,
+            tva: totals.montantTVA,
+            updatedAt: now
+        });
+    } else {
+        const number = d.devis.filter(item => item.type === 'devis').length + 1;
+        const id = uuid();
+        const year = new Date().getFullYear();
+        let sequence = number;
+        let numero = `DEV-${year}-${String(sequence).padStart(4, '0')}`;
+        while (d.devis.some(item => item.numero === numero || item.id === numero)) {
+            sequence += 1;
+            numero = `DEV-${year}-${String(sequence).padStart(4, '0')}`;
+        }
+        quoteDoc = {
+            id: numero,
+            uuid: id,
+            numero,
+            clientId: client.uuid || client.id,
+            clientNom: client.nom,
+            type: 'devis',
+            statut: 'brouillon',
+            lignes: lines,
+            tauxTVA: tva,
+            coutMateriaux: materials,
+            aleas: totals.aleasMontant,
+            aleasPct: aleas,
+            ...totals,
+            totalHT: totals.totalHTNet,
+            tva: totals.montantTVA,
+            date: now,
+            createdAt: now,
+            updatedAt: now
+        };
+        d.devis.push(quoteDoc);
+        CURRENT_ID = id;
+        CURRENT_MODE = 'edit';
+        const currentPage = STACK[STACK.length - 1];
+        if (currentPage) {
+            currentPage.id = id;
+            currentPage.mode = 'edit';
+        }
+    }
+    const saved = await saveData(d);
+    if (!saved) return;
+    toast("Devis enregistré.");
+    go('detail-devis', quoteDoc.uuid || quoteDoc.id, 'view');
+}
+
+function viewDetailDevis() {
+    const document = getData().devis.find(item => item.uuid === CURRENT_ID || item.id === CURRENT_ID);
+    if (!document) return '<div class="card">Devis introuvable.</div>';
+    const subtotal = (document.lignes || []).reduce((sum, line) => sum + (Number(line.q) || 0) * (Number(line.pu) || 0), 0);
+    const aleasPct = Number.isFinite(Number(document.aleasPct))
+        ? Number(document.aleasPct)
+        : subtotal > 0 ? (Number(document.aleas) || 0) / subtotal * 100 : 0;
+    const totals = computeQuote(document.lignes || [], aleasPct, Number(document.tauxTVA) || 0);
+    return `
+        <div class="card">
+            <div class="card-head">
+                <div><div class="card-title">${esc(document.numero || document.id)}</div>
+                    <div class="card-sub">${esc(document.clientNom)} · ${dateFr(document.date)} · ${esc(document.statut)}</div></div>
+                <button class="btn btn-sm btn-ghost" onclick="go('nouveau-devis', '${esc(document.uuid || document.id)}', 'edit')">Modifier</button>
+            </div>
+            <div class="card-sub">Client : ${esc(document.clientNom)}</div>
+            ${(document.lignes || []).map(line => `
+                <div class="list-item">
+                    <div><div class="title">${esc(line.d)}</div><div class="sub">${esc(line.q)} ${esc(line.u)} × ${eur(line.pu)}</div></div>
+                    <div class="amount">${eur((Number(line.q) || 0) * (Number(line.pu) || 0))}</div>
+                </div>`).join('')}
+            <div class="line-item">
+                <div>Total HT : <strong>${eur(totals.totalHTNet)}</strong></div>
+                <div>Aléas : <strong>${eur(totals.aleasMontant)}</strong></div>
+                <div>TVA (${esc(document.tauxTVA)} %) : <strong>${eur(totals.montantTVA)}</strong></div>
+                <div>Total TTC : <strong>${eur(totals.totalTTC)}</strong></div>
+            </div>
+            <div class="row-2" style="margin-top:16px;">
+                ${document.type === 'devis' && document.statut !== 'accepte' ? `<button class="btn btn-success" type="button" onclick="acceptDevis('${esc(document.uuid || document.id)}')">Marquer comme accepté</button>` : ''}
+                ${document.type === 'devis' && document.statut === 'accepte' ? `<button class="btn" type="button" onclick="exportToFacture('${esc(document.uuid || document.id)}')">Créer une facture</button>` : ''}
+                <button class="btn btn-ghost" type="button" onclick="downloadDocumentPdf('${esc(document.uuid || document.id)}')">Télécharger le PDF</button>
+            </div>
+            <button class="btn btn-danger" type="button" style="margin-top:12px;" onclick="deleteDocument('${esc(document.uuid || document.id)}')">Supprimer ce document</button>
+            <button class="btn btn-ghost" type="button" onclick="back()">Retour</button>
+        </div>`;
+}
+
+async function deleteDocument(id) {
+    const doc = getData().devis.find(item => item.uuid === id || item.id === id);
+    if (!doc) {
+        toast("Document introuvable.");
+        return;
+    }
+    if (connectionState !== 'online' || !supabaseClient) {
+        toast("Suppression impossible hors ligne; le document est conservé.");
+        return;
+    }
+    if (!window.confirm(`Supprimer le document ${doc.numero || doc.id} ? Cette action est irréversible.`)) return;
+    try {
+        const { data, error } = await supabaseClient.from('documents')
+            .delete().eq('id', doc.uuid || doc.id).select('id');
+        if (error) throw error;
+        if (!data || data.length !== 1) {
+            toast("Aucun document n’a été supprimé; vérifiez les droits Cloud.");
+            return;
+        }
+        CACHE_DATA.devis = CACHE_DATA.devis.filter(item => item.uuid !== id && item.id !== id);
+        connectionState = 'online';
+        connectionError = '';
+        updateConnectionStatus();
+        toast("Document supprimé du Cloud.");
+        back();
+    } catch (error) {
+        console.error("Erreur de suppression du document", error);
+        connectionState = cloudStateForError(error);
+        connectionError = explainCloudError(error);
+        updateConnectionStatus();
+        toast("Suppression refusée : " + connectionError);
+    }
+}
+
+async function deleteClient(id) {
+    const client = getData().clients.find(item => item.id === id || item.uuid === id);
+    if (!client) {
+        toast("Client introuvable.");
+        return;
+    }
+    const linkedDocuments = getData().devis.filter(item =>
+        item.clientId === client.id || item.clientId === client.uuid
+    );
+    if (linkedDocuments.length) {
+        toast("Supprimez d’abord les documents liés au client.");
+        return;
+    }
+    if (connectionState !== 'online' || !supabaseClient) {
+        toast("Suppression impossible hors ligne; le client est conservé.");
+        return;
+    }
+    if (!window.confirm(`Supprimer le client ${client.nom} ? Cette action est irréversible.`)) return;
+    try {
+        const { data, error } = await supabaseClient.from('clients')
+            .delete().eq('id', client.uuid || client.id).select('id');
+        if (error) throw error;
+        if (!data || data.length !== 1) {
+            toast("Aucun client n’a été supprimé; vérifiez les droits Cloud.");
+            return;
+        }
+        CACHE_DATA.clients = CACHE_DATA.clients.filter(item => item.id !== id && item.uuid !== id);
+        connectionState = 'online';
+        connectionError = '';
+        updateConnectionStatus();
+        toast("Client supprimé du Cloud.");
+        home();
+    } catch (error) {
+        console.error("Erreur de suppression du client", error);
+        connectionState = cloudStateForError(error);
+        connectionError = explainCloudError(error);
+        updateConnectionStatus();
+        toast("Suppression refusée : " + connectionError);
+    }
+}
+
+async function acceptDevis(id) {
+    const document = getData().devis.find(item => item.uuid === id || item.id === id);
+    if (!document || document.type !== 'devis') {
+        toast("Devis introuvable.");
+        return;
+    }
+    document.statut = 'accepte';
+    document.updatedAt = new Date().toISOString();
+    const saved = await saveData(getData());
+    render();
+    if (saved) toast("Devis marqué comme accepté.");
+}
+
+async function exportToFacture(id) {
+    const d = getData();
+    const quote = d.devis.find(item => item.uuid === id || item.id === id);
+    if (!quote || quote.type !== 'devis' || quote.statut !== 'accepte') {
+        toast("Seul un devis accepté peut être facturé.");
+        return;
+    }
+    const invoiceBaseNumber = `FAC-${quote.numero || quote.id}`;
+    const existingInvoice = d.devis.find(item => item.type === 'facture' && (
+        item.linkedDevisId === (quote.uuid || quote.id) ||
+        item.numero === invoiceBaseNumber ||
+        item.numero && item.numero.startsWith(`${invoiceBaseNumber}-`)
+    ));
+    if (existingInvoice) {
+        go('detail-devis', existingInvoice.uuid || existingInvoice.id, 'view');
+        return;
+    }
+    let sequence = 1;
+    let numero = invoiceBaseNumber;
+    while (d.devis.some(item => item.numero === numero || item.id === numero)) {
+        sequence += 1;
+        numero = `${invoiceBaseNumber}-${sequence}`;
+    }
+    const now = new Date().toISOString();
+    const invoice = {
+        ...quote,
+        id: numero,
+        numero,
+        uuid: uuid(),
+        type: 'facture',
+        statut: 'emise',
+        date: now,
+        createdAt: now,
+        updatedAt: now,
+        linkedDevisId: quote.uuid || quote.id
+    };
+    d.devis.push(invoice);
+    const saved = await saveData(d);
+    if (saved) toast("Facture créée.");
+    go('detail-devis', invoice.uuid, 'view');
+}
+
+async function downloadDocumentPdf(id) {
+    const doc = getData().devis.find(item => item.uuid === id || item.id === id);
+    const element = document.getElementById('pdf-template');
+    if (!doc || !element || typeof window.html2pdf !== 'function') {
+        toast("La génération PDF est indisponible.");
+        return;
+    }
+    const subtotal = (doc.lignes || []).reduce((sum, line) => sum + (Number(line.q) || 0) * (Number(line.pu) || 0), 0);
+    const aleasPct = Number.isFinite(Number(doc.aleasPct))
+        ? Number(doc.aleasPct)
+        : subtotal > 0 ? (Number(doc.aleas) || 0) / subtotal * 100 : 0;
+    const totals = computeQuote(doc.lignes || [], aleasPct, Number(doc.tauxTVA) || 0);
+    const title = doc.type === 'facture' ? 'FACTURE' : 'DEVIS';
+    element.innerHTML = `
+        <h1>${title} N° ${esc(doc.numero || doc.id)}</h1>
+        <div class="header-info">
+            <div class="box"><strong>${esc(SETTINGS.nom_entreprise)}</strong><br>${esc(SETTINGS.adresse)}<br>${esc(SETTINGS.cp)} ${esc(SETTINGS.ville)}<br>SIRET : ${esc(SETTINGS.siret)}<br>Assurance : ${esc(SETTINGS.assurance)}</div>
+            <div class="box" style="text-align:right;"><strong>Client :</strong><br>${esc(doc.clientNom)}<br>Date : ${dateFr(doc.date)}</div>
+        </div>
+        <table><thead><tr><th>Désignation</th><th>Qté</th><th>Prix unitaire HT</th><th>Total HT</th></tr></thead>
+        <tbody>${(doc.lignes || []).map(line => `<tr><td>${esc(line.d)}</td><td>${esc(line.q)} ${esc(line.u)}</td><td>${eur(line.pu)}</td><td>${eur((Number(line.q) || 0) * (Number(line.pu) || 0))}</td></tr>`).join('')}</tbody></table>
+        <div class="totals"><p>Aléas : ${eur(totals.aleasMontant)}</p><p>Total HT : ${eur(totals.totalHTNet)}</p><p>TVA (${esc(doc.tauxTVA)} %) : ${eur(totals.montantTVA)}</p><h3>TOTAL TTC : ${eur(totals.totalTTC)}</h3></div>
+        <div class="legal"><p>IBAN : ${esc(SETTINGS.iban)} · BIC : ${esc(SETTINGS.bic)}</p></div>`;
+    element.style.display = 'block';
+    try {
+        await window.html2pdf().set({
+            margin: 0,
+            filename: `${title}_${String(doc.numero || doc.id).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save();
+    } catch (error) {
+        console.error("Erreur de génération PDF", error);
+        toast("Le PDF n’a pas pu être généré.");
+    } finally {
+        element.style.display = 'none';
+        element.replaceChildren();
+    }
 }
 
 function previewVisualPhoto() {
@@ -683,10 +1285,46 @@ async function generateVisualWithAI() {
 
 function renderLines() {
     const cont = document.getElementById('lines-container');
-    if(!cont) return;
-    const tot = computeQuote(DEV_LIGNES, 5, 10);
-    cont.innerHTML = DEV_LIGNES.map(l => `<div class="line-item">${esc(l.d)} - ${eur(l.pu)}</div>`).join('') + 
-        `<div style="margin-top:20px; font-weight:bold; color:var(--primary);">Total TTC: ${eur(tot.totalTTC)}</div>`;
+    if (!cont) return;
+    const tvaInput = document.getElementById('quote-tva');
+    const aleasInput = document.getElementById('quote-aleas');
+    const totals = computeQuote(DEV_LIGNES, Number(aleasInput && aleasInput.value) || 0, Number(tvaInput && tvaInput.value) || 0);
+    cont.innerHTML = `
+        <div class="card-head"><div class="card-title">Lignes du devis</div></div>
+        ${DEV_LIGNES.length ? DEV_LIGNES.map((line, index) => `
+            <div class="line-item">
+                <div class="field"><label for="line-description-${index}">Description</label>
+                    <input class="inp" id="line-description-${index}" maxlength="500" value="${esc(line.d)}" onchange="updateQuoteLine(${index}, 'd', this.value)"></div>
+                <div class="row-2">
+                    <div class="field"><label for="line-quantity-${index}">Quantité</label>
+                        <input class="inp" id="line-quantity-${index}" type="number" min="0.01" step="0.01" value="${esc(line.q)}" onchange="updateQuoteLine(${index}, 'q', this.value)"></div>
+                    <div class="field"><label for="line-unit-${index}">Unité</label>
+                        <select class="inp" id="line-unit-${index}" onchange="updateQuoteLine(${index}, 'u', this.value)">
+                            ${['u', 'm2', 'ml', 'forfait'].map(unit => `<option value="${unit}" ${line.u === unit ? 'selected' : ''}>${unit}</option>`).join('')}
+                        </select></div>
+                </div>
+                <div class="field"><label for="line-price-${index}">Prix unitaire HT (€)</label>
+                    <input class="inp" id="line-price-${index}" type="number" min="0" step="0.01" value="${esc(line.pu)}" onchange="updateQuoteLine(${index}, 'pu', this.value)"></div>
+                <div class="line-header"><span class="line-total" id="line-total-${index}">Total ligne : ${eur((Number(line.q) || 0) * (Number(line.pu) || 0))}</span>
+                    <button class="btn-reset" type="button" aria-label="Supprimer cette ligne" onclick="removeQuoteLine(${index})">Retirer</button></div>
+            </div>`).join('') : '<p class="card-sub">Aucune ligne. Ajoutez une ligne ou générez une proposition à vérifier.</p>'}
+        <div class="line-item">
+            <div>Total HT : <strong id="quote-total-ht">${eur(totals.totalHTNet)}</strong></div>
+            <div>TVA : <strong id="quote-total-tax">${eur(totals.montantTVA)}</strong></div>
+            <div>Total TTC : <strong id="quote-total-ttc">${eur(totals.totalTTC)}</strong></div>
+        </div>`;
+}
+
+function renderQuoteTotals() {
+    const tvaInput = document.getElementById('quote-tva');
+    const aleasInput = document.getElementById('quote-aleas');
+    const totals = computeQuote(DEV_LIGNES, Number(aleasInput && aleasInput.value) || 0, Number(tvaInput && tvaInput.value) || 0);
+    const totalHT = document.getElementById('quote-total-ht');
+    const totalTax = document.getElementById('quote-total-tax');
+    const totalTTC = document.getElementById('quote-total-ttc');
+    if (totalHT) totalHT.textContent = eur(totals.totalHTNet);
+    if (totalTax) totalTax.textContent = eur(totals.montantTVA);
+    if (totalTTC) totalTTC.textContent = eur(totals.totalTTC);
 }
 
 // LANCEMENT
