@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f1f5f9">
-<title>ArtisanApp V22</title>
+<meta name="theme-color" content="#f8fafc">
+<title>ArtisanApp V23</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-/* TON CSS EXISTANT (inchangé pour garder le design premium) */
+/* Design premium ArtisanApp */
 :root{
-  --bg: #f1f5f9; --surface: #ffffff; --surface-hover: #f8fafc; --border: #e2e8f0;
-  --text-main: #0f172a; --text-muted: #64748b; --primary: #2563eb; --primary-hover: #1d4ed8;
-  --primary-light: #eff6ff; --danger: #ef4444; --danger-light: #fef2f2;
-  --success: #10b981; --success-light: #ecfdf5; --radius: 16px;
-  --font-main: 'Inter', -apple-system, sans-serif; --font-mono: 'JetBrains Mono', monospace;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05); --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
+  --bg: #f8fafc; --surface: #ffffff; --surface-hover: #f1f5f9; --border: #e7ecf2;
+  --text-main: #172033; --text-muted: #64748b; --primary: #f97316; --primary-hover: #ea580c;
+  --primary-light: #fff1e7; --danger: #dc2626; --danger-light: #fef2f2;
+  --success: #059669; --success-light: #ecfdf5; --radius: 14px;
+  --font-main: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,.04); --shadow-md: 0 4px 12px rgba(15,23,42,.06);
+  --shadow-lg: 0 12px 32px rgba(15,23,42,.08); --shadow-glow: 0 0 0 3px rgba(249,115,22,.14);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;overflow-x:hidden}
@@ -27,12 +27,12 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);fo
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{min-height:44px;cursor:pointer;border:none;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
 button:disabled{cursor:wait;opacity:.7}
-button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(37,99,235,.7);outline-offset:2px}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(249,115,22,.7);outline-offset:2px}
 a{text-decoration:none;cursor:pointer;color:inherit}
 
 /* HEADER & NAV */
 .hdr{background:var(--surface);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.hdr-mark{width:40px;height:40px;background:var(--primary);color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+.hdr-mark{width:40px;height:40px;background:var(--primary);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
 .hdr-text h1{font-size:20px;font-weight:800;margin-left:12px}
 .hdr-text p{font-size:12px;color:var(--primary);font-weight:700;margin-left:12px;text-transform:uppercase}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 10px rgba(0,0,0,0.02)}
@@ -41,7 +41,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .bottom-nav a.active{color:var(--primary)}
 .bottom-nav svg{width:24px;height:24px;stroke-width:2.5;transition:transform 0.2s}
 .bottom-nav a.active svg{transform:translateY(-2px)}
-.fab{position:fixed;bottom:90px;right:24px;width:64px;height:64px;background:var(--primary);color:#fff;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(37, 99, 235, 0.4);z-index:99}
+.fab{position:fixed;bottom:90px;right:24px;width:56px;height:56px;background:var(--primary);color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 8px 24px rgba(194,65,12,.24);z-index:99}
 .fab:hover{transform:scale(1.05) translateY(-2px)}
 .fab:active{transform:scale(.95)}
 
@@ -50,7 +50,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .sidebar{display:none;width:260px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-direction:column}
 .sidebar .nav-item{display:flex;align-items:center;gap:12px;padding:14px 24px;margin:4px 16px;border-radius:12px;color:var(--text-muted);font-weight:600;cursor:pointer;transition:all 0.2s}
 .sidebar .nav-item:hover{background:var(--surface-hover);color:var(--primary)}
-.sidebar .nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:800}
+.sidebar .nav-item.active{background:var(--primary-light);color:#9a3412;font-weight:800}
 .wrap{flex:1;min-width:0;padding:32px 24px 40px;overflow-y:auto}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .page-content{animation:fadeInUp 0.3s ease-out forwards}
@@ -64,37 +64,41 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 
 /* HERO BANNER V18 */
 .hero-banner {
-    background-color: #0f172a;
-    background-image: linear-gradient(90deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.42) 55%, rgba(15, 23, 42, 0.28) 100%), url('hero-bg.jpg');
-    background-size: cover; background-position: center center; border-radius: var(--radius);
-    padding: 40px 32px; margin-bottom: 24px; box-shadow: var(--shadow-lg); border: 1px solid var(--border);
-    display: flex; flex-direction: column; justify-content: center; min-height: 240px; position: relative; overflow: hidden;
+    background-color:#0f172a;
+    background-image:linear-gradient(90deg,rgba(15,23,42,.88) 0%,rgba(15,23,42,.66) 52%,rgba(15,23,42,.24) 100%),url('hero-bg.jpg');
+    background-size:cover;background-position:center center;border-radius:var(--radius);
+    padding:40px 32px;margin-bottom:24px;box-shadow:var(--shadow-lg);border:1px solid rgba(255,255,255,.16);
+    display:flex;flex-direction:column;justify-content:center;min-height:260px;position:relative;overflow:hidden;
 }
 .hero-banner h2 { color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 32px; font-weight: 900; margin-bottom: 8px;}
 .hero-banner p { color: #e2e8f0; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-size: 16px; max-width: 65%; font-weight: 500;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.hero-actions .btn{width:auto;min-width:150px}
+.hero-actions .btn-light{background:#fff;color:#172033}
+.hero-actions .btn-light:hover{background:#f1f5f9}
 
-.card{background:var(--surface);border-radius:var(--radius);padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:all 0.3s ease}
-.card:hover{transform:scale(1.005) translateY(-2px);box-shadow:var(--shadow-lg)}
+.card{background:var(--surface);border-radius:12px;padding:24px;margin-bottom:18px;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,border-color .2s ease}
+.card:hover{box-shadow:var(--shadow-md)}
 .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}
 .card-title{font-size:18px;font-weight:800}
 .card-sub{font-size:13px;color:var(--text-muted);margin-top:4px}
 
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);transition:all 0.3s ease;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
-.kpi:hover{transform:scale(1.02) translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow-sm);transition:box-shadow .2s ease,border-color .2s ease;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.kpi:hover{box-shadow:var(--shadow-md);border-color:#fdba74}
 .kpi.full{grid-column:span 2;background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);border-left:4px solid var(--primary)}
 .kpi .lbl{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;z-index:1}
 .kpi .val{font-family:var(--font-mono);font-size:32px;font-weight:800;color:var(--text-main);z-index:1}
-.kpi.full .val { color: var(--primary); }
+.kpi.full .val { color: var(--text-main); }
 .kpi-icon { position:absolute; right:-10px; bottom:-10px; width:80px; height:80px; opacity:0.05; color:var(--primary); transform:rotate(-15deg); }
 
 /* BOUTONS */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:16px 24px;border-radius:12px;font-size:14px;font-weight:700;background:var(--primary);color:#fff;width:100%;text-transform:uppercase;box-shadow:var(--shadow-md)}
-.btn:hover{background:var(--primary-hover);transform:translateY(-2px)}
-.btn:active{transform:scale(0.97)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:700;background:var(--primary);color:#fff;width:100%;text-transform:none;box-shadow:none}
+.btn:hover{background:var(--primary-hover)}
+.btn:active{transform:translateY(1px)}
 .btn-ghost{background:var(--surface);color:var(--text-main);border:1px solid var(--border);box-shadow:none}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+.btn-ghost:hover{border-color:#fdba74;background:#fff7ed;color:#9a3412}
 .btn-sm{min-height:44px;padding:10px 16px;font-size:12px;width:auto;border-radius:8px}
 .btn-danger{background:var(--danger-light);color:var(--danger);border:1px solid #fca5a5}
 .btn-danger:hover{background:var(--danger);color:#fff}
@@ -104,20 +108,25 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 /* FORMULAIRES */
 .field{margin-bottom:20px}
 .field label{display:block;font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text-muted);text-transform:uppercase}
-.inp{width:100%;min-width:0;min-height:44px;padding:16px;font-size:16px;background:var(--bg);border:2px solid transparent;border-radius:12px;outline:none;font-weight:600;transition:all 0.2s}
+.inp{width:100%;min-width:0;min-height:44px;padding:11px 13px;font-size:16px;background:var(--surface);border:1px solid #cbd5e1;border-radius:8px;outline:none;font-weight:500;transition:border-color .2s ease,box-shadow .2s ease}
 .inp:focus{background:var(--surface);border-color:var(--primary);box-shadow:var(--shadow-glow)}
 .row-2{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 
 /* LISTES & LIGNES */
 .list-item{display:flex;justify-content:space-between;align-items:center;padding:16px;margin-bottom:8px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:all 0.2s}
-.list-item:hover{background:var(--surface-hover);border-color:var(--border);transform:translateX(4px)}
+.list-item:hover{background:var(--surface-hover);border-color:var(--border)}
 .list-item .title{font-weight:800;font-size:16px}
 .list-item .sub{font-size:12px;color:var(--text-muted);margin-top:2px}
 .list-item .amount{font-family:var(--font-mono);font-weight:800;color:var(--primary);font-size:16px}
-.line-item{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.line-item{background:var(--surface-hover);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
+.catalogue-panel{margin:14px 0 18px;padding:16px;border:1px solid #fed7aa;border-radius:10px;background:#fff7ed}
+.catalogue-panel .field{margin-bottom:10px}
+.add-line-button{width:auto;margin:4px 0 18px}
+.line-total-summary{background:#fff7ed;padding:20px;border-radius:10px;margin-top:20px;border:1px solid #fed7aa;line-height:1.9}
+.line-total-summary .grand-total{font-size:20px;color:#9a3412}
 .line-header{display:flex;justify-content:space-between;margin-bottom:12px}
 .line-desc{font-weight:800;font-size:14px}
-.line-total{font-family:var(--font-mono);color:var(--primary);font-weight:800}
+.line-total{font-family:var(--font-mono);color:#c2410c;font-weight:800}
 .line-inputs{display:flex;gap:12px;align-items:center}
 .pu-wrapper{display:flex;gap:8px;align-items:center;flex:2;}
 .btn-reset{min-height:44px;background:var(--surface);color:var(--text-muted);padding:8px 12px;border-radius:8px;font-size:14px;border:1px solid var(--border)}
@@ -146,19 +155,21 @@ a{text-decoration:none;cursor:pointer;color:inherit}
   .modal-overlay{align-items:center}.modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
 }
 @media (max-width:768px){
-  .layout-wrapper,.wrap,.card,.field,.kpi-grid,.row-2{min-width:0  }
-  @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-  }
+  .layout-wrapper,.wrap,.card,.field,.kpi-grid,.row-2{min-width:0}
   .kpi-grid,.row-2{grid-template-columns:minmax(0,1fr)}
   .kpi.full{grid-column:span 1}
   .bottom-nav a{flex:1;min-width:0;padding:8px 4px}
-  .hero-banner{padding:32px 24px}
+  .hero-banner{min-height:220px;padding:32px 24px}
   .hero-banner p{max-width:100%}
+  .hero-actions{display:grid;grid-template-columns:1fr}
+  .hero-actions .btn{width:100%}
   .kpi .val,.list-item>div:first-child{overflow-wrap:anywhere}
   .line-inputs{flex-wrap:wrap}
   .line-inputs>*{min-width:0}
   img,video,canvas{max-width:100%;height:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 </style>
 </head>
@@ -167,7 +178,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <header class="hdr">
   <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
     <div class="hdr-mark">A</div>
-    <div><h1>ArtisanApp</h1><p>V22 Cloud</p></div>
+    <div><h1>ArtisanApp</h1><p>V23 Cloud</p></div>
   </div>
 </header>
 
@@ -409,10 +420,79 @@ async function saveData(d) {
 // MOTEUR DE CALCUL & HELPERS
 // ═══════════════════════════════════════════════════════════════════
 const TARIFS = {
-    'carr.sol.std':{d:'Pose carrelage standard',u:'m2',pu:55,partF:0.35},
-    'carr.sol.grand':{d:'Pose carrelage grand format',u:'m2',pu:80,partF:0.45},
-    'sdb.renov':{d:'Forfait rénovation SDB',u:'forfait',pu:4500,partF:0.30}
+    'carr.sol.std':{d:'Pose carrelage standard',u:'m2',pu:55,categorie:'Carrelage'},
+    'carr.sol.grand':{d:'Pose carrelage grand format',u:'m2',pu:80,categorie:'Carrelage'},
+    'carr.sol.mosaique':{d:'Pose mosaïque',u:'m2',pu:110,categorie:'Carrelage'},
+    'carr.prep.support':{d:'Préparation du support (ragréage)',u:'m2',pu:16,categorie:'Carrelage'},
+    'carr.depose':{d:'Dépose du carrelage existant',u:'m2',pu:22,categorie:'Carrelage'},
+    'peint.mur.mat':{d:'Peinture murs (mat)',u:'m2',pu:18,categorie:'Peinture'},
+    'peint.mur.satin':{d:'Peinture murs (satin)',u:'m2',pu:20,categorie:'Peinture'},
+    'peint.plafond':{d:'Peinture plafond',u:'m2',pu:22,categorie:'Peinture'},
+    'peint.prep.simple':{d:'Préparation simple (rebouchage, ponçage)',u:'m2',pu:6,categorie:'Peinture'},
+    'peint.prep.lourde':{d:'Préparation lourde (enduit, ratissage)',u:'m2',pu:18,categorie:'Peinture'},
+    'plomb.fuite':{d:'Recherche et réparation de fuite',u:'forfait',pu:280,categorie:'Plomberie'},
+    'plomb.robinet':{d:'Remplacement de robinet',u:'u',pu:135,categorie:'Plomberie'},
+    'plomb.chauffeEau':{d:'Fourniture et pose chauffe-eau 200 L',u:'u',pu:1450,categorie:'Plomberie'},
+    'plomb.wc':{d:'Remplacement WC',u:'u',pu:650,categorie:'Plomberie'},
+    'elec.prise.neuve':{d:'Pose prise 16 A neuve',u:'u',pu:85,categorie:'Électricité'},
+    'elec.prise.rempl':{d:'Remplacement prise existante',u:'u',pu:45,categorie:'Électricité'},
+    'elec.interrupteur':{d:'Pose interrupteur / va-et-vient',u:'u',pu:75,categorie:'Électricité'},
+    'elec.cable.ml':{d:'Câble sous gaine ICTA',u:'ml',pu:14,categorie:'Électricité'},
+    'elec.disj.16A':{d:'Disjoncteur 16 A fourni et posé',u:'u',pu:65,categorie:'Électricité'},
+    'elec.tableau':{d:'Fourniture et pose tableau électrique',u:'forfait',pu:1100,categorie:'Électricité'},
+    'mac.fondation':{d:'Fondation semelle filante béton armé',u:'ml',pu:95,categorie:'Maçonnerie'},
+    'mac.mur.parpaing.20':{d:'Élévation mur parpaing 20 cm',u:'m2',pu:75,categorie:'Maçonnerie'},
+    'mac.mur.brique':{d:'Élévation mur en brique',u:'m2',pu:95,categorie:'Maçonnerie'},
+    'mac.mur.pierre':{d:'Élévation mur en pierre',u:'m2',pu:220,categorie:'Maçonnerie'},
+    'placo.ossature':{d:'Ossature métallique',u:'m2',pu:22,categorie:'Plâtrerie'},
+    'placo.ba13':{d:'Pose plaque BA13',u:'m2',pu:28,categorie:'Plâtrerie'},
+    'placo.bande.enduit':{d:'Bandes et enduit',u:'m2',pu:14,categorie:'Plâtrerie'},
+    'men.porte.interieure':{d:'Fourniture et pose porte intérieure',u:'u',pu:390,categorie:'Menuiserie'},
+    'men.fenetre.alu':{d:'Fourniture et pose fenêtre alu double vitrage',u:'u',pu:750,categorie:'Menuiserie'},
+    'toit.tuile.pose':{d:'Pose couverture tuiles',u:'m2',pu:85,categorie:'Toiture'},
+    'toit.ardoise.pose':{d:'Pose couverture ardoises',u:'m2',pu:120,categorie:'Toiture'},
+    'sdb.renov':{d:'Forfait rénovation salle de bain',u:'forfait',pu:4500,categorie:'Salle de bain'},
+    'sdb.depose.carrelage':{d:'Dépose carrelage existant',u:'m2',pu:22,categorie:'Salle de bain'},
+    'sdb.plomberie':{d:'Plomberie alimentation et évacuation',u:'forfait',pu:850,categorie:'Salle de bain'},
+    'sdb.faience':{d:'Pose faïence murale',u:'m2',pu:62,categorie:'Salle de bain'},
+    'sdb.carrelage.sol':{d:'Pose carrelage sol',u:'m2',pu:58,categorie:'Salle de bain'},
+    'sdb.sanitaires':{d:'Fourniture et pose sanitaires',u:'forfait',pu:1400,categorie:'Salle de bain'},
+    'cuis.depose':{d:'Dépose ancienne cuisine',u:'forfait',pu:450,categorie:'Cuisine'},
+    'cuis.plomberie':{d:'Plomberie et évacuation cuisine',u:'forfait',pu:650,categorie:'Cuisine'},
+    'cuis.elec':{d:'Électricité et prises cuisine',u:'forfait',pu:750,categorie:'Cuisine'},
+    'cuis.pose.meubles':{d:'Pose mobilier cuisine',u:'forfait',pu:950,categorie:'Cuisine'},
+    'terr.prep':{d:'Préparation et terrassement',u:'m2',pu:28,categorie:'Terrasse'},
+    'terr.lambourdes':{d:'Structure et lambourdes',u:'m2',pu:45,categorie:'Terrasse'},
+    'terr.lames.bois':{d:'Pose lames terrasse bois',u:'m2',pu:75,categorie:'Terrasse'},
+    'terr.lames.composite':{d:'Pose lames terrasse composite',u:'m2',pu:110,categorie:'Terrasse'},
+    'iso.combles':{d:'Isolation des combles',u:'m2',pu:25,categorie:'Isolation'},
+    'iso.mur.interieur':{d:'Isolation mur par l’intérieur',u:'m2',pu:32,categorie:'Isolation'}
 };
+const QUOTE_PRICE_BOOK_KEY = 'artisanapp.quote-price-book.v1';
+
+function getQuotePriceBook() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(QUOTE_PRICE_BOOK_KEY) || '{}');
+        if (!saved || Array.isArray(saved) || typeof saved !== 'object') return {};
+        return Object.fromEntries(Object.entries(saved).filter(([code, price]) =>
+            Object.prototype.hasOwnProperty.call(TARIFS, code) && Number.isFinite(price) && price >= 0
+        ));
+    } catch (error) {
+        console.error("Impossible de lire le catalogue tarifaire local", error);
+        return {};
+    }
+}
+
+function saveQuotePriceBook(priceBook) {
+    try {
+        localStorage.setItem(QUOTE_PRICE_BOOK_KEY, JSON.stringify(priceBook));
+        return true;
+    } catch (error) {
+        console.error("Impossible d'enregistrer le catalogue tarifaire local", error);
+        toast("Le tarif reste dans cette ligne, mais le catalogue local n’a pas pu être mis à jour.");
+        return false;
+    }
+}
 
 function computeQuote(lignes, aleasPct, tvaPct) {
     let totalHTBrut = 0;
@@ -544,14 +624,21 @@ function render() {
 
 function viewAccueil() {
     const d = getData();
+    const acceptedRevenue = d.devis.filter(item => item.type === 'devis' && item.statut === 'accepte')
+        .reduce((sum, item) => sum + (Number(item.totalTTC) || 0), 0);
+    const drafts = d.devis.filter(item => item.type === 'devis' && item.statut === 'brouillon').length;
     return `
         <div class="hero-banner">
-            <h2>Bonjour, Chef !</h2>
-            <p>Prêt à chiffrer vos chantiers aujourd'hui ?</p>
+            <h2>Votre activité, en un coup d’œil.</h2>
+            <p>Clients, chantiers et documents réunis dans votre espace ArtisanApp.</p>
+            <div class="hero-actions">
+                <button class="btn" type="button" onclick="go('nouveau-devis')">Créer un devis</button>
+                <button class="btn btn-light" type="button" onclick="go('nouveau-client')">Ajouter un client</button>
+            </div>
         </div>
         <div class="kpi-grid">
-            <div class="kpi full"><div class="lbl">Chiffre d'Affaires</div><div class="val">${eur(d.devis.filter(x=>x.statut==='accepte').reduce((a,b)=>a+b.totalTTC,0))}</div></div>
-            <div class="kpi"><div class="lbl">Devis en cours</div><div class="val">${d.devis.filter(x=>x.statut==='brouillon').length}</div></div>
+            <div class="kpi full"><div class="lbl">Devis acceptés · total TTC</div><div class="val">${eur(acceptedRevenue)}</div></div>
+            <div class="kpi"><div class="lbl">Devis brouillons</div><div class="val">${drafts}</div></div>
             <div class="kpi"><div class="lbl">Clients</div><div class="val">${d.clients.length}</div></div>
         </div>
         <div class="card">
@@ -862,7 +949,12 @@ function viewFormDevis() {
         ? d.devis.find(document => document.uuid === CURRENT_ID || document.id === CURRENT_ID)
         : null;
     if (editing && !existing) return '<div class="card">Document introuvable.</div>';
-    if (existing) DEV_LIGNES = (existing.lignes || []).map(line => ({ ...line }));
+    if (existing) DEV_LIGNES = (existing.lignes || []).map(line => ({
+        ...line,
+        puBase: Number.isFinite(Number(line.puBase))
+            ? Number(line.puBase)
+            : TARIFS[line.code] ? TARIFS[line.code].pu : Number(line.pu) || 0
+    }));
     const selectedClientId = existing
         ? existing.clientId
         : d.clients.some(client => client.id === CURRENT_ID) ? CURRENT_ID : '';
@@ -903,12 +995,31 @@ function viewFormDevis() {
                 <div id="visual-result" style="margin-top:16px;"></div>
             </div>
 
+            <div class="catalogue-panel">
+                <div class="field">
+                    <label for="quote-tariff">Catalogue de prestations</label>
+                    <select class="inp" id="quote-tariff">
+                        <option value="">Choisir une prestation à ajouter…</option>
+                        ${Object.entries(TARIFS).reduce((groups, [code, tariff]) => {
+                            const group = groups.find(item => item.name === tariff.categorie);
+                            if (group) group.options.push([code, tariff]);
+                            else groups.push({ name: tariff.categorie, options: [[code, tariff]] });
+                            return groups;
+                        }, []).map(group => `
+                            <optgroup label="${esc(group.name)}">
+                                ${group.options.map(([code, tariff]) => `<option value="${esc(code)}">${esc(tariff.d)} — ${eur(tariff.pu)} / ${esc(tariff.u)}</option>`).join('')}
+                            </optgroup>`).join('')}
+                    </select>
+                    <p class="field-help">Tarifs indicatifs issus du catalogue historique : vérifiez-les et adaptez-les à votre chantier. Vos tarifs modifiés sont mémorisés sur cet appareil.</p>
+                </div>
+                <button class="btn btn-ghost add-line-button" type="button" onclick="addTariffLine()">Ajouter la prestation sélectionnée</button>
+            </div>
             <div id="lines-container"></div>
             <div class="row-2">
                 <div class="field"><label for="quote-tva">TVA (%)</label><input class="inp" id="quote-tva" type="number" min="0" max="100" step="0.1" value="${esc(tva)}" onchange="renderQuoteTotals()"></div>
                 <div class="field"><label for="quote-aleas">Aléas (%)</label><input class="inp" id="quote-aleas" type="number" min="0" max="100" step="0.1" value="${esc(aleas)}" onchange="renderQuoteTotals()"></div>
             </div>
-            <div class="field"><label for="quote-materials">Coût des matériaux (€)</label><input class="inp" id="quote-materials" type="number" min="0" step="0.01" value="${esc(materials)}"></div>
+            <div class="field"><label for="quote-materials">Coût des matériaux (€)</label><input class="inp" id="quote-materials" type="number" min="0" step="0.01" value="${esc(materials)}" oninput="renderQuoteTotals()"></div>
             <button class="btn btn-ghost" type="button" onclick="addQuoteLine()">Ajouter une ligne</button>
             <button class="btn" type="button" style="margin-top:12px;" onclick="saveQuote()">${editing ? 'Enregistrer le devis' : 'Enregistrer le devis'}</button>
             <button class="btn btn-ghost" type="button" style="margin-top:12px;" onclick="back()">Annuler</button>
@@ -980,11 +1091,54 @@ function addQuoteLine() {
     renderLines();
 }
 
+function addTariffLine() {
+    const selector = document.getElementById('quote-tariff');
+    const tariff = selector && TARIFS[selector.value];
+    if (!tariff) {
+        toast("Sélectionnez une prestation dans le catalogue.");
+        return;
+    }
+    const priceBook = getQuotePriceBook();
+    const price = Object.prototype.hasOwnProperty.call(priceBook, selector.value)
+        ? priceBook[selector.value]
+        : tariff.pu;
+    DEV_LIGNES.push({
+        code: selector.value,
+        d: tariff.d,
+        q: 1,
+        u: tariff.u,
+        pu: price,
+        puBase: tariff.pu
+    });
+    selector.value = '';
+    renderLines();
+}
+
+function resetQuotePrice(index) {
+    const line = DEV_LIGNES[index];
+    const tariff = line && TARIFS[line.code];
+    if (!tariff) return;
+    const priceBook = getQuotePriceBook();
+    delete priceBook[line.code];
+    saveQuotePriceBook(priceBook);
+    line.pu = tariff.pu;
+    line.puBase = tariff.pu;
+    renderLines();
+}
+
 function updateQuoteLine(index, field, value) {
     if (!DEV_LIGNES[index]) return;
     DEV_LIGNES[index][field] = field === 'd' || field === 'u' ? value : Number(value);
+    const line = DEV_LIGNES[index];
+    if (field === 'pu' && TARIFS[line.code] && Number.isFinite(line.pu) && line.pu >= 0) {
+        const priceBook = getQuotePriceBook();
+        priceBook[line.code] = line.pu;
+        saveQuotePriceBook(priceBook);
+    }
     const lineTotal = document.getElementById(`line-total-${index}`);
-    if (lineTotal) lineTotal.textContent = `Total ligne : ${eur((Number(DEV_LIGNES[index].q) || 0) * (Number(DEV_LIGNES[index].pu) || 0))}`;
+    const resetButton = document.getElementById(`line-reset-price-${index}`);
+    if (resetButton) resetButton.disabled = Number(line.pu) === Number(line.puBase);
+    if (lineTotal) lineTotal.textContent = `Total ligne : ${eur((Number(line.q) || 0) * (Number(line.pu) || 0))}`;
     renderQuoteTotals();
 }
 
@@ -1472,6 +1626,8 @@ function renderLines() {
     const tvaInput = document.getElementById('quote-tva');
     const aleasInput = document.getElementById('quote-aleas');
     const totals = computeQuote(DEV_LIGNES, Number(aleasInput && aleasInput.value) || 0, Number(tvaInput && tvaInput.value) || 0);
+    const materialsInput = document.getElementById('quote-materials');
+    const materials = Number(materialsInput && materialsInput.value) || 0;
     cont.innerHTML = `
         <div class="card-head"><div class="card-title">Lignes du devis</div></div>
         ${DEV_LIGNES.length ? DEV_LIGNES.map((line, index) => `
@@ -1489,12 +1645,17 @@ function renderLines() {
                 <div class="field"><label for="line-price-${index}">Prix unitaire HT (€)</label>
                     <input class="inp" id="line-price-${index}" type="number" min="0" step="0.01" value="${esc(line.pu)}" onchange="updateQuoteLine(${index}, 'pu', this.value)"></div>
                 <div class="line-header"><span class="line-total" id="line-total-${index}">Total ligne : ${eur((Number(line.q) || 0) * (Number(line.pu) || 0))}</span>
+                    ${TARIFS[line.code] ? `<button class="btn-reset" id="line-reset-price-${index}" type="button" ${Number(line.pu) === Number(line.puBase) ? 'disabled' : ''} onclick="resetQuotePrice(${index})">Tarif catalogue</button>` : ''}
                     <button class="btn-reset" type="button" aria-label="Supprimer cette ligne" onclick="removeQuoteLine(${index})">Retirer</button></div>
             </div>`).join('') : '<p class="card-sub">Aucune ligne. Ajoutez une ligne ou générez une proposition à vérifier.</p>'}
-        <div class="line-item">
+        <div class="line-total-summary">
+            <div>Sous-total des prestations HT : <strong id="quote-subtotal">${eur(totals.totalHTBrut)}</strong></div>
+            <div>Provision aléas : <strong id="quote-risk">${eur(totals.aleasMontant)}</strong></div>
             <div>Total HT : <strong id="quote-total-ht">${eur(totals.totalHTNet)}</strong></div>
             <div>TVA : <strong id="quote-total-tax">${eur(totals.montantTVA)}</strong></div>
-            <div>Total TTC : <strong id="quote-total-ttc">${eur(totals.totalTTC)}</strong></div>
+            <div class="grand-total">Total TTC : <strong id="quote-total-ttc">${eur(totals.totalTTC)}</strong></div>
+            <div>HT après matériaux estimé : <strong id="quote-after-materials">${eur(totals.totalHTNet - materials)}</strong></div>
+            <div class="field-help">Estimation avant main-d’œuvre, frais généraux et cotisations. Les prix catalogue sont indicatifs.</div>
         </div>`;
 }
 
@@ -1505,9 +1666,17 @@ function renderQuoteTotals() {
     const totalHT = document.getElementById('quote-total-ht');
     const totalTax = document.getElementById('quote-total-tax');
     const totalTTC = document.getElementById('quote-total-ttc');
+    const subtotal = document.getElementById('quote-subtotal');
+    const risk = document.getElementById('quote-risk');
+    const afterMaterials = document.getElementById('quote-after-materials');
+    const materialsInput = document.getElementById('quote-materials');
+    const materials = Number(materialsInput && materialsInput.value) || 0;
     if (totalHT) totalHT.textContent = eur(totals.totalHTNet);
     if (totalTax) totalTax.textContent = eur(totals.montantTVA);
     if (totalTTC) totalTTC.textContent = eur(totals.totalTTC);
+    if (subtotal) subtotal.textContent = eur(totals.totalHTBrut);
+    if (risk) risk.textContent = eur(totals.aleasMontant);
+    if (afterMaterials) afterMaterials.textContent = eur(totals.totalHTNet - materials);
 }
 
 // LANCEMENT

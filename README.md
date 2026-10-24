@@ -1,4 +1,4 @@
-# ArtisanApp V22
+# ArtisanApp V23
 
 Application web métier pour gérer les clients, les devis, les factures et les documents associés.
 
@@ -19,6 +19,8 @@ L'interface s'affiche sans attendre la connexion Cloud. Les modifications hors l
 ## Devis, factures et PDF
 
 Les devis et factures utilisent les mêmes vues de documents et le schéma Supabase existant. Les devis peuvent être édités, acceptés puis convertis en facture. La génération PDF s'appuie sur html2pdf chargé depuis un CDN.
+
+Le formulaire de devis inclut un catalogue de prestations indicatif multi-métiers. Les prix restent modifiables; les tarifs ajustés sont mémorisés localement sur l'appareil et ne remplacent pas les prix des autres utilisateurs. Vérifiez chaque prix selon le chantier et vos coûts réels. Le récapitulatif calcule les totaux HT, les aléas, la TVA, le TTC et le montant HT restant après le coût matériaux saisi; il ne calcule pas les charges ou le coût de main-d’œuvre.
 
 ## Assistants IA
 
