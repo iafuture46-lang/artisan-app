@@ -1,33 +1,39 @@
-# ArtisanApp V18
+# ArtisanApp V22
 
-Frontend monolithique conservé dans `index.html.html`. Le fichier legacy `ArtisanApp-Web.txt` n'est pas utilisé ni fusionné.
+Application web métier pour gérer les clients, les devis, les factures et les documents associés.
 
-## Lancer en local
+## Architecture et lancement local
 
-Prérequis : Node.js 20 ou ultérieur. Le serveur utilise uniquement les modules natifs de Node, sans installation de dépendances.
+- `index.html` contient l'interface et le client Supabase. L'application utilise les tables `clients`, `documents` et `settings`.
+- `server.mjs` sert l'interface et relaie les appels IA pour éviter d'exposer les clés fournisseur dans le navigateur.
+- Le projet ne nécessite pas de dépendance npm; le serveur utilise Node.js 20 ou ultérieur et ses modules natifs.
 
-1. Copier `.env.example` vers `.env` localement et renseigner les clés fournisseur directement dans le fichier local. Ne jamais commiter `.env`.
-2. Dans PowerShell, lancer `node --env-file=.env server.mjs` depuis le dossier du projet.
+Pour lancer localement :
+
+1. Copier `.env.example` vers `.env` et ajouter localement les clés fournisseur nécessaires. Ne jamais commiter `.env`.
+2. Depuis la racine du dépôt, exécuter `node --env-file=.env server.mjs`.
 3. Ouvrir `http://127.0.0.1:4173`.
 
-Attention : `localStorage` est isolé par origine. Les données créées en ouvrant directement `index.html.html` avec `file://` ne sont pas automatiquement visibles sur `http://127.0.0.1:4173`. Avant de changer de mode, exportez les données depuis l'ancienne origine et importez le JSON depuis la nouvelle; gardez une copie du fichier exporté jusqu'à vérification.
+L'interface s'affiche sans attendre la connexion Cloud. Les modifications hors ligne restent uniquement en mémoire dans la session et ne sont pas garanties après rechargement. L'indicateur Cloud précise l'état de synchronisation. L'export JSON des Paramètres permet de télécharger les données chargées; il indique si des modifications locales restent non synchronisées. Le fichier exporté peut contenir des données personnelles.
 
-Sans clés, l'application et les fonctions sans IA restent accessibles; les endpoints IA renvoient une erreur explicite « non configuré ». `/api/health` indique uniquement les capacités configurées et n'expose aucune valeur secrète.
+## Devis, factures et PDF
 
-## Agnès et devis
+Les devis et factures utilisent les mêmes vues de documents et le schéma Supabase existant. Les devis peuvent être édités, acceptés puis convertis en facture. La génération PDF s'appuie sur html2pdf chargé depuis un CDN.
 
-Agnès utilise l'API Chat Completions DeepSeek via `DEEPSEEK_API_KEY`. Les devis sont des propositions de lignes sans prix; quantités, prix, TVA et totaux restent soumis au contrôle de l'utilisateur et au moteur existant de l'application.
+## Assistants IA
 
-## Retouche photo
+- La génération de propositions de lignes de devis passe par `/api/agnes/quote` et DeepSeek (`DEEPSEEK_API_KEY`). Les prix, quantités et totaux sont vérifiés et validés par l'utilisateur.
+- L'aperçu de rénovation visuelle passe par `/api/photos/edit`. La retouche utilise le fournisseur d'images configuré par `OPENAI_IMAGE_API_KEY` et `OPENAI_IMAGE_MODEL`; les instructions sont reformulées côté serveur avec DeepSeek.
+- Les clés fournisseur sont configurées uniquement dans l'environnement serveur. `/api/health` indique les capacités configurées sans révéler les secrets.
 
-Le langage et la reformulation d'instructions passent par DeepSeek. La modification d'image est exécutée par l'API d'édition d'images configurée via `OPENAI_IMAGE_API_KEY` et `OPENAI_IMAGE_MODEL` (GPT Image 2.5 Sunburst par défaut). Ce fournisseur est distinct du modèle de langage. L'image n'est envoyée qu'après clic sur « Modifier avec Agnès »; le serveur la traite en mémoire, valide PNG/JPEG, taille maximale et dimensions, et ne l'écrit pas sur disque. L'appel peut entraîner des frais fournisseur et transmettre la photo ainsi que les instructions au fournisseur externe.
+Les appels IA peuvent transmettre les textes ou photos choisis au fournisseur externe et entraîner des frais. Ils ne sont effectués qu'à la demande de l'utilisateur.
 
-## Email et pièce jointe
+## Email et pièces jointes
 
-EmailJS reste le transport existant. Pour joindre un PDF, la clé de variable EmailJS `document_pdf` doit être configurée comme pièce jointe dynamique de type **Variable Attachment** dans le template, avec le type de contenu `application/pdf`. L'application envoie le PDF encodé en data URL via cette variable. Envoi sans attachement désactivé par défaut dans l'écran d'envoi. Le statut d'un devis n'est actualisé qu'après succès EmailJS; `mailto:` reste une ouverture d'application externe et n'est jamais comptée comme envoi confirmé.
+L'envoi de devis et factures utilise EmailJS côté navigateur. Renseigner le Service ID, le Template ID et la clé publique dans Paramètres; cette configuration est stockée localement dans le navigateur et n'est pas synchronisée avec Supabase. La clé publique n'est pas un secret. Ne jamais saisir de clé privée dans ces champs.
 
-La Public Key EmailJS n'est pas un secret et reste visible dans le navigateur. Restreignez les domaines autorisés, configurez les limites anti-abus du compte et surveillez les quotas. Une garantie plus forte nécessite un relais serveur authentifié; aucun secret SMTP n'est stocké dans le frontend.
+Pour joindre le PDF, configurer dans le modèle EmailJS la variable `document_pdf` comme **Variable Attachment** avec le type `application/pdf`. L'application ne marque le devis comme envoyé qu'après réussite de l'envoi et de sa synchronisation Cloud.
 
 ## Limites de déploiement
 
-Ce serveur est un serveur de développement local. Il n'a ni authentification utilisateur, ni base de données, ni stockage multi-tenant. Il écoute par défaut uniquement sur `127.0.0.1`; ne le publiez pas directement sur Internet. Un déploiement professionnel nécessite d'abord une authentification, des autorisations, des limites d'usage adaptées, TLS, gestion des secrets côté hébergeur et une revue sécurité. Aucun compte fournisseur ni aucune clé ne sont fournis par ce projet.
+`server.mjs` est un serveur de développement local, sans authentification utilisateur ni base multi-tenant. Il écoute par défaut uniquement sur `127.0.0.1`. Ne pas l'exposer directement sur Internet ni le déployer tel quel sur Render. Un déploiement professionnel nécessite notamment une authentification, des autorisations, une configuration TLS et une gestion des secrets côté hébergeur. Aucun déploiement Render n'est configuré ou vérifié par ce dépôt.

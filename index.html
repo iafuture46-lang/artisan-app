@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f1f5f9">
-<title>ArtisanApp V19</title>
+<title>ArtisanApp V22</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -27,6 +27,7 @@ body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);fo
 button,input,select,textarea{font-family:inherit;font-size:16px;color:inherit}
 button{min-height:44px;cursor:pointer;border:none;background:none;transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1)}
 button:disabled{cursor:wait;opacity:.7}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(37,99,235,.7);outline-offset:2px}
 a{text-decoration:none;cursor:pointer;color:inherit}
 
 /* HEADER & NAV */
@@ -34,7 +35,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 .hdr-mark{width:40px;height:40px;background:var(--primary);color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
 .hdr-text h1{font-size:20px;font-weight:800;margin-left:12px}
 .hdr-text p{font-size:12px;color:var(--primary);font-weight:700;margin-left:12px;text-transform:uppercase}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 24px 0;z-index:100;box-shadow:0 -4px 10px rgba(0,0,0,0.02)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:12px 0 max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 10px rgba(0,0,0,0.02)}
 .bottom-nav a{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--text-muted);padding:8px 16px;text-transform:uppercase}
 .bottom-nav a{min-height:44px}
 .bottom-nav a.active{color:var(--primary)}
@@ -145,7 +146,10 @@ a{text-decoration:none;cursor:pointer;color:inherit}
   .modal-overlay{align-items:center}.modal{border-radius:16px;max-width:500px;transform:translateY(20px) scale(0.95);border-top:none;border-left:4px solid var(--primary)}
 }
 @media (max-width:768px){
-  .layout-wrapper,.wrap,.card,.field,.kpi-grid,.row-2{min-width:0}
+  .layout-wrapper,.wrap,.card,.field,.kpi-grid,.row-2{min-width:0  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  }
   .kpi-grid,.row-2{grid-template-columns:minmax(0,1fr)}
   .kpi.full{grid-column:span 1}
   .bottom-nav a{flex:1;min-width:0;padding:8px 4px}
@@ -163,7 +167,7 @@ a{text-decoration:none;cursor:pointer;color:inherit}
 <header class="hdr">
   <div style="display:flex;align-items:center;cursor:pointer" onclick="go('accueil')">
     <div class="hdr-mark">A</div>
-    <div><h1>ArtisanApp</h1><p>V19 Cloud</p></div>
+    <div><h1>ArtisanApp</h1><p>V22 Cloud</p></div>
   </div>
 </header>
 
@@ -204,11 +208,24 @@ const SCHEMA_VERSION = 2;
 const DEFAULT_SETTINGS = {
     nom_entreprise: "", siret: "", adresse: "", cp: "", ville: "",
     tel: "", email: "", iban: "", bic: "", assurance: "",
-    marge: 15, aleas: 5, emailjs_service: "", emailjs_template: "", emailjs_public: "",
-    openai_key: "", deepseek_key: "", agnes_key: ""
+    marge: 15, aleas: 5
 };
 
 let SETTINGS = { ...DEFAULT_SETTINGS };
+const EMAIL_CONFIG_STORAGE_KEY = 'artisanapp.emailjs.config.v1';
+let EMAIL_CONFIG = { emailjs_service: '', emailjs_template: '', emailjs_public: '' };
+try {
+    const savedEmailConfig = JSON.parse(localStorage.getItem(EMAIL_CONFIG_STORAGE_KEY) || 'null');
+    if (savedEmailConfig && typeof savedEmailConfig === 'object') {
+        EMAIL_CONFIG = {
+            emailjs_service: typeof savedEmailConfig.emailjs_service === 'string' ? savedEmailConfig.emailjs_service : '',
+            emailjs_template: typeof savedEmailConfig.emailjs_template === 'string' ? savedEmailConfig.emailjs_template : '',
+            emailjs_public: typeof savedEmailConfig.emailjs_public === 'string' ? savedEmailConfig.emailjs_public : ''
+        };
+    }
+} catch (error) {
+    console.error("Impossible de lire la configuration EmailJS locale", error);
+}
 let CACHE_DATA = { schemaVersion: SCHEMA_VERSION, clients: [], devis: [], cpt: { c: 0, d: 0, f: 0 } };
 let connectionState = 'loading';
 let connectionError = '';
@@ -551,6 +568,7 @@ function viewAccueil() {
 
 function viewParametres() {
     const s = SETTINGS;
+    const emailConfig = EMAIL_CONFIG;
     return `
         <div class="card">
             <div class="card-head"><div class="card-title">Mon Entreprise</div></div>
@@ -581,6 +599,18 @@ function viewParametres() {
         <div class="card">
             <div class="card-head"><div class="card-title">Services IA</div></div>
             <p class="card-sub">Les clés DeepSeek et de retouche photo doivent être configurées dans l'environnement serveur. Elles ne sont pas enregistrées dans Supabase ni exposées dans le navigateur.</p>
+        </div>
+        <div class="card">
+            <div class="card-head"><div class="card-title">Envoi de documents par email</div></div>
+            <p class="card-sub">Configuration EmailJS enregistrée uniquement dans ce navigateur. Les identifiants et la clé publique sont visibles côté client; ne saisissez aucun secret privé. Le PDF est joint via la variable de pièce jointe dynamique <code>document_pdf</code> du modèle EmailJS.</p>
+            <div class="field"><label for="s-ejs-service">Service ID</label><input class="inp" id="s-ejs-service" maxlength="160" value="${esc(emailConfig.emailjs_service)}"></div>
+            <div class="field"><label for="s-ejs-template">Template ID</label><input class="inp" id="s-ejs-template" maxlength="160" value="${esc(emailConfig.emailjs_template)}"></div>
+            <div class="field"><label for="s-ejs-public">Clé publique EmailJS</label><input class="inp" id="s-ejs-public" maxlength="200" value="${esc(emailConfig.emailjs_public)}" autocomplete="off"></div>
+        </div>
+        <div class="card">
+            <div class="card-head"><div class="card-title">Sauvegarde des données</div></div>
+            <p class="card-sub">Télécharge les clients, documents et paramètres actuellement chargés. Le fichier peut contenir des données personnelles et doit être conservé en lieu sûr.</p>
+            <button class="btn btn-ghost" type="button" onclick="exportData()">Exporter une sauvegarde JSON</button>
         </div>
     `;
 }
@@ -626,6 +656,24 @@ async function saveParam(notify = true) {
     }
     SETTINGS.marge = margin;
     SETTINGS.aleas = contingency;
+    const emailConfig = {
+        emailjs_service: document.getElementById('s-ejs-service')?.value.trim() || '',
+        emailjs_template: document.getElementById('s-ejs-template')?.value.trim() || '',
+        emailjs_public: document.getElementById('s-ejs-public')?.value.trim() || ''
+    };
+    const hasEmailConfig = Object.values(emailConfig).some(Boolean);
+    if (hasEmailConfig && Object.values(emailConfig).some(value => !value)) {
+        toast("Renseignez les trois champs EmailJS ou laissez-les tous vides.");
+        return false;
+    }
+    try {
+        localStorage.setItem(EMAIL_CONFIG_STORAGE_KEY, JSON.stringify(emailConfig));
+        EMAIL_CONFIG = emailConfig;
+    } catch (error) {
+        console.error("Erreur d'enregistrement de la configuration EmailJS locale", error);
+        toast("La configuration EmailJS n’a pas pu être enregistrée dans ce navigateur.");
+        return false;
+    }
     hasLocalSettingsChanges = true;
     if (!supabaseClient) {
         connectionState = 'offline';
@@ -665,6 +713,30 @@ async function saveParam(notify = true) {
         if (notify) toast("Échec de la sauvegarde Cloud; paramètres conservés en mémoire");
         return false;
     }
+}
+
+function exportData() {
+    const backup = {
+        schemaVersion: SCHEMA_VERSION,
+        exportedAt: new Date().toISOString(),
+        cloudSynced: connectionState === 'online' && !hasLocalDataChanges && !hasLocalSettingsChanges,
+        data: {
+            clients: CACHE_DATA.clients,
+            documents: CACHE_DATA.devis
+        },
+        settings: SETTINGS,
+        emailConfig: EMAIL_CONFIG
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `artisanapp-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast(backup.cloudSynced ? "Sauvegarde téléchargée." : "Sauvegarde téléchargée; certaines modifications ne sont pas synchronisées.");
 }
 
 function viewClients() {
@@ -1039,6 +1111,7 @@ function viewDetailDevis() {
                 ${document.type === 'devis' && document.statut !== 'accepte' ? `<button class="btn btn-success" type="button" onclick="acceptDevis('${esc(document.uuid || document.id)}')">Marquer comme accepté</button>` : ''}
                 ${document.type === 'devis' && document.statut === 'accepte' ? `<button class="btn" type="button" onclick="exportToFacture('${esc(document.uuid || document.id)}')">Créer une facture</button>` : ''}
                 <button class="btn btn-ghost" type="button" onclick="downloadDocumentPdf('${esc(document.uuid || document.id)}')">Télécharger le PDF</button>
+                <button class="btn btn-ghost" type="button" onclick="sendMail('${esc(document.uuid || document.id)}')">Envoyer par email</button>
             </div>
             <button class="btn btn-danger" type="button" style="margin-top:12px;" onclick="deleteDocument('${esc(document.uuid || document.id)}')">Supprimer ce document</button>
             <button class="btn btn-ghost" type="button" onclick="back()">Retour</button>
@@ -1175,13 +1248,9 @@ async function exportToFacture(id) {
     go('detail-devis', invoice.uuid, 'view');
 }
 
-async function downloadDocumentPdf(id) {
-    const doc = getData().devis.find(item => item.uuid === id || item.id === id);
+function prepareDocumentPdf(doc) {
     const element = document.getElementById('pdf-template');
-    if (!doc || !element || typeof window.html2pdf !== 'function') {
-        toast("La génération PDF est indisponible.");
-        return;
-    }
+    if (!doc || !element || typeof window.html2pdf !== 'function') throw new Error("La génération PDF est indisponible.");
     const subtotal = (doc.lignes || []).reduce((sum, line) => sum + (Number(line.q) || 0) * (Number(line.pu) || 0), 0);
     const aleasPct = Number.isFinite(Number(doc.aleasPct))
         ? Number(doc.aleasPct)
@@ -1198,20 +1267,134 @@ async function downloadDocumentPdf(id) {
         <tbody>${(doc.lignes || []).map(line => `<tr><td>${esc(line.d)}</td><td>${esc(line.q)} ${esc(line.u)}</td><td>${eur(line.pu)}</td><td>${eur((Number(line.q) || 0) * (Number(line.pu) || 0))}</td></tr>`).join('')}</tbody></table>
         <div class="totals"><p>Aléas : ${eur(totals.aleasMontant)}</p><p>Total HT : ${eur(totals.totalHTNet)}</p><p>TVA (${esc(doc.tauxTVA)} %) : ${eur(totals.montantTVA)}</p><h3>TOTAL TTC : ${eur(totals.totalTTC)}</h3></div>
         <div class="legal"><p>IBAN : ${esc(SETTINGS.iban)} · BIC : ${esc(SETTINGS.bic)}</p></div>`;
-    element.style.display = 'block';
-    try {
-        await window.html2pdf().set({
+    return {
+        element,
+        options: {
             margin: 0,
             filename: `${title}_${String(doc.numero || doc.id).replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        }
+    };
+}
+
+async function downloadDocumentPdf(id) {
+    const doc = getData().devis.find(item => item.uuid === id || item.id === id);
+    let pdf;
+    try {
+        pdf = prepareDocumentPdf(doc);
+        pdf.element.style.display = 'block';
+        await window.html2pdf().set(pdf.options).from(pdf.element).save();
     } catch (error) {
         console.error("Erreur de génération PDF", error);
-        toast("Le PDF n’a pas pu être généré.");
+        toast(error instanceof Error ? error.message : "Le PDF n’a pas pu être généré.");
     } finally {
-        element.style.display = 'none';
-        element.replaceChildren();
+        if (pdf) {
+            pdf.element.style.display = 'none';
+            pdf.element.replaceChildren();
+        }
+    }
+}
+
+function sendMail(id) {
+    const doc = getData().devis.find(item => item.uuid === id || item.id === id);
+    if (!doc) {
+        toast("Document introuvable.");
+        return;
+    }
+    const client = getData().clients.find(item => item.id === doc.clientId || item.uuid === doc.clientId);
+    if (!client) {
+        toast("Client associé introuvable.");
+        return;
+    }
+    const overlay = document.getElementById('modal-overlay');
+    overlay.innerHTML = `
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mail-modal-title">
+            <h3 id="mail-modal-title">Envoyer ${doc.type === 'facture' ? 'la facture' : 'le devis'}</h3>
+            <div class="field"><label for="m-to">Email du client</label><input class="inp" id="m-to" type="email" maxlength="254" required value="${esc(client.email)}"></div>
+            <div class="field"><label for="m-msg">Message</label><textarea class="inp" rows="5" id="m-msg">Bonjour ${esc(client.nom)},
+
+Veuillez trouver ci-joint ${doc.type === 'facture' ? 'la facture' : 'le devis'} ${esc(doc.numero || doc.id)} d’un montant de ${eur(doc.totalTTC)} TTC.
+
+Cordialement,
+${esc(SETTINGS.nom_entreprise)}</textarea></div>
+            <button class="btn" id="btn-send-document" type="button" onclick="execMail('${esc(doc.uuid || doc.id)}')">Envoyer le document</button>
+            <button class="btn btn-ghost" style="margin-top:12px;" type="button" onclick="closeMailModal()">Annuler</button>
+        </div>`;
+    overlay.classList.add('show');
+    document.getElementById('m-to').focus();
+}
+
+function closeMailModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.remove('show');
+    overlay.replaceChildren();
+}
+
+async function execMail(id) {
+    const doc = getData().devis.find(item => item.uuid === id || item.id === id);
+    const toInput = document.getElementById('m-to');
+    const messageInput = document.getElementById('m-msg');
+    const button = document.getElementById('btn-send-document');
+    if (!doc || !toInput || !messageInput || !button) return;
+    if (!toInput.value.trim() || !toInput.validity.valid) {
+        toast("Saisissez une adresse email valide.");
+        toInput.focus();
+        return;
+    }
+    if (button.disabled) return;
+    if (!EMAIL_CONFIG.emailjs_service || !EMAIL_CONFIG.emailjs_template || !EMAIL_CONFIG.emailjs_public ||
+        !window.emailjs || typeof window.emailjs.send !== 'function') {
+        toast("Configurez EmailJS dans Paramètres avant l’envoi.");
+        return;
+    }
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = "Génération du PDF et envoi...";
+    try {
+        window.emailjs.init(EMAIL_CONFIG.emailjs_public);
+        const pdf = prepareDocumentPdf(doc);
+        pdf.element.style.display = 'block';
+        let pdfDataUri;
+        try {
+            pdfDataUri = await window.html2pdf().set(pdf.options).from(pdf.element).outputPdf('datauristring');
+        } finally {
+            pdf.element.style.display = 'none';
+            pdf.element.replaceChildren();
+        }
+        if (typeof pdfDataUri !== 'string' || !pdfDataUri.startsWith('data:application/pdf')) {
+            throw new Error("Le PDF n’a pas pu être préparé pour l’envoi.");
+        }
+        await window.emailjs.send(EMAIL_CONFIG.emailjs_service, EMAIL_CONFIG.emailjs_template, {
+            to_email: toInput.value.trim(),
+            message: messageInput.value,
+            from_name: SETTINGS.nom_entreprise,
+            document_pdf: pdfDataUri
+        });
+
+        if (doc.type === 'devis') {
+            const previousStatus = doc.statut;
+            doc.statut = 'envoye';
+            doc.updatedAt = new Date().toISOString();
+            if (!await saveData(getData())) {
+                doc.statut = previousStatus;
+                toast("Email envoyé avec PDF, mais le statut n’a pas été synchronisé.");
+                closeMailModal();
+                render();
+                return;
+            }
+        }
+        closeMailModal();
+        render();
+        toast("Email envoyé avec le PDF en pièce jointe.");
+    } catch (error) {
+        console.error("Erreur d'envoi du document par email", error);
+        toast(error instanceof Error ? error.message : "L’envoi du document a échoué.");
+    } finally {
+        if (button.isConnected) {
+            button.disabled = false;
+            button.textContent = originalLabel;
+        }
     }
 }
 
